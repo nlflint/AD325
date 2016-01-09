@@ -1,0 +1,161 @@
+import org.junit.Test;
+
+import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
+
+import static org.junit.Assert.*;
+
+/**
+ * Created by nate on 1/9/16.
+ */
+public class ArrayStackTests {
+    private final double tolerance = 0.0000000000001;
+
+    @Test
+    public void IsEmpty_WhenANewStackIsCreate_ThenItIsEmpty() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Assert
+        assertTrue(stack.isEmpty());
+    }
+
+    @Test
+    public void IsEmpty_WhenItemsArePushedOntoStack_ThenItIsNotEmpty() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(1);
+        stack.push(5);
+        stack.push(90);
+
+        // Assert
+        assertFalse(stack.isEmpty());
+    }
+
+    @Test
+    public void IsEmpty_WhenLastItemIsPopped_ThenItIsEmpty() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(1);
+        stack.pop();
+
+        // Assert
+        assertTrue(stack.isEmpty());
+    }
+
+    @Test
+    public void IsEmpty_WhenAllButLastItemArePopped_ThenItIsNotEmpty() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(1);
+        stack.push(5);
+        stack.pop();
+
+        // Assert
+        assertFalse(stack.isEmpty());
+    }
+
+    @Test
+    public void Pop_WhenPoppingAnItem_ThenPoppedItemMatchesLastPushedItem() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(1);
+        stack.push(5);
+        double poppedValue = stack.pop();
+
+        // Assert
+        assertEquals(5, poppedValue, tolerance);
+    }
+
+    @Test
+    public void Pop_WhenPoppingItems_ThenItemsArePoppedInReverseOfPushedOrder() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(1);
+        stack.push(5);
+        double firstPop = stack.pop();
+        double secondPop = stack.pop();
+
+        // Assert
+        assertEquals(5, firstPop, tolerance);
+        assertEquals(1, secondPop, tolerance);
+    }
+
+    @Test
+    public void Pop_WhenPoppingAnEmptyStack_ThenIllegalStateExceptionIsThrown() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        try {
+            double poppedValue = stack.pop();
+        } catch (IllegalStateException exceptionn) {
+            return;
+        }
+
+        fail();
+    }
+
+    @Test
+    public void Pop_WhenPushingThenPopping1000000Items_ThenAllPoppedItemsMatchPushedItems() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        IntStream
+                .rangeClosed(1, 1000000)
+                .forEachOrdered(x -> stack.push(x));
+
+        // Assert
+        IntStream
+                .rangeClosed(1000000, 1)
+                .forEachOrdered(x -> assertEquals(x, stack.pop(), tolerance));
+    }
+
+    @Test
+    public void Peek_WhenPeeking_ThenReturnedValueIsLastItemPushedAndNoItemsArePopped() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        stack.push(100);
+        double peekedValue = stack.peek();
+        boolean wasEmpty = stack.isEmpty();
+        double poppedValue = stack.pop();
+
+        // Assert
+        assertEquals(100, peekedValue, tolerance);
+        assertFalse(wasEmpty);
+        assertEquals(100, peekedValue, tolerance);
+        assertTrue(stack.isEmpty());
+    }
+
+    @Test
+    public void Peek_WhenPeekingAnEmptyStack_ThenIllegalStateExceptionIsThrown() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        try {
+            double peekedValue = stack.peek();
+        } catch (IllegalStateException exceptionn) {
+            return;
+        }
+
+        fail();
+    }
+
+    private NumberStack CreateArrayStack() {
+        return new ArrayStack();
+    }
+}
