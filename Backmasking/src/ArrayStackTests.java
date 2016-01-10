@@ -1,6 +1,5 @@
 import org.junit.Test;
 
-import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
@@ -14,7 +13,7 @@ public class ArrayStackTests {
     @Test
     public void IsEmpty_WhenANewStackIsCreate_ThenItIsEmpty() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Assert
         assertTrue(stack.isEmpty());
@@ -23,7 +22,7 @@ public class ArrayStackTests {
     @Test
     public void IsEmpty_WhenItemsArePushedOntoStack_ThenItIsNotEmpty() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(1);
@@ -37,7 +36,7 @@ public class ArrayStackTests {
     @Test
     public void IsEmpty_WhenLastItemIsPopped_ThenItIsEmpty() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(1);
@@ -50,7 +49,7 @@ public class ArrayStackTests {
     @Test
     public void IsEmpty_WhenAllButLastItemArePopped_ThenItIsNotEmpty() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(1);
@@ -64,7 +63,7 @@ public class ArrayStackTests {
     @Test
     public void Pop_WhenPoppingAnItem_ThenPoppedItemMatchesLastPushedItem() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(1);
@@ -78,7 +77,7 @@ public class ArrayStackTests {
     @Test
     public void Pop_WhenPoppingItems_ThenItemsArePoppedInReverseOfPushedOrder() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(1);
@@ -94,7 +93,7 @@ public class ArrayStackTests {
     @Test
     public void Pop_WhenPoppingAnEmptyStack_ThenIllegalStateExceptionIsThrown() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         try {
@@ -109,7 +108,7 @@ public class ArrayStackTests {
     @Test
     public void Pop_WhenPushingThenPopping1000000Items_ThenAllPoppedItemsMatchPushedItems() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         IntStream
@@ -125,7 +124,7 @@ public class ArrayStackTests {
     @Test
     public void Peek_WhenPeeking_ThenReturnedValueIsLastItemPushedAndNoItemsArePopped() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         stack.push(100);
@@ -136,14 +135,14 @@ public class ArrayStackTests {
         // Assert
         assertEquals(100, peekedValue, tolerance);
         assertFalse(wasEmpty);
-        assertEquals(100, peekedValue, tolerance);
+        assertEquals(100, poppedValue, tolerance);
         assertTrue(stack.isEmpty());
     }
 
     @Test
     public void Peek_WhenPeekingAnEmptyStack_ThenIllegalStateExceptionIsThrown() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         try {
@@ -158,7 +157,7 @@ public class ArrayStackTests {
     @Test
     public void ToString_GivenArrayHasNumbersOneThroughTen_ThenToStringOutputsValuesAsString() {
         // Arrange
-        NumberStack stack = CreateArrayStack();
+        NumberStack stack = CreateStack();
 
         // Act
         IntStream
@@ -166,11 +165,21 @@ public class ArrayStackTests {
                 .forEachOrdered(x -> stack.push(x));
 
         // Assert
-        String expectedOutput = "[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]";
+        String expectedOutput = "[10.0 9.0 8.0 7.0 6.0 5.0 4.0 3.0 2.0 1.0]";
         assertEquals(expectedOutput, stack.toString());
     }
 
-    private NumberStack CreateArrayStack() {
+    @Test
+    public void ToString_GivenArrayIsEmpty_ThenOnlyBracketsReturned() {
+        // Arrange
+        NumberStack stack = CreateStack();
+
+        // Assert
+        String expectedOutput = "[]";
+        assertEquals(expectedOutput, stack.toString());
+    }
+
+    public NumberStack CreateStack() {
         return new ArrayStack();
     }
 }

@@ -54,14 +54,17 @@ public class ArrayStack implements NumberStack {
 
     @Override
     public String toString() {
+        if (isEmpty())
+            return "[]";
+
         String output = Arrays
                 .stream(numbers, 0, currentSize)
                 .mapToObj(x -> String.valueOf(x))
-                .reduce((first, second) -> first + " " + second).get();
+                .reduce((first, second) -> second + " " + first).get();
         return surroundWithSquareBrackets(output);
     }
 
-    private String surroundWithSquareBrackets(String string) {
+    public static String surroundWithSquareBrackets(String string) {
         return "[" + string + "]";
     }
 }
