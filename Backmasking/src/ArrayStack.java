@@ -34,12 +34,6 @@ public class ArrayStack implements NumberStack {
         return numbers[--currentSize];
     }
 
-    @Override
-    public double peek() {
-        verifyStackIsNotEmpty();
-        return numbers[currentSize - 1];
-    }
-
     private void verifyStackIsNotEmpty() {
         if (isEmpty())
             throw new IllegalStateException();
@@ -48,6 +42,12 @@ public class ArrayStack implements NumberStack {
     @Override
     public boolean isEmpty() {
         return currentSize == 0;
+    }
+
+    @Override
+    public double peek() {
+        verifyStackIsNotEmpty();
+        return numbers[currentSize - 1];
     }
 
     @Override
@@ -66,6 +66,4 @@ public class ArrayStack implements NumberStack {
                 .reduce((first, second) -> second + " " + first)
                 .orElse("");
     }
-
-
 }

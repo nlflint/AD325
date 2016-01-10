@@ -27,14 +27,14 @@ public class LinkedStack implements NumberStack {
     }
 
     @Override
-    public double peek() {
-        VerifyStackIsNotEmpty();
-        return head.value;
+    public boolean isEmpty() {
+        return head == null;
     }
 
     @Override
-    public boolean isEmpty() {
-        return head == null;
+    public double peek() {
+        VerifyStackIsNotEmpty();
+        return head.value;
     }
 
     @Override
