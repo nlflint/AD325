@@ -1,6 +1,4 @@
 import java.util.Arrays;
-import java.util.stream.DoubleStream;
-import java.util.stream.Stream;
 
 /**
  * Created by nate on 1/9/16.
@@ -54,17 +52,20 @@ public class ArrayStack implements NumberStack {
 
     @Override
     public String toString() {
-        if (isEmpty())
-            return "[]";
-
-        String output = Arrays
-                .stream(numbers, 0, currentSize)
-                .mapToObj(x -> String.valueOf(x))
-                .reduce((first, second) -> second + " " + first).get();
-        return surroundWithSquareBrackets(output);
+        return surroundWithSquareBrace(concatNumbers());
     }
 
-    private static String surroundWithSquareBrackets(String string) {
+    private static String surroundWithSquareBrace(String string) {
         return "[" + string + "]";
     }
+
+    private String concatNumbers() {
+        return Arrays
+                .stream(numbers, 0, currentSize)
+                .mapToObj(x -> String.valueOf(x))
+                .reduce((first, second) -> second + " " + first)
+                .orElse("");
+    }
+
+
 }

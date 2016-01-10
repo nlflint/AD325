@@ -39,14 +39,14 @@ public class LinkedStack implements NumberStack {
 
     @Override
     public String toString() {
-        return surroundWithSquareBrackets(buildOutput());
+        return surroundWithSquareBrace(concatNumbers());
     }
 
-    private static String surroundWithSquareBrackets(String string) {
+    private static String surroundWithSquareBrace(String string) {
         return "[" + string + "]";
     }
 
-    public String buildOutput() {
+    public String concatNumbers() {
         if (isEmpty())
             return "";
 
