@@ -4,9 +4,6 @@
 public class LinkedStack implements NumberStack {
     private LinkedStackNode head;
 
-    public LinkedStack() {
-
-    }
     @Override
     public void push(double number) {
         head = new LinkedStackNode(number, head);
