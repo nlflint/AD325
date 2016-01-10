@@ -155,6 +155,21 @@ public class ArrayStackTests {
         fail();
     }
 
+    @Test
+    public void ToString_GivenArrayHasNumbersOneThroughTen_ThenToStringOutputsValuesAsString() {
+        // Arrange
+        NumberStack stack = CreateArrayStack();
+
+        // Act
+        IntStream
+                .rangeClosed(1, 10)
+                .forEachOrdered(x -> stack.push(x));
+
+        // Assert
+        String expectedOutput = "[1.0 2.0 3.0 4.0 5.0 6.0 7.0 8.0 9.0 10.0]";
+        assertEquals(expectedOutput, stack.toString());
+    }
+
     private NumberStack CreateArrayStack() {
         return new ArrayStack();
     }
