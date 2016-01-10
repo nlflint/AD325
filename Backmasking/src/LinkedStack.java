@@ -45,7 +45,9 @@ public class LinkedStack implements NumberStack {
     public String buildOutput() {
         String output = "";
 
-        if (!isEmpty())
+        if (isEmpty())
+            return output;
+        else
             output += String.valueOf(head.value);
 
         for (LinkedStackNode currentNode = head.next; currentNode != null; currentNode = currentNode.next) {

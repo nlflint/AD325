@@ -170,6 +170,19 @@ public class ArrayStackTests {
     }
 
     @Test
+    public void ToString_GivenStackHasOneItem_ThenItemIsPrintedInBrackets() {
+        // Arrange
+        NumberStack stack = CreateStack();
+
+        // Act
+        stack.push(10.123);
+
+        // Assert
+        String expectedOutput = "[10.123]";
+        assertEquals(expectedOutput, stack.toString());
+    }
+
+    @Test
     public void ToString_GivenArrayIsEmpty_ThenOnlyBracketsReturned() {
         // Arrange
         NumberStack stack = CreateStack();
