@@ -39,16 +39,18 @@ public class LinkedStack implements NumberStack {
 
     @Override
     public String toString() {
-        return "[" + buildOutput() + "]";
+        return surroundWithSquareBrackets(buildOutput());
+    }
+
+    private static String surroundWithSquareBrackets(String string) {
+        return "[" + string + "]";
     }
 
     public String buildOutput() {
-        String output = "";
-
         if (isEmpty())
-            return output;
-        else
-            output += String.valueOf(head.value);
+            return "";
+
+        String output = String.valueOf(head.value);
 
         for (LinkedStackNode currentNode = head.next; currentNode != null; currentNode = currentNode.next) {
             output += " " + String.valueOf(currentNode.value);

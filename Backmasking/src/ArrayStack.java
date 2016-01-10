@@ -64,7 +64,7 @@ public class ArrayStack implements NumberStack {
         return surroundWithSquareBrackets(output);
     }
 
-    public static String surroundWithSquareBrackets(String string) {
+    private static String surroundWithSquareBrackets(String string) {
         return "[" + string + "]";
     }
 }
