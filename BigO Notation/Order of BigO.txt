@@ -1,0 +1,32 @@
+k^2
+log √n = log n
+√n = √n log n = n^0.7
+n = 2^2 n = k^3 n   
+n log n = n log n^2 = 2n log n
+n^1.5
+n^2 = 2 n^2 = n^2 log n^k = n^2 log n
+n^3
+2^n
+k^n
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
