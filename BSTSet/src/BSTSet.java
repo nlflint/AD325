@@ -26,7 +26,13 @@ public class BSTSet implements StringSet_Plus {
 
     @Override
     public int size() {
-        return 0;
+        return recursiveSize(root);
+    }
+
+    private int recursiveSize(Node workingNode) {
+        if (workingNode == null)
+            return 0;
+        return 1 + recursiveSize(workingNode.left) + recursiveSize(workingNode.right);
     }
 
     @Override
@@ -43,26 +49,30 @@ public class BSTSet implements StringSet_Plus {
         if (workingNode.value.equals(s))
             return false;
 
-        if (workingNode.value.compareTo(s) > 0) {
-            if (workingNode.left != null)   {
-                return recursiveAdd(workingNode.left, s);
-            }
+        Node nextNode = getNextNode(workingNode, s);
 
-            workingNode.left = new Node(s);
-            return true;
-        }
+        if (nextNode != null)
+            return recursiveAdd(nextNode,s);
 
-        if (workingNode.right != null) {
-            return recursiveAdd(workingNode.right, s);
-        }
+        addStringToCorrectEdge(workingNode, s);
 
-        workingNode.right = new Node(s);
         return true;
+    }
+
+    private void addStringToCorrectEdge(Node workingNode, String s) {
+        if (workingNode.value.compareTo(s) > 0)
+            workingNode.left = new Node(s);
+        else
+            workingNode.right = new Node(s);
+    }
+
+    private Node getNextNode(Node workingNode, String s) {
+        return workingNode.value.compareTo(s) > 0 ? workingNode.left : workingNode.right;
     }
 
     @Override
     public void clear() {
-
+        root = null;
     }
 
     @Override
@@ -88,7 +98,7 @@ public class BSTSet implements StringSet_Plus {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        return root == null;
     }
 
     @Override

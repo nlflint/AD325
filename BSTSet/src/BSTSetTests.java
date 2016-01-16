@@ -81,19 +81,19 @@ public class BSTSetTests {
     public void Add_WhenLotsOfStringsAdded_ThenSetContainsAllString() {
         // Arrange
         BSTSet set = new BSTSet();
-        String[] addedFredBobs = CreateRandomString();
+        String[] addedFredBobs = CreateRandomStringDataSet();
 
         for (String fredBob : addedFredBobs)
                 set.add(fredBob);
 
         // Act & Assert
-        String[] verifiedFredBobs = CreateRandomString();
+        String[] verifiedFredBobs = CreateRandomStringDataSet();
         for (String fredBob : verifiedFredBobs)
             assertTrue(set.contains(fredBob));
 
     }
 
-    private String[] CreateRandomString() {
+    private String[] CreateRandomStringDataSet() {
         String[] testData = new String[100];
         for (int i = 0; i < testData.length; i++) {
             testData[i] = "FredBob" + i;
@@ -116,5 +116,65 @@ public class BSTSetTests {
             ar[index] = ar[i];
             ar[i] = a;
         }
+    }
+
+    @Test
+    public void Clear_WhenClearingSetThatContainsString_ThenSetDoesNotContainStrings() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("asdf");
+        set.add("qwer");
+        set.clear();
+
+        // Act
+        boolean containsFirst = set.contains("asd" + "f");
+        boolean containsSecond = set.contains("qwe" + "r");
+
+        // Assert
+        assertFalse(containsFirst);
+        assertFalse(containsSecond);
+    }
+
+    @Test
+    public void IsEmpty_GivenNewSet_ThenSetIsEmpty() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+
+        // Act
+        set.clear();
+        boolean isEmpty = set.isEmpty();
+
+        // Assert
+        assertTrue(isEmpty);
+    }
+
+    @Test
+    public void IsEmpty_GivenSetContainsAnItem_ThenSetIsNotEmpty() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("asdf");
+
+        // Act
+        set.clear();
+        boolean isEmpty = set.isEmpty();
+
+        // Assert
+        assertTrue(isEmpty);
+    }
+
+    @Test
+    public void Size_GivenSetContains100Items_ThenSetSizeIs100() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        String[] fredBobs = CreateRandomStringDataSet();
+        for(String fredBob : fredBobs)
+                set.add(fredBob);
+
+        // Act
+        int size = set.size();
+
+        // Assert
+        assertEquals(100, size);
     }
 }
