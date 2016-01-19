@@ -177,4 +177,93 @@ public class BSTSetTests {
         // Assert
         assertEquals(100, size);
     }
+
+    @Test
+    public void Remove_WhenLeafIsRemoved_ThenSetDoesNotContainItem() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("B");
+        set.add("A");
+        set.remove("A");
+
+        // Act
+        boolean contains = set.contains("A");
+
+        // Assert
+        assertFalse(contains);
+    }
+
+    @Test
+    public void Remove_WhenItemWithOnlyLeftEdgeIsRemove_ThenItemIsRemoveAndSetContainsChildOfItem() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("H");
+        set.add("P");
+        set.add("L");
+        set.add("K");
+        set.add("M");
+        set.remove("P");
+
+        // Act
+        boolean containsRemovedItem = set.contains("P");
+        boolean containsChildren = set.contains("L");
+        containsChildren &= set.contains("K");
+        containsChildren &= set.contains("M");
+
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Remove_WhenItemWithOnlyRightEdgeIsRemove_ThenItemIsRemoveAndSetContainsChildOfItem() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("Z");
+        set.add("P");
+        set.add("T");
+        set.add("Q");
+        set.add("V");
+        set.remove("P");
+
+        // Act
+        boolean containsRemovedItem = set.contains("P");
+        boolean containsChildren = set.contains("T");
+        containsChildren &= set.contains("Q");
+        containsChildren &= set.contains("V");
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Remove_WhenItemWithTwoEdgesIsRemoved_ThenItemIsRemoveAndSetContainsChildOfItem() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("H");
+        set.add("P");
+        set.add("T");
+        set.add("V");
+        set.add("U");
+        set.add("M");
+        set.add("K");
+        set.add("N");
+        set.remove("P");
+
+        // Act
+        boolean containsRemovedItem = set.contains("P");
+        boolean containsChildren = set.contains("T");
+        containsChildren &= set.contains("V");
+        containsChildren &= set.contains("U");
+        containsChildren &= set.contains("M");
+        containsChildren &= set.contains("K");
+        containsChildren &= set.contains("N");
+        containsChildren &= set.contains("H");
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
 }

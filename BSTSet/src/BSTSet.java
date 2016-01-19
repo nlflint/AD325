@@ -21,7 +21,47 @@ public class BSTSet implements StringSet_Plus {
 
     @Override
     public boolean remove(String s) {
-        return false;
+        return recursiveRemove(null ,root, s);
+    }
+
+    private boolean recursiveRemove(Node lastNode, Node workingNode, String s) {
+        if (workingNode == null)
+            return false;
+
+        if (workingNode.value.equals(s)) {
+            doRemove(lastNode, workingNode);
+            return true;
+        }
+
+        if (workingNode.value.compareTo(s) > 0)
+            return recursiveRemove(workingNode, workingNode.left, s);
+
+        return recursiveRemove(workingNode, workingNode.right, s);
+
+    }
+
+    private void doRemove(Node lastNode, Node removingNode) {
+        //if (removingNode.left == null && removingNode.right == null)
+
+        boolean isRightNode = false;
+        if (lastNode.right == removingNode)
+            isRightNode = true;
+
+
+//        {
+//
+//            if (removingNode.left != null && removingNode.right == null) {
+//                lastNode.right = removingNode.left;
+//            }
+//            else if (removingNode.left == null && removingNode.right != null)  {
+//                lastNode.right = removingNode.right;
+//            }
+//        }
+//        else {
+//            lastNode.left = removingNode.right;
+//        }
+
+        return;
     }
 
     @Override
