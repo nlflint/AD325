@@ -1,3 +1,5 @@
+import java.util.Stack;
+
 /**
  * Created by nate on 1/16/16.
  */
@@ -6,17 +8,17 @@ public class BSTSet implements StringSet_Plus {
 
     @Override
     public StringIterator iteratorInOrder() {
-        return null;
+        return new InOrderIterator(this);
     }
 
     @Override
     public StringIterator iteratorPreOrder() {
-        return null;
+        return new PreOrderIterator(this);
     }
 
     @Override
     public StringIterator iteratorPostOrder() {
-        return null;
+        return new PostOrderIterator(this);
     }
 
     @Override
@@ -240,5 +242,195 @@ public class BSTSet implements StringSet_Plus {
                 + toStringPostOrderRecursive(currentNode.right)
                 + currentNode.value
                 + optionalSpace;
+    }
+
+    private class InOrderIterator implements StringIterator {
+        private Stack<Node> nodes;
+        private BSTSet bstSet;
+        private Node lastNode;
+
+        public InOrderIterator(BSTSet set) {
+            bstSet = set;
+            nodes = new Stack<Node>();
+            fillStackUntilNextNode(set.root);
+        }
+
+        private void fillStackUntilNextNode(Node startingNode) {
+            while(startingNode != null) {
+                nodes.push(startingNode);
+                startingNode = startingNode.left;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node nextNode = nodes.pop();
+            fillStackUntilNextNode(nextNode.right);
+
+            lastNode = nextNode;
+            return nextNode.value;
+        }
+
+        @Override
+        public void remove() {
+            if (lastNode != null)
+                bstSet.remove(lastNode.value);
+        }
+    }
+
+    private class PreOrderIterator implements StringIterator {
+        private BSTSet bstSet;
+        private Stack<Node> nodes;
+        private Node lastNode;
+
+        public PreOrderIterator(BSTSet set) {
+            bstSet = set;
+
+            nodes = new Stack<Node>();
+            nodes.push(set.root);
+        }
+
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node nextNode = nodes.pop();
+
+            if (nextNode.right != null)
+                nodes.push(nextNode.right);
+
+            if (nextNode.left != null)
+                nodes.push(nextNode.left);
+
+            lastNode = nextNode;
+            return nextNode.value;
+        }
+
+        /**
+         * Removes from the underlying collection the last
+         * element returned by this iterator (optional
+         * operation). This method can be called only once
+         * per call to next(). The behavior of an iterator
+         * is unspecified if the underlying collection is
+         * modified while the iteration is in progress in
+         * any way other than by calling this method.
+         *
+         * @throws UnsupportedOperationException if the
+         * remove operation is not supported by this
+         * iterator
+         */
+        @Override
+        public void remove() {
+            bstSet.remove(lastNode.value);
+        }
+    }
+
+    private class PostOrderIterator implements StringIterator {
+        private BSTSet bstSet;
+        private Stack<Node> nodes;
+        private Node lastNode;
+
+        public PostOrderIterator(BSTSet set) {
+            bstSet = set;
+
+            nodes = new Stack<Node>();
+            fillStackUntilNextNode(set.root);
+        }
+
+        private void fillStackUntilNextNode(Node startingNode) {
+            while(startingNode != null) {
+                nodes.push(startingNode);
+                if (startingNode.left != null) {
+                    startingNode = startingNode.left;
+                } else {
+                    startingNode = startingNode.right;
+                }
+            }
+        }
+
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node currentNode = nodes.pop();
+
+            if (!nodes.isEmpty()) {
+                Node parentNode = nodes.peek();
+                if (parentNode.left == currentNode) {
+                    fillStackUntilNextNode(parentNode.right);
+                }
+            }
+
+            lastNode = currentNode;
+            return currentNode.value;
+        }
+
+        /**
+         * Removes from the underlying collection the last
+         * element returned by this iterator (optional
+         * operation). This method can be called only once
+         * per call to next(). The behavior of an iterator
+         * is unspecified if the underlying collection is
+         * modified while the iteration is in progress in
+         * any way other than by calling this method.
+         *
+         * @throws UnsupportedOperationException if the
+         *                                       remove operation is not supported by this
+         *                                       iterator
+         */
+        @Override
+        public void remove() {
+            bstSet.remove(lastNode.value);
+        }
     }
 }
