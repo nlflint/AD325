@@ -1,67 +1,111 @@
 import java.util.Stack;
 
 /**
- * Created by nate on 1/16/16.
+ * This is a Set implemented using a binary tree,
+ * and is the PLUS version of the assignment.
  */
 public class BSTSet implements StringSet_Plus {
+    // The root node of the binary tree
     private Node root;
 
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using an in-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
     @Override
     public StringIterator iteratorInOrder() {
         return new InOrderIterator(this);
     }
 
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using a pre-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
     @Override
     public StringIterator iteratorPreOrder() {
         return new PreOrderIterator(this);
     }
 
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using a post-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
     @Override
     public StringIterator iteratorPostOrder() {
         return new PostOrderIterator(this);
     }
 
+    /**
+     * Removes the specified element from this set if
+     * it is present. More formally, this removes an
+     * element e such that s.equals(e), if this set
+     * contains such an element. Returns true if this
+     * set contained the element (or equivalently, if
+     * this set changed as a result of the call).
+     * (This set will not contain the element once the
+     * call returns.)
+     *
+     * @param s the String to be removed from this set,
+     * if present
+     * @return true if this set contained the specified
+     * element
+     * @throws NullPointerException if the specified
+     * element is null
+     */
     @Override
     public boolean remove(String s) {
         return recursiveRemove(null ,root, s);
     }
 
-    private boolean recursiveRemove(Node lastNode, Node workingNode, String s) {
+    // Recursively finds and then removes the given string from the given root node.
+    private boolean recursiveRemove(Node lastNode, Node workingNode, String stringToRemove) {
         if (workingNode == null)
             return false;
 
-        if (workingNode.value.compareTo(s) > 0)
-            return recursiveRemove(workingNode, workingNode.left, s);
+        if (workingNode.value.compareTo(stringToRemove) > 0)
+            return recursiveRemove(workingNode, workingNode.left, stringToRemove);
 
-        if (workingNode.value.compareTo(s) < 0)
-            return recursiveRemove(workingNode, workingNode.right, s);
+        if (workingNode.value.compareTo(stringToRemove) < 0)
+            return recursiveRemove(workingNode, workingNode.right, stringToRemove);
 
         doRemove(lastNode, workingNode);
         return true;
     }
 
-    private void doRemove(Node parentNode, Node removingNode) {
-        if (removingNode.left == null) {
-            updateParentReference(parentNode, removingNode, removingNode.right);
+    // Removes the given node from the given parent.
+    private void doRemove(Node parentNode, Node nodeToRemove) {
+        if (nodeToRemove.left == null) {
+            updateParentReference(parentNode, nodeToRemove, nodeToRemove.right);
             return;
         }
 
-        if (removingNode.right == null) {
-            updateParentReference(parentNode, removingNode, removingNode.left);
+        if (nodeToRemove.right == null) {
+            updateParentReference(parentNode, nodeToRemove, nodeToRemove.left);
             return;
         }
 
-        String maxLeftValue = findMaxValue(removingNode.left);
-        removingNode.value = maxLeftValue;
-        recursiveRemove(removingNode, removingNode.left, maxLeftValue);
+        String maxLeftValue = findMaxValue(nodeToRemove.left);
+        nodeToRemove.value = maxLeftValue;
+        recursiveRemove(nodeToRemove, nodeToRemove.left, maxLeftValue);
     }
 
+    // recursively searches the given tree looking for the maximum value
     private String findMaxValue(Node currentNode) {
         if (currentNode.right == null)
             return currentNode.value;
         return findMaxValue(currentNode.right);
     }
 
+    // Updates the parent's reference to a new child.
     private void updateParentReference(Node parentNode, Node removingNode, Node newChildNode) {
         if (parentNode == null) {
             root = newChildNode;
@@ -76,23 +120,50 @@ public class BSTSet implements StringSet_Plus {
         return;
     }
 
+    // Identifies if the given child is the right node of the given parent
     private boolean isRightChildOfParent(Node parentNode, Node childNode) {
         return parentNode.right == childNode;
     }
 
+    /**
+     * Returns the number of elements in this set (its
+     * cardinality).
+     *
+     * @return the number of elements in this set (its
+     * cardinality)
+     */
     @Override
     public int size() {
         return recursiveSize(root);
     }
 
+    // Recursively counts the total number of nodes from the given node.
     private int recursiveSize(Node workingNode) {
         if (workingNode == null)
             return 0;
         return 1 + recursiveSize(workingNode.left) + recursiveSize(workingNode.right);
     }
 
+    /**
+     * Adds the specified element to this set if it is
+     * not already present. More formally, adds the
+     * specified element s to this set if the set contains
+     * no element s2 such that s.equals(s2). If this
+     * set already contains the element, the call leaves
+     * the set unchanged and returns false. This ensures
+     * that the set never contains duplicate elements.
+     *
+     * @param s element to be added to this set
+     * @return true if this set did not already contain
+     * the specified element
+     * @throws NullPointerException if the specified
+     * element is null
+     */
     @Override
     public boolean add(String s) {
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot add null string!");
+
         if (root == null) {
             root = new Node(s);
             return true;
@@ -101,6 +172,8 @@ public class BSTSet implements StringSet_Plus {
         return recursiveAdd(root, s);
     }
 
+    // Recursively traverses the tree looking for the right
+    // place to put the given string.
     private boolean recursiveAdd(Node workingNode, String s) {
         if (workingNode.value.equals(s))
             return false;
@@ -115,6 +188,7 @@ public class BSTSet implements StringSet_Plus {
         return true;
     }
 
+    // Used for adding a new leaf. Adds node to correct edge.
     private void addStringToCorrectEdge(Node workingNode, String s) {
         if (workingNode.value.compareTo(s) > 0)
             workingNode.left = new Node(s);
@@ -122,36 +196,64 @@ public class BSTSet implements StringSet_Plus {
             workingNode.right = new Node(s);
     }
 
+    // returns left or right node base of value of given string
     private Node getNextNode(Node workingNode, String s) {
         return workingNode.value.compareTo(s) > 0 ? workingNode.left : workingNode.right;
     }
 
+    /**
+     * Removes all of the elements from this set. The set
+     * will be empty after this call returns.
+     */
     @Override
     public void clear() {
         root = null;
     }
 
+    /**
+     * Returns true if this set contains the
+     * specified element. More formally, returns true
+     * if and only if this set contains an element e
+     * such that s.equals(e).
+     *
+     * @param s element whose presence in this set is
+     * to be tested
+     * @return true if this set contains the specified
+     * element
+     * @throws NullPointerException if the specified
+     * element is null
+     */
     @Override
     public boolean contains(String s) {
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
+
         if (root == null)
             return false;
 
         return recurisveContains(root, s);
     }
 
-    private boolean recurisveContains(Node root, String s) {
-        if (root == null)
+    // Traverses the given node looking for the given string value.
+    // Returns true if found, false if not found
+    private boolean recurisveContains(Node startingNode, String s) {
+        if (startingNode == null)
             return false;
 
-        if (root.value.equals(s))
+        if (startingNode.value.equals(s))
             return true;
 
-        if (root.value.compareTo(s) > 0)
-            return recurisveContains(root.left, s);
+        if (startingNode.value.compareTo(s) > 0)
+            return recurisveContains(startingNode.left, s);
 
-        return recurisveContains(root.right, s);
+        return recurisveContains(startingNode.right, s);
     }
 
+    /**
+     * Returns true if this set contains no elements.
+     *
+     * @return true if this set contains no elements
+     */
     @Override
     public boolean isEmpty() {
         return root == null;
@@ -173,6 +275,8 @@ public class BSTSet implements StringSet_Plus {
         return toStringInOrderRecursive(root);
     }
 
+    // Builds a string of tree elements recursively from the given
+    // node using In-Order sequence
     private String toStringInOrderRecursive(Node currentNode) {
         if (currentNode == null)
             return "";
@@ -203,6 +307,8 @@ public class BSTSet implements StringSet_Plus {
         return toStringPreOrderRevcursivce(root);
     }
 
+    // Builds a string of tree elements recursively from the given
+    // node using Pre-Order sequence
     private String toStringPreOrderRevcursivce(Node currentNode) {
         if (currentNode == null)
             return "";
@@ -232,6 +338,8 @@ public class BSTSet implements StringSet_Plus {
         return toStringPostOrderRecursive(root);
     }
 
+    // Builds a string of tree elements recursively from the given
+    // node using Post-Order sequence
     private String toStringPostOrderRecursive(Node currentNode) {
         if (currentNode == null)
             return "";
@@ -244,17 +352,28 @@ public class BSTSet implements StringSet_Plus {
                 + optionalSpace;
     }
 
+    /**
+     * This iterator will traverse a BSTSet using In-Order sequence.
+     */
     private class InOrderIterator implements StringIterator {
+        // Stores the current path of the iterator. Top item is always the next item.
         private Stack<Node> nodes;
+        // The set that this iterator is traversing
         private BSTSet bstSet;
+        // Last node that was returned from Next();
         private Node lastNode;
 
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
         public InOrderIterator(BSTSet set) {
             bstSet = set;
             nodes = new Stack<Node>();
             fillStackUntilNextNode(set.root);
         }
 
+        // Pushes a path of nodes onto the stack until it finds the next node.
         private void fillStackUntilNextNode(Node startingNode) {
             while(startingNode != null) {
                 nodes.push(startingNode);
@@ -262,11 +381,26 @@ public class BSTSet implements StringSet_Plus {
             }
         }
 
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
         @Override
         public boolean hasNext() {
             return !nodes.isEmpty();
         }
 
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
         @Override
         public String next() {
             if (!hasNext())
@@ -279,6 +413,19 @@ public class BSTSet implements StringSet_Plus {
             return nextNode.value;
         }
 
+        /**
+         * Removes from the underlying collection the last
+         * element returned by this iterator (optional
+         * operation). This method can be called only once
+         * per call to next(). The behavior of an iterator
+         * is unspecified if the underlying collection is
+         * modified while the iteration is in progress in
+         * any way other than by calling this method.
+         *
+         * @throws UnsupportedOperationException if the
+         * remove operation is not supported by this
+         * iterator
+         */
         @Override
         public void remove() {
             if (lastNode != null)
@@ -286,11 +433,21 @@ public class BSTSet implements StringSet_Plus {
         }
     }
 
+    /**
+     * This iterator will traverse a BSTSet in Pre-Order sequence.
+     */
     private class PreOrderIterator implements StringIterator {
-        private BSTSet bstSet;
+        // Stores the current path of the iterator. Top item is always the next item.
         private Stack<Node> nodes;
+        // The set that this iterator is traversing
+        private BSTSet bstSet;
+        // Last node that was returned from Next();
         private Node lastNode;
 
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
         public PreOrderIterator(BSTSet set) {
             bstSet = set;
 
@@ -354,18 +511,28 @@ public class BSTSet implements StringSet_Plus {
         }
     }
 
+    /**
+     * This iterator will traverse a BSTSet in Post-Order sequence.
+     */
     private class PostOrderIterator implements StringIterator {
-        private BSTSet bstSet;
+        // Stores the current path of the iterator. Top item is always the next item.
         private Stack<Node> nodes;
+        // The set that this iterator is traversing
+        private BSTSet bstSet;
+        // Last node that was returned from Next();
         private Node lastNode;
 
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
         public PostOrderIterator(BSTSet set) {
             bstSet = set;
-
             nodes = new Stack<Node>();
             fillStackUntilNextNode(set.root);
         }
 
+        // Finds the next node and pushes nodes into stack along the way
         private void fillStackUntilNextNode(Node startingNode) {
             while(startingNode != null) {
                 nodes.push(startingNode);
