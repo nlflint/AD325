@@ -8,40 +8,116 @@ public class BSTSet implements StringSet_Plus {
     // The root node of the binary tree
     private Node root;
 
+    // The number of nodes in the tree
+    private int numberOfNodes;
+
     /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using an in-order
-     * traversal of the underlying tree.
-     *
-     * @return an iterator over the elements in this set
+     * Constructor initializes an empty set
      */
-    @Override
-    public StringIterator iteratorInOrder() {
-        return new InOrderIterator(this);
+    public BSTSet() {
+        numberOfNodes = 0;
+        root = null;
     }
 
     /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using a pre-order
-     * traversal of the underlying tree.
+     * Adds the specified element to this set if it is
+     * not already present. More formally, adds the
+     * specified element s to this set if the set contains
+     * no element s2 such that s.equals(s2). If this
+     * set already contains the element, the call leaves
+     * the set unchanged and returns false. This ensures
+     * that the set never contains duplicate elements.
      *
-     * @return an iterator over the elements in this set
+     * @param s element to be added to this set
+     * @return true if this set did not already contain
+     * the specified element
+     * @throws NullPointerException if the specified
+     * element is null
      */
     @Override
-    public StringIterator iteratorPreOrder() {
-        return new PreOrderIterator(this);
+    public boolean add(String s) {
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot add null string!");
+
+        if (root == null) {
+            root = new Node(s);
+            numberOfNodes++;
+            return true;
+        }
+
+        if (recursiveAdd(root, s)) {
+            numberOfNodes++;
+            return true;
+        }
+        return false;
+    }
+
+    // Recursively traverses the tree looking for the right
+    // place to put the given string.
+    private boolean recursiveAdd(Node workingNode, String s) {
+        if (workingNode.value.equals(s))
+            return false;
+
+        Node nextNode = getNextNode(workingNode, s);
+
+        if (nextNode != null)
+            return recursiveAdd(nextNode,s);
+
+        addStringToCorrectEdge(workingNode, s);
+
+        return true;
+    }
+
+    // Used for adding a new leaf. Adds node to correct edge.
+    private void addStringToCorrectEdge(Node workingNode, String s) {
+        if (stringIsLessThanNode(workingNode, s))
+            workingNode.left = new Node(s);
+        else
+            workingNode.right = new Node(s);
+    }
+
+    // returns left or right node base of value of given string
+    private Node getNextNode(Node workingNode, String s) {
+        return stringIsLessThanNode(workingNode, s) ? workingNode.left : workingNode.right;
     }
 
     /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using a post-order
-     * traversal of the underlying tree.
+     * Returns true if this set contains the
+     * specified element. More formally, returns true
+     * if and only if this set contains an element e
+     * such that s.equals(e).
      *
-     * @return an iterator over the elements in this set
+     * @param s element whose presence in this set is
+     * to be tested
+     * @return true if this set contains the specified
+     * element
+     * @throws NullPointerException if the specified
+     * element is null
      */
     @Override
-    public StringIterator iteratorPostOrder() {
-        return new PostOrderIterator(this);
+    public boolean contains(String s) {
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
+
+        if (root == null)
+            return false;
+
+        return recursiveContains(root, s);
+    }
+
+    // Traverses the given node looking for the given string value.
+    // Returns true if found, false if not found
+    private boolean recursiveContains(Node startingNode, String s) {
+        if (startingNode == null)
+            return false;
+
+        if (startingNode.value.equals(s))
+            return true;
+
+        if (stringIsLessThanNode(startingNode, s))
+            return recursiveContains(startingNode.left, s);
+
+        return recursiveContains(startingNode.right, s);
     }
 
     /**
@@ -63,7 +139,12 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public boolean remove(String s) {
-        return recursiveRemove(null ,root, s);
+        if (recursiveRemove(null ,root, s)) {
+            numberOfNodes--;
+            return true;
+        }
+
+        return false;
     }
 
     // Recursively finds and then removes the given string from the given root node.
@@ -146,7 +227,7 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public int size() {
-        return recursiveSize(root);
+        return numberOfNodes;
     }
 
     // Recursively counts the total number of nodes from the given node.
@@ -157,108 +238,13 @@ public class BSTSet implements StringSet_Plus {
     }
 
     /**
-     * Adds the specified element to this set if it is
-     * not already present. More formally, adds the
-     * specified element s to this set if the set contains
-     * no element s2 such that s.equals(s2). If this
-     * set already contains the element, the call leaves
-     * the set unchanged and returns false. This ensures
-     * that the set never contains duplicate elements.
-     *
-     * @param s element to be added to this set
-     * @return true if this set did not already contain
-     * the specified element
-     * @throws NullPointerException if the specified
-     * element is null
-     */
-    @Override
-    public boolean add(String s) {
-        if (s == null)
-            throw new NullPointerException("Given string is null. Cannot add null string!");
-
-        if (root == null) {
-            root = new Node(s);
-            return true;
-        }
-
-        return recursiveAdd(root, s);
-    }
-
-    // Recursively traverses the tree looking for the right
-    // place to put the given string.
-    private boolean recursiveAdd(Node workingNode, String s) {
-        if (workingNode.value.equals(s))
-            return false;
-
-        Node nextNode = getNextNode(workingNode, s);
-
-        if (nextNode != null)
-            return recursiveAdd(nextNode,s);
-
-        addStringToCorrectEdge(workingNode, s);
-
-        return true;
-    }
-
-    // Used for adding a new leaf. Adds node to correct edge.
-    private void addStringToCorrectEdge(Node workingNode, String s) {
-        if (stringIsLessThanNode(workingNode, s))
-            workingNode.left = new Node(s);
-        else
-            workingNode.right = new Node(s);
-    }
-
-    // returns left or right node base of value of given string
-    private Node getNextNode(Node workingNode, String s) {
-        return stringIsLessThanNode(workingNode, s) ? workingNode.left : workingNode.right;
-    }
-
-    /**
      * Removes all of the elements from this set. The set
      * will be empty after this call returns.
      */
     @Override
     public void clear() {
         root = null;
-    }
-
-    /**
-     * Returns true if this set contains the
-     * specified element. More formally, returns true
-     * if and only if this set contains an element e
-     * such that s.equals(e).
-     *
-     * @param s element whose presence in this set is
-     * to be tested
-     * @return true if this set contains the specified
-     * element
-     * @throws NullPointerException if the specified
-     * element is null
-     */
-    @Override
-    public boolean contains(String s) {
-        if (s == null)
-            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
-
-        if (root == null)
-            return false;
-
-        return recurisveContains(root, s);
-    }
-
-    // Traverses the given node looking for the given string value.
-    // Returns true if found, false if not found
-    private boolean recurisveContains(Node startingNode, String s) {
-        if (startingNode == null)
-            return false;
-
-        if (startingNode.value.equals(s))
-            return true;
-
-        if (stringIsLessThanNode(startingNode, s))
-            return recurisveContains(startingNode.left, s);
-
-        return recurisveContains(startingNode.right, s);
+        numberOfNodes = 0;
     }
 
     /**
@@ -366,6 +352,42 @@ public class BSTSet implements StringSet_Plus {
                 + toStringPostOrderRecursive(currentNode.right)
                 + currentNode.value
                 + optionalSpace;
+    }
+
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using an in-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
+    @Override
+    public StringIterator iteratorInOrder() {
+        return new InOrderIterator(this);
+    }
+
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using a pre-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
+    @Override
+    public StringIterator iteratorPreOrder() {
+        return new PreOrderIterator(this);
+    }
+
+    /**
+     * Returns an iterator over the elements in this set.
+     * The elements are returned using a post-order
+     * traversal of the underlying tree.
+     *
+     * @return an iterator over the elements in this set
+     */
+    @Override
+    public StringIterator iteratorPostOrder() {
+        return new PostOrderIterator(this);
     }
 
     /**
