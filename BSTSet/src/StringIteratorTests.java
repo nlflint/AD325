@@ -9,7 +9,7 @@ public abstract class StringIteratorTests {
     public abstract StringIterator createIterator(BSTSet set);
 
     @Test
-    public void WhenTraversingIterator_ThenItemsAreInProperOrder() {
+    public void whenTraversingIterator_ThenItemsAreInProperOrder() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("M");
@@ -34,7 +34,7 @@ public abstract class StringIteratorTests {
     }
 
     @Test
-    public void WhenRemovingAnItem_ThenItemIsRemovedFromSet() {
+    public void whenRemovingAnItem_ThenItemIsRemovedFromSet() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("M");
@@ -59,7 +59,7 @@ public abstract class StringIteratorTests {
     }
 
     @Test
-    public void CallingNextWhenIteratorHasNoItems_ThrowsIllegalStateException() {
+    public void callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("M");

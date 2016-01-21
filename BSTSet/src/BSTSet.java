@@ -71,14 +71,24 @@ public class BSTSet implements StringSet_Plus {
         if (workingNode == null)
             return false;
 
-        if (workingNode.value.compareTo(stringToRemove) > 0)
+        if (stringIsLessThanNode(workingNode, stringToRemove))
             return recursiveRemove(workingNode, workingNode.left, stringToRemove);
 
-        if (workingNode.value.compareTo(stringToRemove) < 0)
+        if (stringIsGreaterThanNode(workingNode, stringToRemove))
             return recursiveRemove(workingNode, workingNode.right, stringToRemove);
 
         doRemove(lastNode, workingNode);
         return true;
+    }
+
+    // identifies if given string is less than given node
+    private boolean stringIsLessThanNode(Node workingNode, String stringToRemove) {
+        return workingNode.value.compareTo(stringToRemove) > 0;
+    }
+
+    // identifies if given string is greater than given node
+    private boolean stringIsGreaterThanNode(Node workingNode, String stringToRemove) {
+        return workingNode.value.compareTo(stringToRemove) < 0;
     }
 
     // Removes the given node from the given parent.
@@ -106,17 +116,19 @@ public class BSTSet implements StringSet_Plus {
     }
 
     // Updates the parent's reference to a new child.
-    private void updateParentReference(Node parentNode, Node removingNode, Node newChildNode) {
-        if (parentNode == null) {
-            root = newChildNode;
+    private void updateParentReference(Node parent, Node childToRemove, Node newChild) {
+        // Special case if removing root node
+        if (nodeIsRoot(childToRemove)) {
+            root = newChild;
             return;
         }
 
-        if(isRightChildOfParent(parentNode, removingNode)) {
-            parentNode.right = newChildNode;
-        } else {
-            parentNode.left = newChildNode;
+        if(isRightChildOfParent(parent, childToRemove)) {
+            parent.right = newChild;
+            return;
         }
+
+        parent.left = newChild;
         return;
     }
 
@@ -190,7 +202,7 @@ public class BSTSet implements StringSet_Plus {
 
     // Used for adding a new leaf. Adds node to correct edge.
     private void addStringToCorrectEdge(Node workingNode, String s) {
-        if (workingNode.value.compareTo(s) > 0)
+        if (stringIsLessThanNode(workingNode, s))
             workingNode.left = new Node(s);
         else
             workingNode.right = new Node(s);
@@ -198,7 +210,7 @@ public class BSTSet implements StringSet_Plus {
 
     // returns left or right node base of value of given string
     private Node getNextNode(Node workingNode, String s) {
-        return workingNode.value.compareTo(s) > 0 ? workingNode.left : workingNode.right;
+        return stringIsLessThanNode(workingNode, s) ? workingNode.left : workingNode.right;
     }
 
     /**
@@ -243,7 +255,7 @@ public class BSTSet implements StringSet_Plus {
         if (startingNode.value.equals(s))
             return true;
 
-        if (startingNode.value.compareTo(s) > 0)
+        if (stringIsLessThanNode(startingNode, s))
             return recurisveContains(startingNode.left, s);
 
         return recurisveContains(startingNode.right, s);
@@ -304,21 +316,25 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public String toStringPreOrder() {
-        return toStringPreOrderRevcursivce(root);
+        return toStringPreOrderRecursivce(root);
     }
 
     // Builds a string of tree elements recursively from the given
     // node using Pre-Order sequence
-    private String toStringPreOrderRevcursivce(Node currentNode) {
+    private String toStringPreOrderRecursivce(Node currentNode) {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = currentNode == root ? "" : " ";
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : " ";
 
         return optionalSpace
                 + currentNode.value
-                + toStringPreOrderRevcursivce(currentNode.left)
-                + toStringPreOrderRevcursivce(currentNode.right);
+                + toStringPreOrderRecursivce(currentNode.left)
+                + toStringPreOrderRecursivce(currentNode.right);
+    }
+
+    private boolean nodeIsRoot(Node currentNode) {
+        return currentNode == root;
     }
 
     /**
@@ -344,7 +360,7 @@ public class BSTSet implements StringSet_Plus {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = currentNode == root ? "" : " ";
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : " ";
 
         return toStringPostOrderRecursive(currentNode.left)
                 + toStringPostOrderRecursive(currentNode.right)
@@ -536,11 +552,15 @@ public class BSTSet implements StringSet_Plus {
         private void fillStackUntilNextNode(Node startingNode) {
             while(startingNode != null) {
                 nodes.push(startingNode);
+
+                // First, go left as much as possible
                 if (startingNode.left != null) {
                     startingNode = startingNode.left;
-                } else {
-                    startingNode = startingNode.right;
+                    continue;
                 }
+
+                // If can't go left, then try to go right with secondary preference
+                startingNode = startingNode.right;
             }
         }
 

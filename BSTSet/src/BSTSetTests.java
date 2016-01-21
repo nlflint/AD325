@@ -6,11 +6,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import static org.junit.Assert.*;
 
 /**
- * Created by nate on 1/16/16.
+ * Tests for BSTSet
  */
 public class BSTSetTests {
     @Test
-    public void Add_WhenAddingStringToNewSet_ThenStringIsAdded() {
+    public void add_WhenAddingStringToNewSet_ThenStringIsAdded() {
         // Arrange
         BSTSet set = new BSTSet();
 
@@ -22,7 +22,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Add_WhenAddingStringASecondTime_ThenStringIsNotAdded() {
+    public void add_WhenAddingStringASecondTime_ThenStringIsNotAdded() {
         // Arrange
         BSTSet set = new BSTSet();
 
@@ -35,7 +35,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Add_WhenAddingTwoDifferentString_ThenStringsAreAdded() {
+    public void add_WhenAddingTwoDifferentString_ThenStringsAreAdded() {
         // Arrange
         BSTSet set = new BSTSet();
 
@@ -49,7 +49,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Add_WhenStringAdded_ThenSetContainsString() {
+    public void contains_WhenStringAdded_ThenSetContainsString() {
         // Arrange
         BSTSet set = new BSTSet();
 
@@ -57,20 +57,20 @@ public class BSTSetTests {
         set.add("blah");
 
         // Assert
-        String expectedContains = "bla" + "h";
+        String expectedContains = "blah";
         assertTrue(set.contains(expectedContains));
     }
 
     @Test
-    public void Add_WhenTwoStringsAdded_ThenSetContainsBothString() {
+    public void contains_WhenTwoStringsAdded_ThenSetContainsBothString() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("blah");
         set.add("blah1");
 
         // Act
-        boolean containsFirst = set.contains("bla" + "h");
-        boolean containsSecond = set.contains("bla" + "h1");
+        boolean containsFirst = set.contains("blah");
+        boolean containsSecond = set.contains("blah1");
 
         // Assert
         assertTrue(containsFirst);
@@ -78,7 +78,52 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Add_WhenLotsOfStringsAdded_ThenSetContainsAllString() {
+    public void contains_DoesNotRelyOnReferenceEquality() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("blah");
+
+        // Act
+        boolean contains = set.contains("bl" + "ah");
+
+        // Assert
+        assertTrue(contains);
+    }
+
+    @Test
+    public void add_AddingNullString_ThrowsException() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act & assert
+        try {
+            set.add(null);
+        } catch (NullPointerException ex) {
+            assertEquals("Given string is null. Cannot add null string!", ex.getMessage());
+            return;
+        }
+
+        fail();
+    }
+
+    @Test
+    public void contains_WhenCallingContainsWithNullString_ThenExceptionIsThrown() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act & assert
+        try {
+            set.contains(null);
+        } catch (NullPointerException ex) {
+            assertEquals("Given string is null. Cannot identify if set contains a null string!", ex.getMessage());
+            return;
+        }
+
+        fail();
+    }
+
+    @Test
+    public void contains_WhenManyStringsAdded_ThenSetContainsAllTheStrings() {
         // Arrange
         BSTSet set = new BSTSet();
         String[] addedFredBobs = CreateRandomStringDataSet();
@@ -119,7 +164,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Clear_WhenClearingSetThatContainsString_ThenSetDoesNotContainStrings() {
+    public void clear_WhenClearingSetThatContainsItems_ThenSetDoesNotContainItems() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("asdf");
@@ -127,16 +172,31 @@ public class BSTSetTests {
         set.clear();
 
         // Act
-        boolean containsFirst = set.contains("asd" + "f");
-        boolean containsSecond = set.contains("qwe" + "r");
+        boolean containsFirst = set.contains("asdf");
+        boolean containsSecond = set.contains("qwer");
+        boolean isEmpty = set.isEmpty();
 
         // Assert
         assertFalse(containsFirst);
         assertFalse(containsSecond);
+        assertTrue(isEmpty);
     }
 
     @Test
-    public void IsEmpty_GivenNewSet_ThenSetIsEmpty() {
+    public void clear_WhenClearingAnEmptySet_ThenSetIsEmpty() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.clear();
+
+        // Act
+        boolean isEmpty = set.isEmpty();
+
+        // Assert
+         assertTrue(isEmpty);
+    }
+
+    @Test
+    public void isEmpty_GivenNewSet_ThenSetIsEmpty() {
         // Arrange
         BSTSet set = new BSTSet();
 
@@ -150,7 +210,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void IsEmpty_GivenSetContainsAnItem_ThenSetIsNotEmpty() {
+    public void isEmpty_WhenSetContainsAnItem_ThenSetIsNotEmpty() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("asdf");
@@ -164,7 +224,21 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Size_GivenSetContains100Items_ThenSetSizeIs100() {
+    public void isEmpty_WhenRemovingLastItem_ThenSetIsEmpty() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("asdf");
+
+        // Act
+        set.remove("asdf");
+        boolean isEmpty = set.isEmpty();
+
+        // Assert
+        assertTrue(isEmpty);
+    }
+
+    @Test
+    public void size_WhenSetContains100Items_ThenSizeIs100() {
         // Arrange
         BSTSet set = new BSTSet();
         String[] fredBobs = CreateRandomStringDataSet();
@@ -179,7 +253,37 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenLeafIsRemoved_ThenSetDoesNotContainItem() {
+    public void size_WhenClearingSet_ThenSizeIsZero() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("Blah");
+        set.clear();
+
+        // Act
+        int size = set.size();
+
+        // Assert
+        assertEquals(0, size);
+    }
+
+    @Test
+    public void size_WhenRemovingAnItem_ThenSizeIsDecremented() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("one");
+        set.add("two");
+        set.add("three");
+        set.remove("two");
+
+        // Act
+        int size = set.size();
+
+        // Assert
+        assertEquals(2, size);
+    }
+
+    @Test
+    public void remove_WhenRemovingLeaf_ThenSetDoesNotContainLeaf() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("B");
@@ -194,7 +298,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenRemovingItemThatDoesntExist_ThenReturnsFalse() {
+    public void remove_RemovingAnItemThatDoesNotExist_ReturnsFalse() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("B");
@@ -211,7 +315,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenItemWithOnlyLeftEdgeIsRemove_ThenItemIsRemoveAndSetContainsChildOfItem() {
+    public void remove_WhenRemovingItemWithOnlyLeftChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("H");
@@ -234,7 +338,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenItemWithOnlyRightEdgeIsRemove_ThenItemIsRemoveAndSetContainsChildOfItem() {
+    public void remove_WhenRemovingItemWithOnlyRightChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("Z");
@@ -256,7 +360,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenItemWithTwoEdgesIsRemoved_ThenItemIsRemoveAndSetContainsChildOfItem() {
+    public void remove_WhenRemovingItemWithTwoChildren_ThenItemIsRemovedAndSetContainsChildren() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("H");
@@ -280,12 +384,14 @@ public class BSTSetTests {
         containsChildren &= set.contains("H");
 
         // Assert
-        assertTrue(containsChildren);
+
         assertFalse(containsRemovedItem);
+        assertTrue(containsChildren);
+
     }
 
     @Test
-    public void Remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved() {
+    public void remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("M");
@@ -314,7 +420,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved() {
+    public void remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("M");
@@ -337,7 +443,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved() {
+    public void remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved() {
         // Arrange
         BSTSet set = new BSTSet();
         set.add("A");
@@ -356,7 +462,7 @@ public class BSTSetTests {
     }
 
     @Test
-    public void Add_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved() {
+    public void remove_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved() {
         // Arrange
         BSTSet set = new BSTSet();
         String[] addedFredBobs = CreateRandomStringDataSet();
@@ -379,6 +485,23 @@ public class BSTSetTests {
     }
 
     @Test
+    public void remove_WhenRemovingItem_ThenRemoveDoesNotDependOnReferenceEquality() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("AAA");
+        set.add("BBB");
+        set.remove("A" + "A" + "A");
+
+        // Act
+        boolean containsRemovedItem = set.contains("AAA");
+        boolean containsChild = set.contains("BBB");
+
+        // Assert
+        assertTrue(containsChild);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
     public void toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder() {
         // Arrange
         BSTSet set = new BSTSet();
@@ -397,6 +520,19 @@ public class BSTSetTests {
 
         // Assert
         assertEquals("A M O P R S U Y Z", inOrderResult);
+
+    }
+
+    @Test
+    public void toStringInOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act
+        String emptyResult = set.toStringInOrder();
+
+        // Assert
+        assertEquals("", emptyResult);
 
     }
 
@@ -423,24 +559,50 @@ public class BSTSetTests {
     }
 
     @Test
+    public void toStringPreOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act
+        String emptyResult = set.toStringPreOrder();
+
+        // Assert
+        assertEquals("", emptyResult);
+
+    }
+
+    @Test
     public void toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder() {
         // Arrange
         BSTSet set = new BSTSet();
-        set.add("M");
-        set.add("Y");
-        set.add("A");
-        set.add("Z");
-        set.add("P");
-        set.add("O");
-        set.add("U");
-        set.add("S");
-        set.add("R");
+        set.add("MMM");
+        set.add("YYY");
+        set.add("AAA");
+        set.add("ZZZ");
+        set.add("PPP");
+        set.add("OOO");
+        set.add("UUU");
+        set.add("SSS");
+        set.add("RRR");
 
         // Act
         String postOrderResult = set.toStringPostOrder();
 
         // Assert
-        assertEquals("A O R S U P Z Y M", postOrderResult);
+        assertEquals("AAA OOO RRR SSS UUU PPP ZZZ YYY MMM", postOrderResult);
+
+    }
+
+    @Test
+    public void toStringPostOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act
+        String emptyResult = set.toStringPostOrder();
+
+        // Assert
+        assertEquals("", emptyResult);
 
     }
 }
