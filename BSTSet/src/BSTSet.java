@@ -28,40 +28,54 @@ public class BSTSet implements StringSet_Plus {
         if (workingNode == null)
             return false;
 
-        if (workingNode.value.equals(s)) {
-            doRemove(lastNode, workingNode);
-            return true;
-        }
-
         if (workingNode.value.compareTo(s) > 0)
             return recursiveRemove(workingNode, workingNode.left, s);
 
-        return recursiveRemove(workingNode, workingNode.right, s);
+        if (workingNode.value.compareTo(s) < 0)
+            return recursiveRemove(workingNode, workingNode.right, s);
 
+        doRemove(lastNode, workingNode);
+        return true;
     }
 
-    private void doRemove(Node lastNode, Node removingNode) {
-        //if (removingNode.left == null && removingNode.right == null)
+    private void doRemove(Node parentNode, Node removingNode) {
+        if (removingNode.left == null) {
+            updateParentReference(parentNode, removingNode, removingNode.right);
+            return;
+        }
 
-        boolean isRightNode = false;
-        if (lastNode.right == removingNode)
-            isRightNode = true;
+        if (removingNode.right == null) {
+            updateParentReference(parentNode, removingNode, removingNode.left);
+            return;
+        }
 
+        String maxLeftValue = findMaxValue(removingNode.left);
+        removingNode.value = maxLeftValue;
+        recursiveRemove(removingNode, removingNode.left, maxLeftValue);
+    }
 
-//        {
-//
-//            if (removingNode.left != null && removingNode.right == null) {
-//                lastNode.right = removingNode.left;
-//            }
-//            else if (removingNode.left == null && removingNode.right != null)  {
-//                lastNode.right = removingNode.right;
-//            }
-//        }
-//        else {
-//            lastNode.left = removingNode.right;
-//        }
+    private String findMaxValue(Node currentNode) {
+        if (currentNode.right == null)
+            return currentNode.value;
+        return findMaxValue(currentNode.right);
+    }
 
+    private void updateParentReference(Node parentNode, Node removingNode, Node newChildNode) {
+        if (parentNode == null) {
+            root = newChildNode;
+            return;
+        }
+
+        if(isRightChildOfParent(parentNode, removingNode)) {
+            parentNode.right = newChildNode;
+        } else {
+            parentNode.left = newChildNode;
+        }
         return;
+    }
+
+    private boolean isRightChildOfParent(Node parentNode, Node childNode) {
+        return parentNode.right == childNode;
     }
 
     @Override
@@ -141,18 +155,90 @@ public class BSTSet implements StringSet_Plus {
         return root == null;
     }
 
+    /**
+     * Returns a String containing all of the elements
+     * in this set ordered using an in-order traversal
+     * of the underlying tree. The values are separated
+     * by spaces, ' '. Ideally, there should not be a
+     * final space separator in the returned string.
+     *
+     * @return A string representation of the elements of
+     * the set ordered by an in-order traversal of the
+     * underlying tree.
+     */
     @Override
     public String toStringInOrder() {
-        return null;
+        return toStringInOrderRecursive(root);
     }
 
+    private String toStringInOrderRecursive(Node currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalPreSpace = currentNode.left == null ? "" : " ";
+        String optionalPostSpace = currentNode.right == null ? "" : " ";
+
+        return toStringInOrderRecursive(currentNode.left)
+                + optionalPreSpace
+                + currentNode.value
+                + optionalPostSpace
+                + toStringInOrderRecursive(currentNode.right);
+    }
+
+    /**
+     * Returns a String containing all of the elements
+     * in this set ordered using a pre-order traversal
+     * of the underlying tree. The values are separated
+     * by spaces, ' '. Ideally, there should not be a
+     * final space separator in the returned string.
+     *
+     * @return A string representation of the elements of
+     * the set ordered by a pre-order traversal of the
+     * underlying tree.
+     */
     @Override
     public String toStringPreOrder() {
-        return null;
+        return toStringPreOrderRevcursivce(root);
     }
 
+    private String toStringPreOrderRevcursivce(Node currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalSpace = currentNode == root ? "" : " ";
+
+        return optionalSpace
+                + currentNode.value
+                + toStringPreOrderRevcursivce(currentNode.left)
+                + toStringPreOrderRevcursivce(currentNode.right);
+    }
+
+    /**
+     * Returns a String containing all of the elements
+     * in this set ordered using a post-order traversal
+     * of the underlying tree. The values are separated
+     * by spaces, ' '. Ideally, there should not be a
+     * final space separator in the returned string.
+     *
+     * @return A string representation of the elements of
+     * the set ordered by a post-order traversal of the
+     * underlying tree.
+     *
+     */
     @Override
     public String toStringPostOrder() {
-        return null;
+        return toStringPostOrderRecursive(root);
+    }
+
+    private String toStringPostOrderRecursive(Node currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalSpace = currentNode == root ? "" : " ";
+
+        return toStringPostOrderRecursive(currentNode.left)
+                + toStringPostOrderRecursive(currentNode.right)
+                + currentNode.value
+                + optionalSpace;
     }
 }

@@ -194,6 +194,23 @@ public class BSTSetTests {
     }
 
     @Test
+    public void Remove_WhenRemovingItemThatDoesntExist_ThenReturnsFalse() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("B");
+        set.add("A");
+        set.remove("C");
+
+        // Act
+        boolean containsA = set.contains("A");
+        boolean containsB = set.contains("B");
+
+        // Assert
+        assertTrue(containsA);
+        assertTrue(containsB);
+    }
+
+    @Test
     public void Remove_WhenItemWithOnlyLeftEdgeIsRemove_ThenItemIsRemoveAndSetContainsChildOfItem() {
         // Arrange
         BSTSet set = new BSTSet();
@@ -265,5 +282,165 @@ public class BSTSetTests {
         // Assert
         assertTrue(containsChildren);
         assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("M");
+        set.add("Y");
+        set.add("Z");
+        set.add("P");
+        set.add("O");
+        set.add("U");
+        set.add("S");
+        set.add("R");
+        set.remove("Y");
+
+        // Act
+        boolean containsRemovedItem = set.contains("Y");
+        boolean containsChildren = set.contains("M");
+        containsChildren &= set.contains("Z");
+        containsChildren &= set.contains("P");
+        containsChildren &= set.contains("O");
+        containsChildren &= set.contains("U");
+        containsChildren &= set.contains("S");
+        containsChildren &= set.contains("R");
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("M");
+        set.add("L");
+        set.add("Z");
+        set.add("P");
+        set.add("A");
+        set.remove("M");
+
+        // Act
+        boolean containsRemovedItem = set.contains("M");
+        boolean containsChildren = set.contains("L");
+        containsChildren &= set.contains("Z");
+        containsChildren &= set.contains("P");
+        containsChildren &= set.contains("A");
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("A");
+        set.add("B");
+        set.add("C");
+        set.remove("A");
+
+        // Act
+        boolean containsRemovedItem = set.contains("A");
+        boolean containsChildren = set.contains("B");
+        containsChildren &= set.contains("C");
+
+        // Assert
+        assertTrue(containsChildren);
+        assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void Add_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        String[] addedFredBobs = CreateRandomStringDataSet();
+
+        for (String fredBob : addedFredBobs)
+            set.add(fredBob);
+
+        // Act
+        String[] verifyingFredBobs = CreateRandomStringDataSet();
+        int itemIndexToRemove = 50;
+        set.remove(verifyingFredBobs[itemIndexToRemove]);
+
+        // Assert
+        for (int i = 0; i < verifyingFredBobs.length; i++) {
+            if (i == itemIndexToRemove)
+                assertFalse(set.contains(verifyingFredBobs[i]));
+            else
+                assertTrue(set.contains(verifyingFredBobs[i]));
+        }
+    }
+
+    @Test
+    public void toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("M");
+        set.add("Y");
+        set.add("A");
+        set.add("Z");
+        set.add("P");
+        set.add("O");
+        set.add("U");
+        set.add("S");
+        set.add("R");
+
+        // Act
+        String inOrderResult = set.toStringInOrder();
+
+        // Assert
+        assertEquals("A M O P R S U Y Z", inOrderResult);
+
+    }
+
+    @Test
+    public void toStringPreOrder_WhenGettingPreOrderString_ThenItemsAreInPreOrder() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("M");
+        set.add("Y");
+        set.add("A");
+        set.add("Z");
+        set.add("P");
+        set.add("O");
+        set.add("U");
+        set.add("S");
+        set.add("R");
+
+        // Act
+        String preOrderResult = set.toStringPreOrder();
+
+        // Assert
+        assertEquals("M A Y P O U S R Z", preOrderResult);
+
+    }
+
+    @Test
+    public void toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder() {
+        // Arrange
+        BSTSet set = new BSTSet();
+        set.add("M");
+        set.add("Y");
+        set.add("A");
+        set.add("Z");
+        set.add("P");
+        set.add("O");
+        set.add("U");
+        set.add("S");
+        set.add("R");
+
+        // Act
+        String postOrderResult = set.toStringPostOrder();
+
+        // Assert
+        assertEquals("A O R S U P Z Y M", postOrderResult);
+
     }
 }
