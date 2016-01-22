@@ -1,8 +1,18 @@
+/**
+ * Nathan Flint
+ * Assignment 2: BSTSet
+ * Level: Plus
+ *
+ * This class implements an ADT called Set. A binary search tree is used for the implementation.
+ */
+
 import java.util.Stack;
 
 /**
  * This is a Set implemented using a binary tree,
  * and is the PLUS version of the assignment.
+ *
+ * @author Nathan Flint
  */
 public class BSTSet implements StringSet_Plus {
     // The root node of the binary tree
@@ -319,6 +329,7 @@ public class BSTSet implements StringSet_Plus {
                 + toStringPreOrderRecursivce(currentNode.right);
     }
 
+    // Identifies if the given node is the root node
     private boolean nodeIsRoot(Node currentNode) {
         return currentNode == root;
     }

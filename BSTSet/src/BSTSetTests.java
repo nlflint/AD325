@@ -138,6 +138,7 @@ public class BSTSetTests {
 
     }
 
+    // Creates 100 strings and then randomly shuffles them
     private String[] CreateRandomStringDataSet() {
         String[] testData = new String[100];
         for (int i = 0; i < testData.length; i++) {
@@ -148,18 +149,18 @@ public class BSTSetTests {
         return testData;
     }
 
-    // Implementing Fisher–Yates shuffle
-    static void shuffleArray(String[] ar)
+    // Shuffles the array
+    static void shuffleArray(String[] strings)
     {
-        // If running on Java 6 or older, use `new Random()` on RHS here
         Random rnd = ThreadLocalRandom.current();
-        for (int i = ar.length - 1; i > 0; i--)
+        for (int i = strings.length - 1; i > 0; i--)
         {
             int index = rnd.nextInt(i + 1);
-            // Simple swap
-            String a = ar[index];
-            ar[index] = ar[i];
-            ar[i] = a;
+
+
+            String temp = strings[index];
+            strings[index] = strings[i];
+            strings[i] = temp;
         }
     }
 
