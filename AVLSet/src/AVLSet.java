@@ -1,8 +1,11 @@
 /**
  * Created by nathanf on 1/21/2016.
  */
-public class AVLSet implements StringSet_Improved {
+public class AVLSet implements StringSet_Improved, StringSet_Check {
+    // The root node for the binary tree
     protected AVLNode root;
+    // Tracks the number of things in the set
+    private int nodeCount;
 
     /**
      * Adds the specified element to this set if it is
@@ -21,50 +24,58 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public boolean add(String s) {
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot add null string!");
+
         if (root == null) {
             root = new AVLNode(s);
+            nodeCount++;
             return true;
         }
 
-        return recursiveAdd(root, s);
+        if (recursiveAdd(root, s)) {
+            nodeCount++;
+            return true;
+        }
+        return false;
     }
 
-    private boolean recursiveAdd(AVLNode workingNode, String s) {
-        if (workingNode.value.equals(s))
+    private boolean recursiveAdd(AVLNode workingAVLNode, String s) {
+        if (workingAVLNode.value.equals(s))
             return false;
 
-        AVLNode nextNode = getNextNode(workingNode, s);
+        AVLNode nextAVLNode = getNextAVLNode(workingAVLNode, s);
 
-        if (nextNode != null)
-            return recursiveAdd(nextNode,s);
+        if (nextAVLNode != null)
+            return recursiveAdd(nextAVLNode,s);
 
-        addStringToCorrectEdge(workingNode, s);
+        addStringToCorrectEdge(workingAVLNode, s);
 
         return true;
 
     }
 
     // Used for adding a new leaf. Adds node to correct edge.
-    private void addStringToCorrectEdge(AVLNode workingNode, String s) {
-        if (stringIsLessThanNode(workingNode, s))
-            workingNode.left = new AVLNode(s);
+    private void addStringToCorrectEdge(AVLNode workingAVLNode, String s) {
+        if (stringIsLessThanAVLNode(workingAVLNode, s))
+            workingAVLNode.left = new AVLNode(s);
         else
-            workingNode.right = new AVLNode(s);
+            workingAVLNode.right = new AVLNode(s);
     }
 
     // returns left or right node base of value of given string
-    private AVLNode getNextNode(AVLNode workingNode, String s) {
-        return stringIsLessThanNode(workingNode, s) ? workingNode.left : workingNode.right;
+    private AVLNode getNextAVLNode(AVLNode workingAVLNode, String s) {
+        return stringIsLessThanAVLNode(workingAVLNode, s) ? workingAVLNode.left : workingAVLNode.right;
     }
 
     // identifies if given string is less than given node
-    private boolean stringIsLessThanNode(AVLNode workingNode, String stringToRemove) {
-        return workingNode.value.compareTo(stringToRemove) > 0;
+    private boolean stringIsLessThanAVLNode(AVLNode workingAVLNode, String stringToRemove) {
+        return workingAVLNode.value.compareTo(stringToRemove) > 0;
     }
 
     // identifies if given string is greater than given node
-    private boolean stringIsGreaterThanNode(AVLNode workingNode, String stringToRemove) {
-        return workingNode.value.compareTo(stringToRemove) < 0;
+    private boolean stringIsGreaterThanAVLNode(AVLNode workingAVLNode, String stringToRemove) {
+        return workingAVLNode.value.compareTo(stringToRemove) < 0;
     }
 
     /**
@@ -73,7 +84,8 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public void clear() {
-
+        root = null;
+        nodeCount = 0;
     }
 
     /**
@@ -91,7 +103,28 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public boolean contains(String s) {
-        return false;
+        if (s == null)
+            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
+
+        if (root == null)
+            return false;
+
+        return recursiveContains(root, s);
+    }
+
+    // Traverses the given node looking for the given string value.
+    // Returns true if found, false if not found
+    private boolean recursiveContains(AVLNode startingAVLNode, String s) {
+        if (startingAVLNode == null)
+            return false;
+
+        if (startingAVLNode.value.equals(s))
+            return true;
+
+        if (stringIsLessThanAVLNode(startingAVLNode, s))
+            return recursiveContains(startingAVLNode.left, s);
+
+        return recursiveContains(startingAVLNode.right, s);
     }
 
     /**
@@ -101,7 +134,7 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public boolean isEmpty() {
-        return false;
+        return root == null;
     }
 
     /**
@@ -122,7 +155,23 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public String toStringInOrder() {
-        return null;
+        return "[" + toStringInOrderRecursive(root) + "]";
+    }
+
+    // Builds a string of tree elements recursively from the given
+    // node using In-Order sequence
+    private String toStringInOrderRecursive(AVLNode currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalPreSpace = currentNode.left == null ? "" : ", ";
+        String optionalPostSpace = currentNode.right == null ? "" : ", ";
+
+        return toStringInOrderRecursive(currentNode.left)
+                + optionalPreSpace
+                + currentNode.value
+                + optionalPostSpace
+                + toStringInOrderRecursive(currentNode.right);
     }
 
     /**
@@ -143,7 +192,21 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public String toStringPreOrder() {
-        return null;
+        return "[" + toStringPreOrderRecursivce(root) + "]";
+    }
+
+    // Builds a string of tree elements recursively from the given
+    // node using Pre-Order sequence
+    private String toStringPreOrderRecursivce(AVLNode currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : ", ";
+
+        return optionalSpace
+                + currentNode.value
+                + toStringPreOrderRecursivce(currentNode.left)
+                + toStringPreOrderRecursivce(currentNode.right);
     }
 
     /**
@@ -164,11 +227,155 @@ public class AVLSet implements StringSet_Improved {
      */
     @Override
     public String toStringPostOrder() {
-        return null;
+        return "[" + toStringPostOrderRecursive(root) + "]";
+    }
+
+    // Builds a string of tree elements recursively from the given
+    // node using Post-Order sequence
+    private String toStringPostOrderRecursive(AVLNode currentNode) {
+        if (currentNode == null)
+            return "";
+
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : ", ";
+
+        return toStringPostOrderRecursive(currentNode.left)
+                + toStringPostOrderRecursive(currentNode.right)
+                + currentNode.value
+                + optionalSpace;
     }
 
     /**
-     * Node for AVLSet
+     * Prints an unambiguous string representation of the tree's structure.
+     * @return string representing where all values lie in the tree
+     */
+    @Override
+    public String toString() {
+        return getStringRepresentationRecursive(root);
+    }
+
+    // recursively builds a string that represents the tree's structure
+    private String getStringRepresentationRecursive(AVLNode node) {
+        if (node == null)
+            return "_";
+
+        String left = getStringRepresentationRecursive(node.left);
+        String right = getStringRepresentationRecursive(node.right);
+        String optionalSpace = " ";
+
+        if ((left == "_") && (right == "_")) {
+            return node.value;
+        }
+
+        return "(" + node.value + optionalSpace + left + optionalSpace + right + ")";
+    }
+
+    /**
+     * Removes the specified element from this set if
+     * it is present. More formally, this removes an
+     * element e such that s.equals(e), if this set
+     * contains such an element. Returns true if this
+     * set contained the element (or equivalently, if
+     * this set changed as a result of the call).
+     * (This set will not contain the element once the
+     * call returns.)
+     *
+     * @param s the String to be removed from this set,
+     *          if present
+     * @return true if this set contained the specified
+     * element
+     * @throws NullPointerException if the specified
+     *                              element is null
+     */
+    @Override
+    public boolean remove(String s) {
+        if (recursiveRemove(null ,root, s)) {
+            nodeCount--;
+            return true;
+        }
+
+        return false;
+    }
+
+    // Recursively finds and then removes the given string from the given root node.
+    private boolean recursiveRemove(AVLNode lastAVLNode, AVLNode workingAVLNode, String stringToRemove) {
+        if (workingAVLNode == null)
+            return false;
+
+        if (stringIsLessThanAVLNode(workingAVLNode, stringToRemove))
+            return recursiveRemove(workingAVLNode, workingAVLNode.left, stringToRemove);
+
+        if (stringIsGreaterThanAVLNode(workingAVLNode, stringToRemove))
+            return recursiveRemove(workingAVLNode, workingAVLNode.right, stringToRemove);
+
+        doRemove(lastAVLNode, workingAVLNode);
+        return true;
+    }
+
+    // Removes the given node from the given parent.
+    private void doRemove(AVLNode parentAVLNode, AVLNode nodeToRemove) {
+        if (nodeToRemove.left == null) {
+            updateParentReference(parentAVLNode, nodeToRemove, nodeToRemove.right);
+            return;
+        }
+
+        if (nodeToRemove.right == null) {
+            updateParentReference(parentAVLNode, nodeToRemove, nodeToRemove.left);
+            return;
+        }
+
+        String maxLeftValue = findMaxValue(nodeToRemove.left);
+        nodeToRemove.value = maxLeftValue;
+        recursiveRemove(nodeToRemove, nodeToRemove.left, maxLeftValue);
+    }
+
+    // recursively searches the given tree looking for the maximum value
+    private String findMaxValue(AVLNode currentAVLNode) {
+        if (currentAVLNode.right == null)
+            return currentAVLNode.value;
+        return findMaxValue(currentAVLNode.right);
+    }
+
+    // Updates the parent's reference to a new child.
+    private void updateParentReference(AVLNode parent, AVLNode childToRemove, AVLNode newChild) {
+        // Special case if removing root node
+        if (nodeIsRoot(childToRemove)) {
+            root = newChild;
+            return;
+        }
+
+        if(isRightChildOfParent(parent, childToRemove)) {
+            parent.right = newChild;
+            return;
+        }
+
+        parent.left = newChild;
+        return;
+    }
+
+    // Identifies if the given node is the root node
+    private boolean nodeIsRoot(AVLNode currentNode) {
+        return currentNode == root;
+    }
+
+    // Identifies if the given child is the right node of the given parent
+    private boolean isRightChildOfParent(AVLNode parentAVLNode, AVLNode childAVLNode) {
+        return parentAVLNode.right == childAVLNode;
+    }
+
+    /**
+     * Returns the number of elements in this set (its
+     * cardinality).
+     *
+     * @return the number of elements in this set (its
+     * cardinality)
+     */
+    @Override
+    public int size() {
+        return nodeCount;
+    }
+
+    /**
+     * AVLNode for AVLSet
      */
     class AVLNode {
         String value;
