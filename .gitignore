@@ -1,2 +1,6 @@
 BSTSet/out/
 BSTSet/.idea/
+**/.idea/.name
+AVLSet/.idea/compiler.xml
+**/.idea/**
+**/out/**
