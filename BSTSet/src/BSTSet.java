@@ -483,6 +483,25 @@ public class BSTSet implements StringSet_Plus {
     }
 
     /**
+     * This is a node used in the tree
+     */
+    class Node {
+        // Value of the node
+        String value;
+        // The left and right childred of this node
+        Node left, right;
+
+        /**
+         * Constructor. Makes a new node with the given value and null child references.
+         * @param s value that this node will hold
+         */
+        public Node(String s) {
+            value = s;
+            left = right = null;
+        }
+    }
+
+    /**
      * This iterator will traverse a BSTSet in Pre-Order sequence.
      */
     private class PreOrderIterator implements StringIterator {
