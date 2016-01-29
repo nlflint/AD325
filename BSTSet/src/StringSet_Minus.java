@@ -20,7 +20,7 @@ public interface StringSet_Minus {
      * @param s element to be added to this set
      * @return true if this set did not already contain 
      * the specified element
-     * @throws NullPointerException if the specified 
+     * @throws IllegalArgumentException if the specified 
      * element is null
      */
     public boolean add(String s);
@@ -41,7 +41,7 @@ public interface StringSet_Minus {
      * to be tested
      * @return true if this set contains the specified 
      * element
-     * @throws NullPointerException if the specified 
+     * @throws IllegalArgumentException if the specified 
      * element is null
      */
     public boolean contains(String s);

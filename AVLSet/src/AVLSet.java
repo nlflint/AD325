@@ -33,26 +33,86 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
             return true;
         }
 
-        if (recursiveAdd(root, s)) {
+        if (recursiveAdd(null, root, s)) {
             nodeCount++;
             return true;
         }
         return false;
     }
 
-    private boolean recursiveAdd(AVLNode workingAVLNode, String s) {
-        if (workingAVLNode.value.equals(s))
+    private boolean recursiveAdd(AVLNode parent, AVLNode node, String s) {
+        if (node.value.equals(s))
             return false;
 
-        AVLNode nextAVLNode = getNextAVLNode(workingAVLNode, s);
+        AVLNode nextAVLNode = getNextAVLNode(node, s);
 
         if (nextAVLNode != null)
-            return recursiveAdd(nextAVLNode,s);
+            if (recursiveAdd(node, nextAVLNode,s)) {
+                node.height++;
+                rebalanceIfNeeded(parent, node);
+                return true;
+            } else {
+                return false;
+            }
 
-        addStringToCorrectEdge(workingAVLNode, s);
+        addStringToCorrectEdge(node, s);
 
+        updateHeight(node);
+        rebalanceIfNeeded(parent, node);
         return true;
 
+    }
+
+    private void updateHeight(AVLNode node) {
+        if (node == null)
+            return;
+        node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
+    }
+
+    private void rebalanceIfNeeded(AVLNode parent, AVLNode node) {
+        int leftHeight = getNodeHeight(node.left);
+        int rightHeight = getNodeHeight(node.right);
+
+        // right is too long
+        if ((rightHeight - leftHeight) > 1) {
+            AVLNode newChild = rotateLeft(node);
+            updateParentReference(parent, node, newChild);
+            updateHeight(parent);
+            updateHeight(node);
+            updateHeight(newChild);
+            return;
+        }
+
+        // left is too long
+        if ((leftHeight - rightHeight) > 1) {
+            AVLNode newChild = rotateRight(node);
+            updateParentReference(parent, node, newChild);
+            updateHeight(parent);
+            updateHeight(node);
+            updateHeight(newChild);
+            return;
+        }
+
+    }
+
+    private AVLNode rotateLeft(AVLNode a) {
+        AVLNode b = a.right;
+        a.right = b.left;
+        b.left = a;
+        return b;
+    }
+
+    private AVLNode rotateRight(AVLNode a) {
+        AVLNode b = a.left;
+        a.left = b.right;
+        b.right = a;
+        return b;
+    }
+
+
+
+    private int getNodeHeight(AVLNode node) {
+        return node == null ? 0 : node.height;
     }
 
     // Used for adding a new leaf. Adds node to correct edge.
@@ -345,6 +405,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
 
         if(isRightChildOfParent(parent, childToRemove)) {
             parent.right = newChild;
+
             return;
         }
 
@@ -379,11 +440,13 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
      */
     class AVLNode {
         String value;
-        AVLNode left, right, parent;
+        AVLNode left, right;//, parent;
+        int height;
 
         public AVLNode(String s) {
             value = s;
-            left = right = parent = null;
+            left = right = null;
+            height = 1;
         }
 
     }

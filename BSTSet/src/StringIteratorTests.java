@@ -34,31 +34,6 @@ public abstract class StringIteratorTests {
     }
 
     @Test
-    public void whenRemovingAnItem_ThenItemIsRemovedFromSet() {
-        // Arrange
-        BSTSet set = new BSTSet();
-        set.add("M");
-        set.add("Y");
-        set.add("A");
-        set.add("Z");
-        set.add("P");
-        set.add("O");
-        set.add("U");
-        set.add("S");
-        set.add("R");
-        StringIterator iterator = createIterator(set);
-
-        // Act
-        while (iterator.hasNext())
-            if (iterator.next() == "U")
-                iterator.remove();
-
-        // Assert
-        boolean containsU = set.contains("U");
-        assertFalse(containsU);
-    }
-
-    @Test
     public void callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException() {
         // Arrange
         BSTSet set = new BSTSet();

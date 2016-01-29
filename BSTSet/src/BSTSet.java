@@ -2,17 +2,16 @@
  * Nathan Flint
  * Assignment 2: BSTSet
  * Level: Plus
+ * Features:
+ *   -toString enhancement
+ *   -remove
+ *   -simple iterators
+ *   -complicated iterator
  *
- * This class implements an ADT called Set. A binary search tree is used for the implementation.
- */
-
-import java.util.Stack;
-
-/**
- * This is a Set implemented using a binary tree,
- * and is the PLUS version of the assignment.
+ * This class implements a Set. A binary search tree is used for the implementation.
  *
  * @author Nathan Flint
+ * 28 January 2016
  */
 public class BSTSet implements StringSet_Plus {
     // The root node of the binary tree
@@ -41,13 +40,13 @@ public class BSTSet implements StringSet_Plus {
      * @param s element to be added to this set
      * @return true if this set did not already contain
      * the specified element
-     * @throws NullPointerException if the specified
+     * @throws IllegalArgumentException if the specified
      * element is null
      */
     @Override
     public boolean add(String s) {
         if (s == null)
-            throw new NullPointerException("Given string is null. Cannot add null string!");
+            throw new IllegalArgumentException("Given string is null. Cannot add null string!");
 
         if (root == null) {
             root = new Node(s);
@@ -101,13 +100,13 @@ public class BSTSet implements StringSet_Plus {
      * to be tested
      * @return true if this set contains the specified
      * element
-     * @throws NullPointerException if the specified
+     * @throws IllegalArgumentException if the specified
      * element is null
      */
     @Override
     public boolean contains(String s) {
         if (s == null)
-            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
+            throw new IllegalArgumentException("Given string is null. Cannot identify if set contains a null string!");
 
         if (root == null)
             return false;
@@ -144,11 +143,14 @@ public class BSTSet implements StringSet_Plus {
      * if present
      * @return true if this set contained the specified
      * element
-     * @throws NullPointerException if the specified
+     * @throws IllegalArgumentException if the specified
      * element is null
      */
     @Override
     public boolean remove(String s) {
+        if (s == null)
+            throw new IllegalArgumentException("Given string is null. Cannot remove a null string!");
+
         if (recursiveRemove(null ,root, s)) {
             numberOfNodes--;
             return true;
@@ -406,7 +408,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class InOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private Stack<Node> nodes;
+        private NodeStack nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -418,7 +420,7 @@ public class BSTSet implements StringSet_Plus {
          */
         public InOrderIterator(BSTSet set) {
             bstSet = set;
-            nodes = new Stack<Node>();
+            nodes = new NodeStack();
             fillStackUntilNextNode(set.root);
         }
 
@@ -461,44 +463,6 @@ public class BSTSet implements StringSet_Plus {
             lastNode = nextNode;
             return nextNode.value;
         }
-
-        /**
-         * Removes from the underlying collection the last
-         * element returned by this iterator (optional
-         * operation). This method can be called only once
-         * per call to next(). The behavior of an iterator
-         * is unspecified if the underlying collection is
-         * modified while the iteration is in progress in
-         * any way other than by calling this method.
-         *
-         * @throws UnsupportedOperationException if the
-         * remove operation is not supported by this
-         * iterator
-         */
-        @Override
-        public void remove() {
-            if (lastNode != null)
-                bstSet.remove(lastNode.value);
-        }
-    }
-
-    /**
-     * This is a node used in the tree
-     */
-    class Node {
-        // Value of the node
-        String value;
-        // The left and right childred of this node
-        Node left, right;
-
-        /**
-         * Constructor. Makes a new node with the given value and null child references.
-         * @param s value that this node will hold
-         */
-        public Node(String s) {
-            value = s;
-            left = right = null;
-        }
     }
 
     /**
@@ -506,7 +470,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class PreOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private Stack<Node> nodes;
+        private NodeStack nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -519,7 +483,7 @@ public class BSTSet implements StringSet_Plus {
         public PreOrderIterator(BSTSet set) {
             bstSet = set;
 
-            nodes = new Stack<Node>();
+            nodes = new NodeStack();
             nodes.push(set.root);
         }
 
@@ -559,24 +523,6 @@ public class BSTSet implements StringSet_Plus {
             lastNode = nextNode;
             return nextNode.value;
         }
-
-        /**
-         * Removes from the underlying collection the last
-         * element returned by this iterator (optional
-         * operation). This method can be called only once
-         * per call to next(). The behavior of an iterator
-         * is unspecified if the underlying collection is
-         * modified while the iteration is in progress in
-         * any way other than by calling this method.
-         *
-         * @throws UnsupportedOperationException if the
-         * remove operation is not supported by this
-         * iterator
-         */
-        @Override
-        public void remove() {
-            bstSet.remove(lastNode.value);
-        }
     }
 
     /**
@@ -584,7 +530,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class PostOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private Stack<Node> nodes;
+        private NodeStack nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -596,7 +542,7 @@ public class BSTSet implements StringSet_Plus {
          */
         public PostOrderIterator(BSTSet set) {
             bstSet = set;
-            nodes = new Stack<Node>();
+            nodes = new NodeStack();
             fillStackUntilNextNode(set.root);
         }
 
@@ -653,23 +599,92 @@ public class BSTSet implements StringSet_Plus {
             lastNode = currentNode;
             return currentNode.value;
         }
-
-        /**
-         * Removes from the underlying collection the last
-         * element returned by this iterator (optional
-         * operation). This method can be called only once
-         * per call to next(). The behavior of an iterator
-         * is unspecified if the underlying collection is
-         * modified while the iteration is in progress in
-         * any way other than by calling this method.
-         *
-         * @throws UnsupportedOperationException if the
-         *                                       remove operation is not supported by this
-         *                                       iterator
-         */
-        @Override
-        public void remove() {
-            bstSet.remove(lastNode.value);
-        }
     }
 }
+
+/**
+ * This is a node used in the tree
+ */
+class Node {
+    // Value of the node
+    String value;
+    // The left and right childred of this node
+    Node left, right;
+
+    /**
+     * Constructor. Makes a new node with the given value and null child references.
+     * @param s value that this node will hold
+     */
+    public Node(String s) {
+        value = s;
+        left = right = null;
+    }
+}
+
+/**
+ * This class implements the Stack ADT using a linked list.
+ */
+class NodeStack {
+    private NodeStackNode head;
+
+    /**
+     * Puts the given value on the top of the stack
+     * @param number value to put on the stack
+     */
+    public void push(Node number) {
+        head = new NodeStackNode(number, head);
+    }
+
+    /**
+     * Removes and returns the last item put on the stack.
+     * @return value of the item removed from the stack.
+     */
+    public Node pop() {
+        VerifyStackIsNotEmpty();
+
+        NodeStackNode poppedValue = head;
+        head = head.next;
+        return poppedValue.value;
+    }
+
+    private void VerifyStackIsNotEmpty() {
+        if (isEmpty())
+            throw new IllegalStateException();
+    }
+
+    /**
+     * Identifies if the stack contains any items.
+     * @return true if the stack is empty
+     */
+    public boolean isEmpty() {
+        return head == null;
+    }
+
+    /**
+     * Gets the value from the top of the stack without removing it.
+     * @return the value at the top of the stack
+     */
+    public Node peek() {
+        VerifyStackIsNotEmpty();
+        return head.value;
+    }
+}
+
+class NodeStackNode {
+
+    public Node value;
+
+    public NodeStackNode next;
+
+    public NodeStackNode(Node v) {
+        value = v;
+        next = null;
+    }
+
+    public NodeStackNode(Node v, NodeStackNode n) {
+        value = v;
+        next = n;
+    }
+
+}
+

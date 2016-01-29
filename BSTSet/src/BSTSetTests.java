@@ -98,7 +98,7 @@ public class BSTSetTests {
         // Act & assert
         try {
             set.add(null);
-        } catch (NullPointerException ex) {
+        } catch (IllegalArgumentException ex) {
             assertEquals("Given string is null. Cannot add null string!", ex.getMessage());
             return;
         }
@@ -114,7 +114,7 @@ public class BSTSetTests {
         // Act & assert
         try {
             set.contains(null);
-        } catch (NullPointerException ex) {
+        } catch (IllegalArgumentException ex) {
             assertEquals("Given string is null. Cannot identify if set contains a null string!", ex.getMessage());
             return;
         }
@@ -441,6 +441,22 @@ public class BSTSetTests {
         // Assert
         assertTrue(containsChildren);
         assertFalse(containsRemovedItem);
+    }
+
+    @Test
+    public void contains_WhenRemovingANullString_ThenExceptionIsThrown() {
+        // Arrange
+        BSTSet set = new BSTSet();
+
+        // Act & assert
+        try {
+            set.remove(null);
+        } catch (IllegalArgumentException ex) {
+            assertEquals("Given string is null. Cannot remove a null string!", ex.getMessage());
+            return;
+        }
+
+        fail();
     }
 
     @Test

@@ -12,52 +12,57 @@ I used a test first approach to this assignment. I looked at the interface, and 
 As far as I can tell, everthing works. I created 40+ tests to thoroughly test all the functionality. 
 
 3. How did you test your implementation? Include testing results.
-I used junit to write unit tests for all behaviors. All tests are passing:
+I used junit to write unit tests, and Intellij to run the tests. Here are all the unit test names and their results.
 
 Result - Test Name
 ---------------------------------------------------------
-PASS - BSTSetTests.add_AddingNullString_ThrowsException
-PASS - BSTSetTests.add_WhenAddingStringASecondTime_ThenStringIsNotAdded
-PASS - BSTSetTests.add_WhenAddingStringToNewSet_ThenStringIsAdded
-PASS - BSTSetTests.add_WhenAddingTwoDifferentString_ThenStringsAreAdded
-PASS - BSTSetTests.clear_WhenClearingAnEmptySet_ThenSetIsEmpty
-PASS - BSTSetTests.clear_WhenClearingSetThatContainsItems_ThenSetDoesNotContainItems
-PASS - BSTSetTests.contains_DoesNotRelyOnReferenceEquality
-PASS - BSTSetTests.contains_WhenCallingContainsWithNullString_ThenExceptionIsThrown
-PASS - BSTSetTests.contains_WhenManyStringsAdded_ThenSetContainsAllTheStrings
-PASS - BSTSetTests.contains_WhenStringAdded_ThenSetContainsString
-PASS - BSTSetTests.contains_WhenTwoStringsAdded_ThenSetContainsBothString
-PASS - BSTSetTests.isEmpty_GivenNewSet_ThenSetIsEmpty
-PASS - BSTSetTests.isEmpty_WhenRemovingLastItem_ThenSetIsEmpty
-PASS - BSTSetTests.isEmpty_WhenSetContainsAnItem_ThenSetIsNotEmpty
-PASS - BSTSetTests.remove_RemovingAnItemThatDoesNotExist_ReturnsFalse
-PASS - BSTSetTests.remove_WhenRemovingItem_ThenRemoveDoesNotDependOnReferenceEquality
-PASS - BSTSetTests.remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved
-PASS - BSTSetTests.remove_WhenRemovingItemWithOnlyLeftChild_ThenItemIsRemovedAndSetContainsChild
-PASS - BSTSetTests.remove_WhenRemovingItemWithOnlyRightChild_ThenItemIsRemovedAndSetContainsChild
-PASS - BSTSetTests.remove_WhenRemovingItemWithTwoChildren_ThenItemIsRemovedAndSetContainsChildren
-PASS - BSTSetTests.remove_WhenRemovingLeaf_ThenSetDoesNotContainLeaf
-PASS - BSTSetTests.remove_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved
-PASS - BSTSetTests.remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved
-PASS - BSTSetTests.remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved
-PASS - BSTSetTests.size_WhenClearingSet_ThenSizeIsZero
-PASS - BSTSetTests.size_WhenRemovingAnItem_ThenSizeIsDecremented
-PASS - BSTSetTests.size_WhenSetContains100Items_ThenSizeIs100
-PASS - BSTSetTests.toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder
-PASS - BSTSetTests.toStringInOrder_WhenSetIsEmpty_ThenEmptyStringReturned
-PASS - BSTSetTests.toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder
-PASS - BSTSetTests.toStringPostOrder_WhenSetIsEmpty_ThenEmptyStringReturned
-PASS - BSTSetTests.toStringPreOrder_WhenGettingPreOrderString_ThenItemsAreInPreOrder
-PASS - BSTSetTests.toStringPreOrder_WhenSetIsEmpty_ThenEmptyStringReturned
-PASS - InOrderIteratorTests.callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
-PASS - InOrderIteratorTests.whenRemovingAnItem_ThenItemIsRemovedFromSet
-PASS - InOrderIteratorTests.whenTraversingIterator_ThenItemsAreInProperOrder
-PASS - PostOrderIteratorTests.callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
-PASS - PostOrderIteratorTests.whenRemovingAnItem_ThenItemIsRemovedFromSet
-PASS - PostOrderIteratorTests.whenTraversingIterator_ThenItemsAreInProperOrder
-PASS - PreOrderIteratorTests.callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
-PASS - PreOrderIteratorTests.whenRemovingAnItem_ThenItemIsRemovedFromSet
-PASS - PreOrderIteratorTests.whenTraversingIterator_ThenItemsAreInProperOrder
+BSTSet Tests:
+PASS - add_AddingNullString_ThrowsException
+PASS - add_WhenAddingStringASecondTime_ThenStringIsNotAdded
+PASS - add_WhenAddingStringToNewSet_ThenStringIsAdded
+PASS - add_WhenAddingTwoDifferentString_ThenStringsAreAdded
+PASS - clear_WhenClearingAnEmptySet_ThenSetIsEmpty
+PASS - clear_WhenClearingSetThatContainsItems_ThenSetDoesNotContainItems
+PASS - contains_DoesNotRelyOnReferenceEquality
+PASS - contains_WhenCallingContainsWithNullString_ThenExceptionIsThrown
+PASS - contains_WhenManyStringsAdded_ThenSetContainsAllTheStrings
+PASS - contains_WhenRemovingANullString_ThenExceptionIsThrown
+PASS - contains_WhenStringAdded_ThenSetContainsString
+PASS - contains_WhenTwoStringsAdded_ThenSetContainsBothString
+PASS - isEmpty_GivenNewSet_ThenSetIsEmpty
+PASS - isEmpty_WhenRemovingLastItem_ThenSetIsEmpty
+PASS - isEmpty_WhenSetContainsAnItem_ThenSetIsNotEmpty
+PASS - remove_RemovingAnItemThatDoesNotExist_ReturnsFalse
+PASS - remove_WhenRemovingItem_ThenRemoveDoesNotDependOnReferenceEquality
+PASS - remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved
+PASS - remove_WhenRemovingItemWithOnlyLeftChild_ThenItemIsRemovedAndSetContainsChild
+PASS - remove_WhenRemovingItemWithOnlyRightChild_ThenItemIsRemovedAndSetContainsChild
+PASS - remove_WhenRemovingItemWithTwoChildren_ThenItemIsRemovedAndSetContainsChildren
+PASS - remove_WhenRemovingLeaf_ThenSetDoesNotContainLeaf
+PASS - remove_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved
+PASS - remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved
+PASS - remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved
+PASS - size_WhenClearingSet_ThenSizeIsZero
+PASS - size_WhenRemovingAnItem_ThenSizeIsDecremented
+PASS - size_WhenSetContains100Items_ThenSizeIs100
+PASS - toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder
+PASS - toStringInOrder_WhenSetIsEmpty_ThenEmptyStringReturned
+PASS - toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder
+PASS - toStringPostOrder_WhenSetIsEmpty_ThenEmptyStringReturned
+PASS - toStringPreOrder_WhenGettingPreOrderString_ThenItemsAreInPreOrder
+PASS - toStringPreOrder_WhenSetIsEmpty_ThenEmptyStringReturned
+
+In-Order Iterator Tests
+PASS - callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
+PASS - whenTraversingIterator_ThenItemsAreInProperOrder
+
+Post-Order Iterator Tests
+PASS - callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
+PASS - whenTraversingIterator_ThenItemsAreInProperOrder
+
+Pre-Order Iterator Tests:
+PASS - callingNextWhenIteratorHasNoItems_ThrowsIllegalStateException
+PASS - whenTraversingIterator_ThenItemsAreInProperOrder
 
 4. What problems did you encounter as you worked on this assignment?
 The most difficult part of the assignment was implmenting the Remove() method. The iterators were also quite difficult to implement. 

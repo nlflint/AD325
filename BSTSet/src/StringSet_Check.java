@@ -23,7 +23,7 @@ public interface StringSet_Check extends StringSet_Minus {
      * if present
      * @return true if this set contained the specified 
      * element
-     * @throws NullPointerException if the specified 
+     * @throws IllegalArgumentException if the specified 
      * element is null
      */
     public boolean remove(String s);

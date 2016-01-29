@@ -582,19 +582,61 @@ public class AVLSetTests {
         assertTrue(containsChild);
         assertFalse(containsRemovedItem);
     }
+
+    @Test
+    public void rebalance_WhenAddingValueToTheRightRight_ThenTreeIsReblancedSoNewRootIsRightChild() {
+        // Arrange
+        AVLSet set = new AVLSet();
+        set.add("A");
+        set.add("B");
+
+        // Act
+        set.add("C");
+
+        // Assert
+        assertEquals("(B A C)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenAddingValueToTheRightRightWihtBigChildTrees_ThenTreeIsReblancedSoNewRootIsRightChild() {
+        // Arrange
+        AVLSet set = new AVLSet();
+        set.add("A");
+        set.add("B");
+
+        // Act
+        set.add("C");
+
+        // Assert
+        assertEquals("(B A C)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenAddingValueToTheLeftLeft_ThenTreeIsReblancedSoNewRootIsLeftChild() {
+        // Arrange
+        AVLSet set = new AVLSet();
+        set.add("C");
+        set.add("B");
+
+        // Act
+        set.add("A");
+
+        // Assert
+        assertEquals("(B A C)", set.toString());
+    }
     
     @Test
     public void TreeAsString() {
         //Arrange
+        String[] values = new String[] {"M", "T", "O", "Z", "D", "E", "A", "B"};
         AVLSet set = new AVLSet();
-        set.add("M");
-        set.add("T");
-        set.add("O");
-        set.add("Z");
-        set.add("D");
-        set.add("E");
-        set.add("A");
-        set.add("B");
+        for (String value : values) {
+            System.out.println("Adding: " + value);
+            set.add(value);
+
+            String tree = set.toString();
+            System.out.println(tree);
+        }
 
         // Act
         String treeRepresentation = set.toString();
@@ -608,7 +650,7 @@ public class AVLSetTests {
     public void hugeTree() {
         //Arrange
         AVLSet set = new AVLSet();
-        String[] values =  CreateRandomStringDataSet(15);
+        String[] values =  CreateRandomStringDataSet(4);
         for(String value : values)
                 set.add(value);
 
