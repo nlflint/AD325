@@ -408,7 +408,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class InOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack nodes;
+        private NodeStack<Node> nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -470,7 +470,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class PreOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack nodes;
+        private NodeStack<Node> nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -530,7 +530,7 @@ public class BSTSet implements StringSet_Plus {
      */
     private class PostOrderIterator implements StringIterator {
         // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack nodes;
+        private NodeStack<Node> nodes;
         // The set that this iterator is traversing
         private BSTSet bstSet;
         // Last node that was returned from Next();
@@ -624,25 +624,25 @@ class Node {
 /**
  * This class implements the Stack ADT using a linked list.
  */
-class NodeStack {
-    private NodeStackNode head;
+class NodeStack<T> {
+    private StackNode<T> head;
 
     /**
      * Puts the given value on the top of the stack
      * @param number value to put on the stack
      */
-    public void push(Node number) {
-        head = new NodeStackNode(number, head);
+    public void push(T number) {
+        head = new StackNode<T>(number, head);
     }
 
     /**
      * Removes and returns the last item put on the stack.
      * @return value of the item removed from the stack.
      */
-    public Node pop() {
+    public T pop() {
         VerifyStackIsNotEmpty();
 
-        NodeStackNode poppedValue = head;
+        StackNode<T> poppedValue = head;
         head = head.next;
         return poppedValue.value;
     }
@@ -664,27 +664,23 @@ class NodeStack {
      * Gets the value from the top of the stack without removing it.
      * @return the value at the top of the stack
      */
-    public Node peek() {
+    public T peek() {
         VerifyStackIsNotEmpty();
         return head.value;
     }
 }
 
-class NodeStackNode {
-
-    public Node value;
-
-    public NodeStackNode next;
-
-    public NodeStackNode(Node v) {
+class StackNode<T> {
+    public T value;
+    public StackNode<T> next;
+    public StackNode(T v) {
         value = v;
         next = null;
     }
 
-    public NodeStackNode(Node v, NodeStackNode n) {
+    public StackNode(T v, StackNode<T> n) {
         value = v;
         next = n;
     }
-
 }
 

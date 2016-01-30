@@ -48,7 +48,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
 
         if (nextAVLNode != null)
             if (recursiveAdd(node, nextAVLNode,s)) {
-                node.height++;
+                updateHeight(node);
                 rebalanceIfNeeded(parent, node);
                 return true;
             } else {
@@ -56,9 +56,8 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
             }
 
         addStringToCorrectEdge(node, s);
-
         updateHeight(node);
-        rebalanceIfNeeded(parent, node);
+        //rebalanceIfNeeded(parent, node);
         return true;
 
     }
@@ -73,26 +72,79 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
         int leftHeight = getNodeHeight(node.left);
         int rightHeight = getNodeHeight(node.right);
 
-        // right is too long
-        if ((rightHeight - leftHeight) > 1) {
+        boolean rightChildIsTooLong = (rightHeight - leftHeight) > 1;
+        boolean leftChildIsTooLong = (leftHeight - rightHeight) > 1;
+
+        boolean rightOfRightChildIsLonger = isRightChildLonger(node.right);
+        boolean rightOfLeftChildIsLonger = isRightChildLonger(node.left);
+
+        // right is too big, rotate left
+        if (rightChildIsTooLong && rightOfRightChildIsLonger) {
             AVLNode newChild = rotateLeft(node);
             updateParentReference(parent, node, newChild);
-            updateHeight(parent);
             updateHeight(node);
             updateHeight(newChild);
+            updateHeight(parent);
             return;
         }
+
+        // right is too but, rotate right then left
+        if (rightChildIsTooLong && !rightOfRightChildIsLonger) {
+            AVLNode rotatingNode = node.right;
+
+            AVLNode newChild = rotateRight(rotatingNode);
+            updateParentReference(node, rotatingNode, newChild);
+            updateHeight(rotatingNode);
+            updateHeight(newChild);
+            updateHeight(node);
+
+            rotatingNode = node;
+            newChild = rotateLeft(rotatingNode);
+            updateParentReference(parent, rotatingNode, newChild);
+            updateHeight(rotatingNode);
+            updateHeight(newChild);
+            updateHeight(parent);
+            return;
+        }
+
 
         // left is too long
-        if ((leftHeight - rightHeight) > 1) {
+        if (leftChildIsTooLong && !rightOfLeftChildIsLonger) {
             AVLNode newChild = rotateRight(node);
             updateParentReference(parent, node, newChild);
-            updateHeight(parent);
             updateHeight(node);
             updateHeight(newChild);
+            updateHeight(parent);
             return;
         }
 
+        // left is too long, rotate left then right
+        if (leftChildIsTooLong && rightOfLeftChildIsLonger) {
+            AVLNode rotatingNode = node.left;
+
+            AVLNode newChild = rotateLeft(rotatingNode);
+            updateParentReference(node, rotatingNode, newChild);
+            updateHeight(rotatingNode);
+            updateHeight(newChild);
+            updateHeight(node);
+
+            rotatingNode = node;
+            newChild = rotateRight(rotatingNode);
+            updateParentReference(parent, rotatingNode, newChild);
+            updateHeight(rotatingNode);
+            updateHeight(newChild);
+            updateHeight(parent);
+            return;
+        }
+
+    }
+
+    private boolean isRightChildLonger(AVLNode node) {
+        if (node == null) return false;
+
+        int rightHeight = node.right == null ? 0 : node.right.height;
+        int leftHeight = node.left == null ? 0 : node.left.height;
+        return rightHeight > leftHeight;
     }
 
     private AVLNode rotateLeft(AVLNode a) {
@@ -108,8 +160,6 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
         b.right = a;
         return b;
     }
-
-
 
     private int getNodeHeight(AVLNode node) {
         return node == null ? 0 : node.height;
