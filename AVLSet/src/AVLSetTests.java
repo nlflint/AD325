@@ -567,7 +567,7 @@ public class AVLSetTests {
         String treeRepresentation = set.toString();
 
         // Assert
-        assertEquals("(O (E (D A B) M) (T _ Z))", treeRepresentation);
+        assertEquals("(O (E (B A D) M) (T _ Z))", treeRepresentation);
         System.out.println(treeRepresentation);
     }
 
