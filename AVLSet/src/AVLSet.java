@@ -489,11 +489,11 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
             return node == null ? 0 : node.height;
         }
 
-        protected boolean rightChildIsTooLong(AVLNode node) {
+        protected boolean leftChildIsTooLong(AVLNode node) {
             return (getNodeHeight(node.left) - getNodeHeight(node.right)) > 1;
         }
 
-        protected boolean leftChildIsTooLong(AVLNode node) {
+        protected boolean rightChildIsTooLong(AVLNode node) {
             return (getNodeHeight(node.right) - getNodeHeight(node.left)) > 1;
         }
 
