@@ -1,8 +1,6 @@
 /**
- * @author Nathan Flint
+ * Nathan Flint
  * Assignment 2: BSTSet
- * 28 January 2016
- *
  * Level: Plus
  * Features:
  *   -toString enhancement
@@ -11,6 +9,9 @@
  *   -complicated iterator
  *
  * This class implements a Set. A binary search tree is used for the implementation.
+ *
+ * @author Nathan Flint
+ * 28 January 2016
  */
 public class BSTSet implements StringSet_Plus {
     // The root node of the binary tree
@@ -375,7 +376,7 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public StringIterator iteratorInOrder() {
-        return new InOrderIterator(root);
+        return new InOrderIterator(this);
     }
 
     /**
@@ -387,7 +388,7 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public StringIterator iteratorPreOrder() {
-        return new PreOrderIterator(root);
+        return new PreOrderIterator(this);
     }
 
     /**
@@ -399,187 +400,205 @@ public class BSTSet implements StringSet_Plus {
      */
     @Override
     public StringIterator iteratorPostOrder() {
-        return new PostOrderIterator(root);
+        return new PostOrderIterator(this);
     }
-
-
-}
-
-/**
- * This iterator will traverse a BSTSet using In-Order sequence.
- */
-class InOrderIterator implements StringIterator {
-    // Stores the current path of the iterator. Top item is always the next item.
-    private NodeStack nodes;
 
     /**
-     * Constructor for iterator
-     * @param root the root node of the tree that the iterator will traverse
+     * This iterator will traverse a BSTSet using In-Order sequence.
      */
-    public InOrderIterator(Node root) {
-        nodes = new NodeStack();
-        fillStackUntilNextNode(root);
-    }
+    private class InOrderIterator implements StringIterator {
+        // Stores the current path of the iterator. Top item is always the next item.
+        private NodeStack<Node> nodes;
+        // The set that this iterator is traversing
+        private BSTSet bstSet;
+        // Last node that was returned from Next();
+        private Node lastNode;
 
-    // Pushes a path of nodes onto the stack until it finds the next node.
-    private void fillStackUntilNextNode(Node startingNode) {
-        while(startingNode != null) {
-            nodes.push(startingNode);
-            startingNode = startingNode.left;
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
+        public InOrderIterator(BSTSet set) {
+            bstSet = set;
+            nodes = new NodeStack();
+            fillStackUntilNextNode(set.root);
         }
-    }
 
-    /**
-     * Returns true if the iteration has more elements.
-     * (In other words, returns true if next() would
-     * return an element rather than throwing an
-     * exception.)
-     *
-     * @return true if the iteration has more elements
-     */
-    @Override
-    public boolean hasNext() {
-        return !nodes.isEmpty();
-    }
-
-    /**
-     * Returns the next element in the iteration.
-     *
-     * @return the next element in the iteration
-     * @throws IllegalStateException if the iteration
-     *                               has no more elements
-     */
-    @Override
-    public String next() {
-        if (!hasNext())
-            throw new IllegalStateException("There are no more items");
-
-        Node nextNode = nodes.pop();
-        fillStackUntilNextNode(nextNode.right);
-
-        return nextNode.value;
-    }
-}
-
-/**
- * This iterator will traverse a BSTSet in Pre-Order sequence.
- */
-class PreOrderIterator implements StringIterator {
-    // Stores the current path of the iterator. Top item is always the next item.
-    private NodeStack nodes;
-
-    /**
-     * Constructor for iterator
-     * @param root The root node of the tree that this iterator will traverse
-     */
-    public PreOrderIterator(Node root) {
-        nodes = new NodeStack();
-        nodes.push(root);
-    }
-
-    /**
-     * Returns true if the iteration has more elements.
-     * (In other words, returns true if next() would
-     * return an element rather than throwing an
-     * exception.)
-     *
-     * @return true if the iteration has more elements
-     */
-    @Override
-    public boolean hasNext() {
-        return !nodes.isEmpty();
-    }
-
-    /**
-     * Returns the next element in the iteration.
-     *
-     * @return the next element in the iteration
-     * @throws IllegalStateException if the iteration
-     *                               has no more elements
-     */
-    @Override
-    public String next() {
-        if (!hasNext())
-            throw new IllegalStateException("There are no more items");
-
-        Node nextNode = nodes.pop();
-
-        if (nextNode.right != null)
-            nodes.push(nextNode.right);
-
-        if (nextNode.left != null)
-            nodes.push(nextNode.left);
-
-        return nextNode.value;
-    }
-}
-
-/**
- * This iterator will traverse a BSTSet in Post-Order sequence.
- */
-class PostOrderIterator implements StringIterator {
-    // Stores the current path of the iterator. Top item is always the next item.
-    private NodeStack nodes;
-
-    /**
-     * Constructor for iterator
-     * @param root The root node of the tree that this iterator will traverse
-     */
-    public PostOrderIterator(Node root) {
-        nodes = new NodeStack();
-        fillStackUntilNextNode(root);
-    }
-
-    // Finds the next node and pushes nodes into stack along the way
-    private void fillStackUntilNextNode(Node startingNode) {
-        while(startingNode != null) {
-            nodes.push(startingNode);
-
-            // First, go left as much as possible
-            if (startingNode.left != null) {
+        // Pushes a path of nodes onto the stack until it finds the next node.
+        private void fillStackUntilNextNode(Node startingNode) {
+            while(startingNode != null) {
+                nodes.push(startingNode);
                 startingNode = startingNode.left;
-                continue;
             }
+        }
 
-            // If can't go left, then try to go right with secondary preference
-            startingNode = startingNode.right;
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node nextNode = nodes.pop();
+            fillStackUntilNextNode(nextNode.right);
+
+            lastNode = nextNode;
+            return nextNode.value;
         }
     }
 
     /**
-     * Returns true if the iteration has more elements.
-     * (In other words, returns true if next() would
-     * return an element rather than throwing an
-     * exception.)
-     *
-     * @return true if the iteration has more elements
+     * This iterator will traverse a BSTSet in Pre-Order sequence.
      */
-    @Override
-    public boolean hasNext() {
-        return !nodes.isEmpty();
+    private class PreOrderIterator implements StringIterator {
+        // Stores the current path of the iterator. Top item is always the next item.
+        private NodeStack<Node> nodes;
+        // The set that this iterator is traversing
+        private BSTSet bstSet;
+        // Last node that was returned from Next();
+        private Node lastNode;
+
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
+        public PreOrderIterator(BSTSet set) {
+            bstSet = set;
+
+            nodes = new NodeStack();
+            nodes.push(set.root);
+        }
+
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node nextNode = nodes.pop();
+
+            if (nextNode.right != null)
+                nodes.push(nextNode.right);
+
+            if (nextNode.left != null)
+                nodes.push(nextNode.left);
+
+            lastNode = nextNode;
+            return nextNode.value;
+        }
     }
 
     /**
-     * Returns the next element in the iteration.
-     *
-     * @return the next element in the iteration
-     * @throws IllegalStateException if the iteration
-     *                               has no more elements
+     * This iterator will traverse a BSTSet in Post-Order sequence.
      */
-    @Override
-    public String next() {
-        if (!hasNext())
-            throw new IllegalStateException("There are no more items");
+    private class PostOrderIterator implements StringIterator {
+        // Stores the current path of the iterator. Top item is always the next item.
+        private NodeStack<Node> nodes;
+        // The set that this iterator is traversing
+        private BSTSet bstSet;
+        // Last node that was returned from Next();
+        private Node lastNode;
 
-        Node currentNode = nodes.pop();
+        /**
+         * Constructor for iterator
+         * @param set The BSTset that this iterator will traverse
+         */
+        public PostOrderIterator(BSTSet set) {
+            bstSet = set;
+            nodes = new NodeStack();
+            fillStackUntilNextNode(set.root);
+        }
 
-        if (!nodes.isEmpty()) {
-            Node parentNode = nodes.peek();
-            if (parentNode.left == currentNode) {
-                fillStackUntilNextNode(parentNode.right);
+        // Finds the next node and pushes nodes into stack along the way
+        private void fillStackUntilNextNode(Node startingNode) {
+            while(startingNode != null) {
+                nodes.push(startingNode);
+
+                // First, go left as much as possible
+                if (startingNode.left != null) {
+                    startingNode = startingNode.left;
+                    continue;
+                }
+
+                // If can't go left, then try to go right with secondary preference
+                startingNode = startingNode.right;
             }
         }
-        return currentNode.value;
+
+        /**
+         * Returns true if the iteration has more elements.
+         * (In other words, returns true if next() would
+         * return an element rather than throwing an
+         * exception.)
+         *
+         * @return true if the iteration has more elements
+         */
+        @Override
+        public boolean hasNext() {
+            return !nodes.isEmpty();
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element in the iteration
+         * @throws IllegalStateException if the iteration
+         *                               has no more elements
+         */
+        @Override
+        public String next() {
+            if (!hasNext())
+                throw new IllegalStateException("There are no more items");
+
+            Node currentNode = nodes.pop();
+
+            if (!nodes.isEmpty()) {
+                Node parentNode = nodes.peek();
+                if (parentNode.left == currentNode) {
+                    fillStackUntilNextNode(parentNode.right);
+                }
+            }
+
+            lastNode = currentNode;
+            return currentNode.value;
+        }
     }
 }
 
@@ -605,26 +624,25 @@ class Node {
 /**
  * This class implements the Stack ADT using a linked list.
  */
-class NodeStack {
-    // The head the linked list
-    private NodeStackNode head;
+class NodeStack<T> {
+    private StackNode<T> head;
 
     /**
      * Puts the given value on the top of the stack
      * @param number value to put on the stack
      */
-    public void push(Node number) {
-        head = new NodeStackNode(number, head);
+    public void push(T number) {
+        head = new StackNode<T>(number, head);
     }
 
     /**
      * Removes and returns the last item put on the stack.
      * @return value of the item removed from the stack.
      */
-    public Node pop() {
+    public T pop() {
         VerifyStackIsNotEmpty();
 
-        NodeStackNode poppedValue = head;
+        StackNode<T> poppedValue = head;
         head = head.next;
         return poppedValue.value;
     }
@@ -646,30 +664,23 @@ class NodeStack {
      * Gets the value from the top of the stack without removing it.
      * @return the value at the top of the stack
      */
-    public Node peek() {
+    public T peek() {
         VerifyStackIsNotEmpty();
         return head.value;
     }
-
-    // A node of the stack's linked list
-    private class NodeStackNode {
-        // the value of this linked list node
-        public Node value;
-        // The next node in the list
-        public NodeStackNode next;
-
-        /**
-         * Constructor to make a new node for the linked list
-         * @param v the value of this ist
-         * @param n the next node in the list
-         */
-        public NodeStackNode(Node v, NodeStackNode n) {
-            value = v;
-            next = n;
-        }
-
-    }
 }
 
+class StackNode<T> {
+    public T value;
+    public StackNode<T> next;
+    public StackNode(T v) {
+        value = v;
+        next = null;
+    }
 
+    public StackNode(T v, StackNode<T> n) {
+        value = v;
+        next = n;
+    }
+}
 

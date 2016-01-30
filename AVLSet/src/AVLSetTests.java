@@ -1,4 +1,3 @@
-import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -142,20 +141,26 @@ public class AVLSetTests {
     @Test
     public void clear_WhenClearingSetThatContainsItems_ThenSetDoesNotContainItems() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("asdf");
-        set.add("qwer");
-        set.clear();
+        AVLSet set = createSetFromSequence("asdf", "qwer");
 
         // Act
-        boolean containsFirst = set.contains("asdf");
-        boolean containsSecond = set.contains("qwer");
-        boolean isEmpty = set.isEmpty();
+        set.clear();
 
         // Assert
-        assertFalse(containsFirst);
-        assertFalse(containsSecond);
+        boolean containsEither = containsAny(set, "asdf", "qwer");
+        assertFalse(containsEither);
+
+        boolean isEmpty = set.isEmpty();
         assertTrue(isEmpty);
+    }
+
+    private boolean containsAny(AVLSet set, String... values) {
+        boolean containsChildren = false;
+
+        for(String value : values)
+            containsChildren |= set.contains(value);
+
+        return containsChildren;
     }
 
     @Test
@@ -245,10 +250,7 @@ public class AVLSetTests {
     @Test
     public void size_WhenRemovingAnItem_ThenSizeIsDecremented() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("one");
-        set.add("two");
-        set.add("three");
+        AVLSet set = createSetFromSequence("one", "two", "three");
         set.remove("two");
 
         // Act
@@ -261,136 +263,99 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingLeaf_ThenSetDoesNotContainLeaf() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("B");
-        set.add("A");
-        set.remove("A");
+        AVLSet set = createSetFromSequence("B", "A");
 
         // Act
-        boolean contains = set.contains("A");
+        set.remove("A");
 
         // Assert
+        boolean contains = set.contains("A");
         assertFalse(contains);
     }
 
     @Test
     public void remove_RemovingAnItemThatDoesNotExist_ReturnsFalse() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("B");
-        set.add("A");
-        set.remove("C");
+        AVLSet set = createSetFromSequence("A", "B");
 
         // Act
-        boolean containsA = set.contains("A");
-        boolean containsB = set.contains("B");
+        set.remove("C");
 
         // Assert
-        assertTrue(containsA);
-        assertTrue(containsB);
+        boolean containsBoth = setContainsAll(set, "A", "B");
+        assertTrue(containsBoth);
     }
 
     @Test
     public void remove_WhenRemovingItemWithOnlyLeftChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("H");
-        set.add("P");
-        set.add("L");
-        set.add("K");
-        set.add("M");
-        set.remove("P");
+        AVLSet set = createSetFromSequence("H", "P", "L", "K", "M");
 
         // Act
-        boolean containsRemovedItem = set.contains("P");
-        boolean containsChildren = set.contains("L");
-        containsChildren &= set.contains("K");
-        containsChildren &= set.contains("M");
-
+        set.remove("P");
 
         // Assert
+        boolean containsChildren = setContainsAll(set, "L", "K", "M");
         assertTrue(containsChildren);
+
+        boolean containsRemovedItem = set.contains("P");
         assertFalse(containsRemovedItem);
     }
 
     @Test
     public void remove_WhenRemovingItemWithOnlyRightChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("Z");
-        set.add("P");
-        set.add("T");
-        set.add("Q");
-        set.add("V");
-        set.remove("P");
+        AVLSet set = createSetFromSequence("Z", "P", "T", "Q", "V");
 
         // Act
-        boolean containsRemovedItem = set.contains("P");
-        boolean containsChildren = set.contains("T");
-        containsChildren &= set.contains("Q");
-        containsChildren &= set.contains("V");
+        set.remove("P");
 
         // Assert
-        assertTrue(containsChildren);
+        boolean containsRemovedItem = set.contains("P");
         assertFalse(containsRemovedItem);
+
+        boolean containsChildren = setContainsAll(set, "T", "Q", "V");
+        assertTrue(containsChildren);
     }
 
     @Test
     public void remove_WhenRemovingItemWithTwoChildren_ThenItemIsRemovedAndSetContainsChildren() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("H");
-        set.add("P");
-        set.add("T");
-        set.add("V");
-        set.add("U");
-        set.add("M");
-        set.add("K");
-        set.add("N");
-        set.remove("P");
+        AVLSet set = createSetFromSequence("H", "P", "T", "V", "U", "M", "K", "N");
 
         // Act
-        boolean containsRemovedItem = set.contains("P");
-        boolean containsChildren = set.contains("T");
-        containsChildren &= set.contains("V");
-        containsChildren &= set.contains("U");
-        containsChildren &= set.contains("M");
-        containsChildren &= set.contains("K");
-        containsChildren &= set.contains("N");
-        containsChildren &= set.contains("H");
+        set.remove("P");
 
         // Assert
-
+        boolean containsRemovedItem = set.contains("P");
         assertFalse(containsRemovedItem);
+
+        boolean containsChildren = setContainsAll(set, "T", "V", "U", "M", "K", "N", "H");
         assertTrue(containsChildren);
 
+    }
+
+    private boolean setContainsAll(AVLSet set, String... values) {
+        boolean containsChildren = true;
+
+        for(String value : values)
+            containsChildren &= set.contains(value);
+
+        return containsChildren;
     }
 
     @Test
     public void remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("M");
-        set.add("Y");
-        set.add("Z");
-        set.add("P");
-        set.add("O");
-        set.add("U");
-        set.add("S");
-        set.add("R");
-        set.remove("Y");
+        AVLSet set = createSetFromSequence("M", "Y", "Z", "P", "O", "U", "S", "R");
 
         // Act
-        boolean containsRemovedItem = set.contains("Y");
-        boolean containsChildren = set.contains("M");
-        containsChildren &= set.contains("Z");
-        containsChildren &= set.contains("P");
-        containsChildren &= set.contains("O");
-        containsChildren &= set.contains("U");
-        containsChildren &= set.contains("S");
-        containsChildren &= set.contains("R");
+        set.remove("Y");
 
         // Assert
+        boolean containsRemovedItem = set.contains("Y");
+        boolean containsChildren = setContainsAll(set, "M", "Z", "P", "O", "U", "S","R");
+
         assertTrue(containsChildren);
         assertFalse(containsRemovedItem);
     }
@@ -398,43 +363,33 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("M");
-        set.add("L");
-        set.add("Z");
-        set.add("P");
-        set.add("A");
-        set.remove("M");
+        AVLSet set = createSetFromSequence("M", "L", "Z", "P", "A");
 
         // Act
-        boolean containsRemovedItem = set.contains("M");
-        boolean containsChildren = set.contains("L");
-        containsChildren &= set.contains("Z");
-        containsChildren &= set.contains("P");
-        containsChildren &= set.contains("A");
+        set.remove("M");
 
         // Assert
+        boolean containsChildren = set.contains("L");
         assertTrue(containsChildren);
+
+        boolean containsRemovedItem = setContainsAll(set, "M", "Z", "P", "A");
         assertFalse(containsRemovedItem);
     }
 
     @Test
     public void remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("A");
-        set.add("B");
-        set.add("C");
-        set.remove("A");
+        AVLSet set = createSetFromSequence("A", "B", "C");
 
         // Act
-        boolean containsRemovedItem = set.contains("A");
-        boolean containsChildren = set.contains("B");
-        containsChildren &= set.contains("C");
+        set.remove("A");
 
         // Assert
-        assertTrue(containsChildren);
+        boolean containsRemovedItem = set.contains("A");
         assertFalse(containsRemovedItem);
+
+        boolean containsChildren = setContainsAll(set, "B", "C");
+        assertTrue(containsChildren);
     }
 
     @Test
@@ -464,16 +419,7 @@ public class AVLSetTests {
     @Test
     public void toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("M");
-        set.add("Y");
-        set.add("A");
-        set.add("Z");
-        set.add("P");
-        set.add("O");
-        set.add("U");
-        set.add("S");
-        set.add("R");
+        AVLSet set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
 
         // Act
         String inOrderResult = set.toStringInOrder();
@@ -499,16 +445,7 @@ public class AVLSetTests {
     @Test
     public void toStringPreOrder_WhenGettingPreOrderString_ThenItemsAreInPreOrder() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("M");
-        set.add("Y");
-        set.add("A");
-        set.add("Z");
-        set.add("P");
-        set.add("O");
-        set.add("U");
-        set.add("S");
-        set.add("R");
+        AVLSet set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
 
         // Act
         String preOrderResult = set.toStringPreOrder();
@@ -534,16 +471,7 @@ public class AVLSetTests {
     @Test
     public void toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("MMM");
-        set.add("YYY");
-        set.add("AAA");
-        set.add("ZZZ");
-        set.add("PPP");
-        set.add("OOO");
-        set.add("UUU");
-        set.add("SSS");
-        set.add("RRR");
+        AVLSet set = createSetFromSequence("MMM", "YYY", "AAA", "ZZZ", "PPP", "OOO", "UUU", "SSS", "RRR");
 
         // Act
         String postOrderResult = set.toStringPostOrder();
@@ -569,80 +497,77 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItem_ThenRemoveDoesNotDependOnReferenceEquality() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("AAA");
-        set.add("BBB");
-        set.remove("A" + "A" + "A");
+        AVLSet set = createSetFromSequence("AAA", "BBB");
 
         // Act
-        boolean containsRemovedItem = set.contains("AAA");
-        boolean containsChild = set.contains("BBB");
+        set.remove("A" + "A" + "A");
 
         // Assert
+        boolean containsRemovedItem = set.contains("AAA");
+        boolean containsChild = set.contains("BBB");
         assertTrue(containsChild);
         assertFalse(containsRemovedItem);
     }
 
     @Test
-    public void rebalance_WhenAddingValueToTheRightRight_ThenTreeIsReblancedSoNewRootIsRightChild() {
+    public void rebalance_WhenAddingValueToTheLeftLeftChild_ThenOverWeightNodeIsRotatedRight() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("A");
-        set.add("B");
+        AVLSet set = createSetFromSequence("G", "E", "H", "F", "I", "C", "D", "B");
 
         // Act
-        set.add("C");
+        set.add("A");
 
         // Assert
-        assertEquals("(B A C)", set.toString());
+        assertEquals("(G (C (B A _) (E D F)) (H _ I))", set.toString());
     }
 
     @Test
-    public void rebalance_WhenAddingValueToTheRightRightWihtBigChildTrees_ThenTreeIsReblancedSoNewRootIsRightChild() {
+    public void rebalance_WhenAddingValueToTheLeftRightChild_ThenOverWeightNodeIsRotateRightLeft() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("A");
-        set.add("B");
+        AVLSet set = createSetFromSequence("J","G","L","B","H","K","M","A","D","I","N","0","C","E");
 
         // Act
-        set.add("C");
+        set.add("F");
 
         // Assert
-        assertEquals("(B A C)", set.toString());
+        assertEquals("(J (D (B (A 0 _) C) (G (E _ F) (H _ I))) (L K (M _ N)))", set.toString());
+    }
+
+    private AVLSet createSetFromSequence(String... args) {
+        AVLSet set = new AVLSet();
+
+        for(String value : args) {
+            set.add(value);
+            System.out.print("Added " + value + ": ");
+            System.out.println(set.toString());
+        }
+        return set;
     }
 
     @Test
-    public void rebalance_WhenAddingValueToTheLeftLeft_ThenTreeIsReblancedSoNewRootIsLeftChild() {
+    public void rebalance_WhenAddingValueToTheRightRightChild_ThenOverWeightNodeIsRotatedLeft() {
         // Arrange
-        AVLSet set = new AVLSet();
-        set.add("C");
-        set.add("B");
+        AVLSet set = createSetFromSequence("C", "B", "E", "A", "D", "G", "F", "H");
 
         // Act
-        set.add("A");
+        set.add("I");
 
         // Assert
-        assertEquals("(B A C)", set.toString());
+        assertEquals("(C (B A _) (G (E D F) (H _ I)))", set.toString());
     }
+
+
     
     @Test
     public void TreeAsString() {
         //Arrange
-        String[] values = new String[] {"M", "T", "O", "Z", "D", "E", "A", "B"};
-        AVLSet set = new AVLSet();
-        for (String value : values) {
-            System.out.println("Adding: " + value);
-            set.add(value);
-
-            String tree = set.toString();
-            System.out.println(tree);
-        }
+        AVLSet set = createSetFromSequence("M", "T", "O", "Z", "D", "E", "A", "B");
 
         // Act
         String treeRepresentation = set.toString();
 
         // Assert
-        assertEquals("(M (D (A _ B) E) (T O Z))", treeRepresentation);
+        assertEquals("(O (E (D A B) M) (T _ Z))", treeRepresentation);
         System.out.println(treeRepresentation);
     }
 
