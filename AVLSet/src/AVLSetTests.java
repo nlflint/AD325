@@ -97,7 +97,7 @@ public class AVLSetTests {
         // Act & assert
         try {
             set.add(null);
-        } catch (NullPointerException ex) {
+        } catch (IllegalArgumentException ex) {
             assertEquals("Given string is null. Cannot add null string!", ex.getMessage());
             return;
         }
@@ -113,7 +113,7 @@ public class AVLSetTests {
         // Act & assert
         try {
             set.contains(null);
-        } catch (NullPointerException ex) {
+        } catch (IllegalArgumentException ex) {
             assertEquals("Given string is null. Cannot identify if set contains a null string!", ex.getMessage());
             return;
         }
@@ -451,7 +451,7 @@ public class AVLSetTests {
         String preOrderResult = set.toStringPreOrder();
 
         // Assert
-        assertEquals("[M, A, Y, P, O, U, S, R, Z]", preOrderResult);
+        assertEquals("[P, M, A, O, Y, S, R, U, Z]", preOrderResult);
 
     }
 
@@ -477,7 +477,7 @@ public class AVLSetTests {
         String postOrderResult = set.toStringPostOrder();
 
         // Assert
-        assertEquals("[AAA, OOO, RRR, SSS, UUU, PPP, ZZZ, YYY, MMM]", postOrderResult);
+        assertEquals("[AAA, OOO, MMM, RRR, UUU, SSS, ZZZ, YYY, PPP]", postOrderResult);
 
     }
 
@@ -533,6 +533,102 @@ public class AVLSetTests {
         assertEquals("(J (D (B (A 0 _) C) (G (E _ F) (H _ I))) (L K (M _ N)))", set.toString());
     }
 
+    @Test
+    public void rebalance_WhenAddingValueToTheRightLeftChild_ThenOverWeightNodeIsRotateLeftRight() {
+        // Arrange
+        AVLSet set = createSetFromSequence("E","C","H","B","D","G","M","A","F","K","N","J","L","O");
+
+        // Act
+        set.add("I");
+
+        // Assert
+        assertEquals("(E (C (B A _) D) (K (H (G F _) (J I _)) (M L (N _ O))))", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeavesRightRightOverWeight_ThenOverWeightNodeIsRotatedLeft() {
+        // Arrange
+        AVLSet set = createSetFromSequence("B","A","C","D");
+
+        // Act
+        set.remove("A");
+
+        // Assert
+        assertEquals("(C B D)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemoveReplaceLeavesImbalanceAtReplacingNode_ThenLocalImbalanceIsCorrected() {
+        // Arrange
+        AVLSet set = createSetFromSequence("E","B","F","A","C","G","D");
+
+        // Act
+        set.remove("B");
+
+        // Assert
+        assertEquals("(E (C A D) (F _ G))", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeaveLeftLeftOverWeight_ThenOverWeightNodeIsRotatedRight() {
+        // Arrange
+        AVLSet set = createSetFromSequence("C","B","D","A");
+
+        // Act
+        set.remove("D");
+
+        // Assert
+        assertEquals("(B A C)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeavesLeftRightOverWeight_ThenOverWeightNodeIsRotatedLeftRight() {
+        // Arrange
+        AVLSet set = createSetFromSequence("C","A","D","B");
+
+        // Act
+        set.remove("D");
+
+        // Assert
+        assertEquals("(B A C)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeavesRightLeftOverWeight_ThenOverWeightNodeIsRotatedRightLeft() {
+        // Arrange
+        AVLSet set = createSetFromSequence("B","A","D","C");
+
+        // Act
+        set.remove("A");
+
+        // Assert
+        assertEquals("(C B D)", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeavesRightLeftAndRighRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedRight() {
+        // Arrange
+        AVLSet set = createSetFromSequence("C","B","G","A","E","I","D","F","H","J");
+
+        // Act
+        set.remove("B");
+
+        // Assert
+        assertEquals("(G (C A (E D F)) (I H J))", set.toString());
+    }
+
+    @Test
+    public void rebalance_WhenRemovingLeavesLeftLeftAndLeftRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedLeft() {
+        // Arrange
+        AVLSet set = createSetFromSequence("H","D","I","B","F","J","A","C","E","G");
+
+        // Act
+        set.remove("I");
+
+        // Assert
+        assertEquals("(D (B A C) (H (F E G) J))", set.toString());
+    }
+
     private AVLSet createSetFromSequence(String... args) {
         AVLSet set = new AVLSet();
 
@@ -572,18 +668,67 @@ public class AVLSetTests {
     }
 
     @Test
-    public void hugeTree() {
+    public void hugeTreeIsBalancedAfterRandomlyAdding() {
         //Arrange
         AVLSet set = new AVLSet();
-        String[] values =  CreateRandomStringDataSet(4);
+
+        // Act
+        String[] values =  CreateRandomStringDataSet(1000);
         for(String value : values)
                 set.add(value);
 
+        // Assert
+        assertTrue(isTreeIsBalanced(set.root));
+    }
+
+    @Test
+    public void hugeTreeIsBalancedAfterRandomlyRemoving() {
+        //Arrange
+        AVLSet set = new AVLSet();
+        String[] values =  CreateRandomStringDataSet(1000);
+        for(String value : values)
+            set.add(value);
+
+        String[] valuesRemoving =  CreateRandomStringDataSet(1000);
+        for(int i = 0; i < 500; i++)
+            set.remove(valuesRemoving[i]);
+
         // Act
-        String treeRepresentation = set.toString();
+        for(int i = 500; i < 1000; i++)
+            set.contains(valuesRemoving[i]);
 
         // Assert
-        System.out.println(treeRepresentation);
+        assertTrue(isTreeIsBalanced(set.root));
+    }
+
+    private boolean isTreeIsBalanced(Node node) {
+        if (node == null)
+            return true;
+
+        boolean isLocallyBalanced = isLocallyBalanced(node);
+        boolean leftOk = isTreeIsBalanced(node.left);
+        boolean rightOk = isTreeIsBalanced(node.right);
+        boolean allOk = leftOk && rightOk && isLocallyBalanced;
+
+        assertTrue(allOk);
+
+        return allOk;
+
+    }
+
+    private boolean isLocallyBalanced(Node node) {
+        return 2 > Math.abs(
+                getHeight(node.left) - getHeight(node.right));
+    }
+
+    private int getHeight(Node node) {
+        if (node == null)
+            return 0;
+
+        return 1 + Math.max(
+                getHeight(node.left),
+                getHeight(node.right));
+
     }
 
     private String[] CreateRandomStringDataSet(int numberOfElements) {

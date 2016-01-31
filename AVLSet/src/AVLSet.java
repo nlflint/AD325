@@ -1,11 +1,7 @@
 /**
  * Created by nathanf on 1/21/2016.
  */
-public class AVLSet implements StringSet_Improved, StringSet_Check {
-    // The root node for the binary tree
-    protected AVLNode root;
-    // Tracks the number of things in the set
-    private int nodeCount;
+public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Check  {
     // collection of rotation types
     private Rotation[] rotations;
 
@@ -15,52 +11,21 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     public AVLSet() {
         rotations = new Rotation[] {
                 new LeftRotation(),
-                new LeftRightRotation(),
                 new RightRotation(),
+                new LeftRightRotation(),
                 new RightLeftRotation()
         };
     }
-    /**
-     * Adds the specified element to this set if it is
-     * not already present. More formally, adds the
-     * specified element s to this set if the set contains
-     * no element s2 such that s.equals(s2). If this
-     * set already contains the element, the call leaves
-     * the set unchanged and returns false. This ensures
-     * that the set never contains duplicate elements.
-     *
-     * @param s element to be added to this set
-     * @return true if this set did not already contain
-     * the specified element
-     * @throws NullPointerException if the specified
-     *                              element is null
-     */
+
     @Override
-    public boolean add(String s) {
-        if (s == null)
-            throw new NullPointerException("Given string is null. Cannot add null string!");
-
-        if (root == null) {
-            root = new AVLNode(s);
-            nodeCount++;
-            return true;
-        }
-
-        if (recursiveAdd(null, root, s)) {
-            nodeCount++;
-            return true;
-        }
-        return false;
-    }
-
-    private boolean recursiveAdd(AVLNode parent, AVLNode node, String s) {
+    protected boolean recursiveAdd(Node parent, Node node, String s) {
         if (node.value.equals(s))
             return false;
 
-        AVLNode nextAVLNode = getNextAVLNode(node, s);
+        Node nextNode = getNextNode(node, s);
 
-        if (nextAVLNode != null)
-            if (recursiveAdd(node, nextAVLNode,s)) {
+        if (nextNode != null)
+            if (recursiveAdd(node, nextNode,s)) {
                 updateHeight(node);
                 rebalanceIfNeeded(parent, node);
                 return true;
@@ -71,16 +36,15 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
         addStringToCorrectEdge(node, s);
         updateHeight(node);
         return true;
-
     }
 
-    private void updateHeight(AVLNode node) {
+    private void updateHeight(Node node) {
         if (node == null)
             return;
         node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
     }
 
-    private void rebalanceIfNeeded(AVLNode parent, AVLNode node) {
+    private void rebalanceIfNeeded(Node parent, Node node) {
         for (Rotation rotation : rotations)
             if (rotation.isNeeded(node)) {
                 rotation.execute(parent, node);
@@ -88,90 +52,8 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
             }
     }
 
-    private int getNodeHeight(AVLNode node) {
+    private int getNodeHeight(Node node) {
         return node == null ? 0 : node.height;
-    }
-
-    // Used for adding a new leaf. Adds node to correct edge.
-    private void addStringToCorrectEdge(AVLNode workingAVLNode, String s) {
-        if (stringIsLessThanAVLNode(workingAVLNode, s))
-            workingAVLNode.left = new AVLNode(s);
-        else
-            workingAVLNode.right = new AVLNode(s);
-    }
-
-    // returns left or right node base of value of given string
-    private AVLNode getNextAVLNode(AVLNode workingAVLNode, String s) {
-        return stringIsLessThanAVLNode(workingAVLNode, s) ? workingAVLNode.left : workingAVLNode.right;
-    }
-
-    // identifies if given string is less than given node
-    private boolean stringIsLessThanAVLNode(AVLNode workingAVLNode, String stringToRemove) {
-        return workingAVLNode.value.compareTo(stringToRemove) > 0;
-    }
-
-    // identifies if given string is greater than given node
-    private boolean stringIsGreaterThanAVLNode(AVLNode workingAVLNode, String stringToRemove) {
-        return workingAVLNode.value.compareTo(stringToRemove) < 0;
-    }
-
-    /**
-     * Removes all of the elements from this set. The set
-     * will be empty after this call returns.
-     */
-    @Override
-    public void clear() {
-        root = null;
-        nodeCount = 0;
-    }
-
-    /**
-     * Returns true if this set contains the
-     * specified element. More formally, returns true
-     * if and only if this set contains an element e
-     * such that s.equals(e).
-     *
-     * @param s element whose presence in this set is
-     *          to be tested
-     * @return true if this set contains the specified
-     * element
-     * @throws NullPointerException if the specified
-     *                              element is null
-     */
-    @Override
-    public boolean contains(String s) {
-        if (s == null)
-            throw new NullPointerException("Given string is null. Cannot identify if set contains a null string!");
-
-        if (root == null)
-            return false;
-
-        return recursiveContains(root, s);
-    }
-
-    // Traverses the given node looking for the given string value.
-    // Returns true if found, false if not found
-    private boolean recursiveContains(AVLNode startingAVLNode, String s) {
-        if (startingAVLNode == null)
-            return false;
-
-        if (startingAVLNode.value.equals(s))
-            return true;
-
-        if (stringIsLessThanAVLNode(startingAVLNode, s))
-            return recursiveContains(startingAVLNode.left, s);
-
-        return recursiveContains(startingAVLNode.right, s);
-    }
-
-    /**
-     * Returns true if this set contains no elements.
-     *
-     * @return true if this set contains no elements
-     */
-    @Override
-    public boolean isEmpty() {
-        return root == null;
     }
 
     /**
@@ -197,7 +79,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
 
     // Builds a string of tree elements recursively from the given
     // node using In-Order sequence
-    private String toStringInOrderRecursive(AVLNode currentNode) {
+    private String toStringInOrderRecursive(Node currentNode) {
         if (currentNode == null)
             return "";
 
@@ -234,7 +116,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
 
     // Builds a string of tree elements recursively from the given
     // node using Pre-Order sequence
-    private String toStringPreOrderRecursivce(AVLNode currentNode) {
+    private String toStringPreOrderRecursivce(Node currentNode) {
         if (currentNode == null)
             return "";
 
@@ -269,7 +151,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
 
     // Builds a string of tree elements recursively from the given
     // node using Post-Order sequence
-    private String toStringPostOrderRecursive(AVLNode currentNode) {
+    private String toStringPostOrderRecursive(Node currentNode) {
         if (currentNode == null)
             return "";
 
@@ -291,7 +173,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     }
 
     // recursively builds a string that represents the tree's structure
-    private String getStringRepresentationRecursive(AVLNode node) {
+    private String getStringRepresentationRecursive(Node node) {
         if (node == null)
             return "_";
 
@@ -326,7 +208,7 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     @Override
     public boolean remove(String s) {
         if (recursiveRemove(null ,root, s)) {
-            nodeCount--;
+            numberOfNodes--;
             return true;
         }
 
@@ -334,22 +216,29 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     }
 
     // Recursively finds and then removes the given string from the given root node.
-    private boolean recursiveRemove(AVLNode lastAVLNode, AVLNode workingAVLNode, String stringToRemove) {
-        if (workingAVLNode == null)
+    private boolean recursiveRemove(Node parent, Node workingNode, String stringToRemove) {
+        if (workingNode == null)
             return false;
 
-        if (stringIsLessThanAVLNode(workingAVLNode, stringToRemove))
-            return recursiveRemove(workingAVLNode, workingAVLNode.left, stringToRemove);
+        boolean result;
+        if (stringIsLessThanNode(workingNode, stringToRemove))  {
+            result = recursiveRemove(workingNode, workingNode.left, stringToRemove);
+        }
+        else if (stringIsGreaterThanNode(workingNode, stringToRemove)) {
+            result = recursiveRemove(workingNode, workingNode.right, stringToRemove);
+        }
+        else {
+            doRemove(parent, workingNode);
+            result = true;
+        }
 
-        if (stringIsGreaterThanAVLNode(workingAVLNode, stringToRemove))
-            return recursiveRemove(workingAVLNode, workingAVLNode.right, stringToRemove);
-
-        doRemove(lastAVLNode, workingAVLNode);
-        return true;
+        updateHeight(workingNode);
+        rebalanceIfNeeded(parent, workingNode);
+        return result;
     }
 
     // Removes the given node from the given parent.
-    private void doRemove(AVLNode parentAVLNode, AVLNode nodeToRemove) {
+    private void doRemove(Node parentAVLNode, Node nodeToRemove) {
         if (nodeToRemove.left == null) {
             updateParentReference(parentAVLNode, nodeToRemove, nodeToRemove.right);
             return;
@@ -366,77 +255,21 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     }
 
     // recursively searches the given tree looking for the maximum value
-    private String findMaxValue(AVLNode currentAVLNode) {
+    private String findMaxValue(Node currentAVLNode) {
         if (currentAVLNode.right == null)
             return currentAVLNode.value;
         return findMaxValue(currentAVLNode.right);
     }
 
-    // Updates the parent's reference to a new child.
-    private void updateParentReference(AVLNode parent, AVLNode childToRemove, AVLNode newChild) {
-        // Special case if removing root node
-        if (nodeIsRoot(childToRemove)) {
-            root = newChild;
-            return;
-        }
-
-        if(isRightChildOfParent(parent, childToRemove)) {
-            parent.right = newChild;
-
-            return;
-        }
-
-        parent.left = newChild;
-        return;
-    }
-
-    // Identifies if the given node is the root node
-    private boolean nodeIsRoot(AVLNode currentNode) {
-        return currentNode == root;
-    }
-
-    // Identifies if the given child is the right node of the given parent
-    private boolean isRightChildOfParent(AVLNode parentAVLNode, AVLNode childAVLNode) {
-        return parentAVLNode.right == childAVLNode;
-    }
-
-    /**
-     * Returns the number of elements in this set (its
-     * cardinality).
-     *
-     * @return the number of elements in this set (its
-     * cardinality)
-     */
-    @Override
-    public int size() {
-        return nodeCount;
-    }
-
-    /**
-     * AVLNode for AVLSet
-     */
-    class AVLNode {
-        String value;
-        AVLNode left, right;//, parent;
-        int height;
-
-        public AVLNode(String s) {
-            value = s;
-            left = right = null;
-            height = 1;
-        }
-
-    }
-
     private class LeftRightRotation extends Rotation {
 
         @Override
-        boolean isNeeded(AVLNode node) {
+        boolean isNeeded(Node node) {
             return leftChildIsTooLong(node) && isRightChildLongest(node.left);
         }
 
         @Override
-        void execute(AVLNode parent, AVLNode rotatingNode) {
+        void execute(Node parent, Node rotatingNode) {
             rotateLeft(rotatingNode, rotatingNode.left);
             rotateRight(parent, rotatingNode);
         }
@@ -445,12 +278,12 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     private class RightRotation extends Rotation {
 
         @Override
-        boolean isNeeded(AVLNode node) {
-            return leftChildIsTooLong(node) && !isRightChildLongest(node.left);
+        boolean isNeeded(Node node) {
+            return leftChildIsTooLong(node) && isLeftChildLongest(node.left);
         }
 
         @Override
-        void execute(AVLNode parent, AVLNode rotatingNode) {
+        void execute(Node parent, Node rotatingNode) {
             rotateRight(parent, rotatingNode);
         }
     }
@@ -458,55 +291,63 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
     private class LeftRotation extends Rotation {
 
         @Override
-        boolean isNeeded(AVLNode node) {
+        boolean isNeeded(Node node) {
             return rightChildIsTooLong(node) && isRightChildLongest(node.right);
         }
 
         @Override
-        void execute(AVLNode parent, AVLNode rotatingNode) {
+        void execute(Node parent, Node rotatingNode) {
             rotateLeft(parent, rotatingNode);
         }
     }
     private class RightLeftRotation extends Rotation {
 
         @Override
-        boolean isNeeded(AVLNode node) {
-            return rightChildIsTooLong(node) && !isRightChildLongest(node.right);
+        boolean isNeeded(Node node) {
+            return rightChildIsTooLong(node) && isLeftChildLongest(node.right);
         }
 
         @Override
-        void execute(AVLNode parent, AVLNode rotatingNode) {
+        void execute(Node parent, Node rotatingNode) {
             rotateRight(rotatingNode, rotatingNode.right);
             rotateLeft(parent, rotatingNode);
         }
     }
 
     private abstract  class Rotation {
-        abstract boolean isNeeded(AVLNode node);
-        abstract void execute(AVLNode parent, AVLNode rotatingNode);
+        abstract boolean isNeeded(Node node);
+        abstract void execute(Node parent, Node rotatingNode);
 
-        protected int getNodeHeight(AVLNode node) {
+        protected int getNodeHeight(Node node) {
             return node == null ? 0 : node.height;
         }
 
-        protected boolean leftChildIsTooLong(AVLNode node) {
+        protected boolean leftChildIsTooLong(Node node) {
             return (getNodeHeight(node.left) - getNodeHeight(node.right)) > 1;
         }
 
-        protected boolean rightChildIsTooLong(AVLNode node) {
+        protected boolean rightChildIsTooLong(Node node) {
             return (getNodeHeight(node.right) - getNodeHeight(node.left)) > 1;
         }
 
-        protected boolean isRightChildLongest(AVLNode node) {
+        protected boolean isRightChildLongest(Node node) {
             if (node == null) return false;
 
             int rightHeight = node.right == null ? 0 : node.right.height;
             int leftHeight = node.left == null ? 0 : node.left.height;
-            return rightHeight > leftHeight;
+            return rightHeight >= leftHeight;
         }
 
-        protected void rotateLeft(AVLNode parent, AVLNode rotatingNode) {
-            AVLNode temp = rotatingNode.right;
+        protected boolean isLeftChildLongest(Node node) {
+            if (node == null) return false;
+
+            int rightHeight = node.right == null ? 0 : node.right.height;
+            int leftHeight = node.left == null ? 0 : node.left.height;
+            return leftHeight >= rightHeight;
+        }
+
+        protected void rotateLeft(Node parent, Node rotatingNode) {
+            Node temp = rotatingNode.right;
             rotatingNode.right = temp.left;
             temp.left = rotatingNode;
 
@@ -516,8 +357,8 @@ public class AVLSet implements StringSet_Improved, StringSet_Check {
             updateHeight(parent);
         }
 
-        protected void rotateRight(AVLNode parent, AVLNode rotatingNode) {
-            AVLNode temp = rotatingNode.left;
+        protected void rotateRight(Node parent, Node rotatingNode) {
+            Node temp = rotatingNode.left;
             rotatingNode.left = temp.right;
             temp.right = rotatingNode;
 
