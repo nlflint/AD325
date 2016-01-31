@@ -9,6 +9,9 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
      * Constructor initializes class
      */
     public AVLSet() {
+        numberOfNodes = 0;
+        root = null;
+        DELIMINATOR = ", ";
         rotations = new Rotation[] {
                 new LeftRotation(),
                 new RightRotation(),
@@ -54,138 +57,6 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
 
     private int getNodeHeight(Node node) {
         return node == null ? 0 : node.height;
-    }
-
-    /**
-     * Returns a String containing all of the elements in this set ordered
-     * using an in-order traversal of the underlying tree, with punctuation.
-     * The return value is enclosed in square brackets with values separated
-     * by the sequence comma-space.
-     * <p>Here are some example: <ul>
-     * <li>The set containing "A" "B" "C" would return: <br>
-     * <tt>[A, B, C]</tt></li>
-     * <li>The set containing "Hi" would return: <br>
-     * <tt>[Hi]</tt></li>
-     * <li>The empty set would return: <br>
-     * <tt>[]</tt></li></ul>
-     *
-     * @return A string representation of the elements of the set ordered
-     * by an in-order traversal of the underlying tree, with punctuation.
-     */
-    @Override
-    public String toStringInOrder() {
-        return "[" + toStringInOrderRecursive(root) + "]";
-    }
-
-    // Builds a string of tree elements recursively from the given
-    // node using In-Order sequence
-    private String toStringInOrderRecursive(Node currentNode) {
-        if (currentNode == null)
-            return "";
-
-        String optionalPreSpace = currentNode.left == null ? "" : ", ";
-        String optionalPostSpace = currentNode.right == null ? "" : ", ";
-
-        return toStringInOrderRecursive(currentNode.left)
-                + optionalPreSpace
-                + currentNode.value
-                + optionalPostSpace
-                + toStringInOrderRecursive(currentNode.right);
-    }
-
-    /**
-     * Returns a String containing all of the elements in this set ordered
-     * using a pre-order traversal of the underlying tree, with punctuation.
-     * The return value is enclosed in square brackets with values separated
-     * by the sequence comma-space.
-     * <p>Here are some example: <ul>
-     * <li>The set containing "A" "B" "C" would return: <br>
-     * <tt>[B, A, C]</tt></li>
-     * <li>The set containing "Hi" would return: <br>
-     * <tt>[Hi]</tt></li>
-     * <li>The empty set would return: <br>
-     * <tt>[]</tt></li></ul>
-     *
-     * @return A string representation of the elements of the set ordered
-     * by a pre-order traversal of the underlying tree, with punctuation.
-     */
-    @Override
-    public String toStringPreOrder() {
-        return "[" + toStringPreOrderRecursivce(root) + "]";
-    }
-
-    // Builds a string of tree elements recursively from the given
-    // node using Pre-Order sequence
-    private String toStringPreOrderRecursivce(Node currentNode) {
-        if (currentNode == null)
-            return "";
-
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : ", ";
-
-        return optionalSpace
-                + currentNode.value
-                + toStringPreOrderRecursivce(currentNode.left)
-                + toStringPreOrderRecursivce(currentNode.right);
-    }
-
-    /**
-     * Returns a String containing all of the elements in this set ordered
-     * using a post-order traversal of the underlying tree, with punctuation.
-     * The return value is enclosed in square brackets with values separated
-     * by the sequence comma-space.
-     * <p>Here are some example: <ul>
-     * <li>The set containing "A" "B" "C" would return: <br>
-     * <tt>[A, C, B]</tt></li>
-     * <li>The set containing "Hi" would return: <br>
-     * <tt>[Hi]</tt></li>
-     * <li>The empty set would return: <br>
-     * <tt>[]</tt></li></ul>
-     *
-     * @return A string representation of the elements of the set ordered
-     * by a post-order traversal of the underlying tree, with punctuation.
-     */
-    @Override
-    public String toStringPostOrder() {
-        return "[" + toStringPostOrderRecursive(root) + "]";
-    }
-
-    // Builds a string of tree elements recursively from the given
-    // node using Post-Order sequence
-    private String toStringPostOrderRecursive(Node currentNode) {
-        if (currentNode == null)
-            return "";
-
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : ", ";
-
-        return toStringPostOrderRecursive(currentNode.left)
-                + toStringPostOrderRecursive(currentNode.right)
-                + currentNode.value
-                + optionalSpace;
-    }
-
-    /**
-     * Prints an unambiguous string representation of the tree's structure.
-     * @return string representing where all values lie in the tree
-     */
-    @Override
-    public String toString() {
-        return getStringRepresentationRecursive(root);
-    }
-
-    // recursively builds a string that represents the tree's structure
-    private String getStringRepresentationRecursive(Node node) {
-        if (node == null)
-            return "_";
-
-        String left = getStringRepresentationRecursive(node.left);
-        String right = getStringRepresentationRecursive(node.right);
-        String optionalSpace = " ";
-
-        if ((left == "_") && (right == "_")) {
-            return node.value;
-        }
-
-        return "(" + node.value + optionalSpace + left + optionalSpace + right + ")";
     }
 
     /**

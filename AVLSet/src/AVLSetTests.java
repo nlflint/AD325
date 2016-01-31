@@ -11,7 +11,7 @@ public class AVLSetTests {
     @Test
     public void add_WhenAddingStringToNewSet_ThenStringIsAdded() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         boolean wasAdded = set.add("blah");
@@ -23,7 +23,7 @@ public class AVLSetTests {
     @Test
     public void add_WhenAddingStringASecondTime_ThenStringIsNotAdded() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         set.add("blah");
@@ -36,7 +36,7 @@ public class AVLSetTests {
     @Test
     public void add_WhenAddingTwoDifferentString_ThenStringsAreAdded() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         boolean firstAdded = set.add("blah");
@@ -50,7 +50,7 @@ public class AVLSetTests {
     @Test
     public void contains_WhenStringAdded_ThenSetContainsString() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         set.add("blah");
@@ -63,7 +63,7 @@ public class AVLSetTests {
     @Test
     public void contains_WhenTwoStringsAdded_ThenSetContainsBothString() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.add("blah");
         set.add("blah1");
 
@@ -79,7 +79,7 @@ public class AVLSetTests {
     @Test
     public void contains_DoesNotRelyOnReferenceEquality() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.add("blah");
 
         // Act
@@ -92,7 +92,7 @@ public class AVLSetTests {
     @Test
     public void add_AddingNullString_ThrowsException() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act & assert
         try {
@@ -108,7 +108,7 @@ public class AVLSetTests {
     @Test
     public void contains_WhenCallingContainsWithNullString_ThenExceptionIsThrown() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act & assert
         try {
@@ -125,7 +125,7 @@ public class AVLSetTests {
     public void contains_WhenManyStringsAdded_ThenSetContainsAllTheStrings() {
         // Arrange
         int numberOfItems = 100;
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         String[] addedFredBobs = CreateRandomStringDataSet(numberOfItems);
 
         for (String fredBob : addedFredBobs)
@@ -141,7 +141,7 @@ public class AVLSetTests {
     @Test
     public void clear_WhenClearingSetThatContainsItems_ThenSetDoesNotContainItems() {
         // Arrange
-        AVLSet set = createSetFromSequence("asdf", "qwer");
+        StringSet_Check set = createSetFromSequence("asdf", "qwer");
 
         // Act
         set.clear();
@@ -154,7 +154,7 @@ public class AVLSetTests {
         assertTrue(isEmpty);
     }
 
-    private boolean containsAny(AVLSet set, String... values) {
+    private boolean containsAny(StringSet_Check set, String... values) {
         boolean containsChildren = false;
 
         for(String value : values)
@@ -166,7 +166,7 @@ public class AVLSetTests {
     @Test
     public void clear_WhenClearingAnEmptySet_ThenSetIsEmpty() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.clear();
 
         // Act
@@ -179,7 +179,7 @@ public class AVLSetTests {
     @Test
     public void isEmpty_GivenNewSet_ThenSetIsEmpty() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
 
         // Act
@@ -193,7 +193,7 @@ public class AVLSetTests {
     @Test
     public void isEmpty_WhenSetContainsAnItem_ThenSetIsNotEmpty() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.add("asdf");
 
         // Act
@@ -207,7 +207,7 @@ public class AVLSetTests {
     @Test
     public void isEmpty_WhenRemovingLastItem_ThenSetIsEmpty() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.add("asdf");
 
         // Act
@@ -221,7 +221,7 @@ public class AVLSetTests {
     @Test
     public void size_WhenSetContains100Items_ThenSizeIs100() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         String[] fredBobs = CreateRandomStringDataSet(100);
         for(String fredBob : fredBobs)
             set.add(fredBob);
@@ -236,7 +236,7 @@ public class AVLSetTests {
     @Test
     public void size_WhenClearingSet_ThenSizeIsZero() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         set.add("Blah");
         set.clear();
 
@@ -250,7 +250,7 @@ public class AVLSetTests {
     @Test
     public void size_WhenRemovingAnItem_ThenSizeIsDecremented() {
         // Arrange
-        AVLSet set = createSetFromSequence("one", "two", "three");
+        StringSet_Check set = createSetFromSequence("one", "two", "three");
         set.remove("two");
 
         // Act
@@ -263,7 +263,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingLeaf_ThenSetDoesNotContainLeaf() {
         // Arrange
-        AVLSet set = createSetFromSequence("B", "A");
+        StringSet_Check set = createSetFromSequence("B", "A");
 
         // Act
         set.remove("A");
@@ -276,7 +276,7 @@ public class AVLSetTests {
     @Test
     public void remove_RemovingAnItemThatDoesNotExist_ReturnsFalse() {
         // Arrange
-        AVLSet set = createSetFromSequence("A", "B");
+        StringSet_Check set = createSetFromSequence("A", "B");
 
         // Act
         set.remove("C");
@@ -289,7 +289,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItemWithOnlyLeftChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
-        AVLSet set = createSetFromSequence("H", "P", "L", "K", "M");
+        StringSet_Check set = createSetFromSequence("H", "P", "L", "K", "M");
 
         // Act
         set.remove("P");
@@ -305,7 +305,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItemWithOnlyRightChild_ThenItemIsRemovedAndSetContainsChild() {
         // Arrange
-        AVLSet set = createSetFromSequence("Z", "P", "T", "Q", "V");
+        StringSet_Check set = createSetFromSequence("Z", "P", "T", "Q", "V");
 
         // Act
         set.remove("P");
@@ -321,7 +321,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItemWithTwoChildren_ThenItemIsRemovedAndSetContainsChildren() {
         // Arrange
-        AVLSet set = createSetFromSequence("H", "P", "T", "V", "U", "M", "K", "N");
+        StringSet_Check set = createSetFromSequence("H", "P", "T", "V", "U", "M", "K", "N");
 
         // Act
         set.remove("P");
@@ -335,7 +335,7 @@ public class AVLSetTests {
 
     }
 
-    private boolean setContainsAll(AVLSet set, String... values) {
+    private boolean setContainsAll(StringSet_Check set, String... values) {
         boolean containsChildren = true;
 
         for(String value : values)
@@ -347,7 +347,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItemThatCausesCascadingRemove_ThenOnlyOneItemIsRemoved() {
         // Arrange
-        AVLSet set = createSetFromSequence("M", "Y", "Z", "P", "O", "U", "S", "R");
+        StringSet_Check set = createSetFromSequence("M", "Y", "Z", "P", "O", "U", "S", "R");
 
         // Act
         set.remove("Y");
@@ -363,7 +363,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingRootNodeWithTwoChildren_ThenOnlyRootNodeIsRemoved() {
         // Arrange
-        AVLSet set = createSetFromSequence("M", "L", "Z", "P", "A");
+        StringSet_Check set = createSetFromSequence("M", "L", "Z", "P", "A");
 
         // Act
         set.remove("M");
@@ -379,7 +379,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingRootNodeWithOneChild_ThenOnlyRootNodeIsRemoved() {
         // Arrange
-        AVLSet set = createSetFromSequence("A", "B", "C");
+        StringSet_Check set = createSetFromSequence("A", "B", "C");
 
         // Act
         set.remove("A");
@@ -396,7 +396,7 @@ public class AVLSetTests {
     public void remove_WhenRemovingRandomItemFromHugeSet_ThenOnlyRandomItemIsRemoved() {
         // Arrange
         int numberOfItems = 100;
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
         String[] addedFredBobs = CreateRandomStringDataSet(numberOfItems);
 
         for (String fredBob : addedFredBobs)
@@ -419,7 +419,7 @@ public class AVLSetTests {
     @Test
     public void toStringInOrder_WhenGettingInOrderString_ThenItemsAreInAlphabeticalOrder() {
         // Arrange
-        AVLSet set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
+        StringSet_Check set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
 
         // Act
         String inOrderResult = set.toStringInOrder();
@@ -432,7 +432,7 @@ public class AVLSetTests {
     @Test
     public void toStringInOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         String emptyResult = set.toStringInOrder();
@@ -445,7 +445,7 @@ public class AVLSetTests {
     @Test
     public void toStringPreOrder_WhenGettingPreOrderString_ThenItemsAreInPreOrder() {
         // Arrange
-        AVLSet set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
+        StringSet_Check set = createSetFromSequence("M", "Y", "A", "Z", "P", "O", "U", "S", "R");
 
         // Act
         String preOrderResult = set.toStringPreOrder();
@@ -458,7 +458,7 @@ public class AVLSetTests {
     @Test
     public void toStringPreOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         String emptyResult = set.toStringPreOrder();
@@ -471,7 +471,7 @@ public class AVLSetTests {
     @Test
     public void toStringPostOrder_WhenGettingPostOrderString_ThenItemsAreInPostOrder() {
         // Arrange
-        AVLSet set = createSetFromSequence("MMM", "YYY", "AAA", "ZZZ", "PPP", "OOO", "UUU", "SSS", "RRR");
+        StringSet_Check set = createSetFromSequence("MMM", "YYY", "AAA", "ZZZ", "PPP", "OOO", "UUU", "SSS", "RRR");
 
         // Act
         String postOrderResult = set.toStringPostOrder();
@@ -484,7 +484,7 @@ public class AVLSetTests {
     @Test
     public void toStringPostOrder_WhenSetIsEmpty_ThenEmptyStringReturned() {
         // Arrange
-        AVLSet set = new AVLSet();
+        StringSet_Check set = new AVLSet();
 
         // Act
         String emptyResult = set.toStringPostOrder();
@@ -497,7 +497,7 @@ public class AVLSetTests {
     @Test
     public void remove_WhenRemovingItem_ThenRemoveDoesNotDependOnReferenceEquality() {
         // Arrange
-        AVLSet set = createSetFromSequence("AAA", "BBB");
+        StringSet_Check set = createSetFromSequence("AAA", "BBB");
 
         // Act
         set.remove("A" + "A" + "A");
@@ -518,7 +518,7 @@ public class AVLSetTests {
         set.add("A");
 
         // Assert
-        assertEquals("(G (C (B A _) (E D F)) (H _ I))", set.toString());
+        assertEquals("(G (C (B A _) (E D F)) (H _ I))", toString(set.root));
     }
 
     @Test
@@ -530,7 +530,7 @@ public class AVLSetTests {
         set.add("F");
 
         // Assert
-        assertEquals("(J (D (B (A 0 _) C) (G (E _ F) (H _ I))) (L K (M _ N)))", set.toString());
+        assertEquals("(J (D (B (A 0 _) C) (G (E _ F) (H _ I))) (L K (M _ N)))", toString(set.root));
     }
 
     @Test
@@ -542,7 +542,7 @@ public class AVLSetTests {
         set.add("I");
 
         // Assert
-        assertEquals("(E (C (B A _) D) (K (H (G F _) (J I _)) (M L (N _ O))))", set.toString());
+        assertEquals("(E (C (B A _) D) (K (H (G F _) (J I _)) (M L (N _ O))))", toString(set.root));
     }
 
     @Test
@@ -554,7 +554,7 @@ public class AVLSetTests {
         set.remove("A");
 
         // Assert
-        assertEquals("(C B D)", set.toString());
+        assertEquals("(C B D)", toString(set.root));
     }
 
     @Test
@@ -566,7 +566,7 @@ public class AVLSetTests {
         set.remove("B");
 
         // Assert
-        assertEquals("(E (C A D) (F _ G))", set.toString());
+        assertEquals("(E (C A D) (F _ G))", toString(set.root));
     }
 
     @Test
@@ -578,7 +578,7 @@ public class AVLSetTests {
         set.remove("D");
 
         // Assert
-        assertEquals("(B A C)", set.toString());
+        assertEquals("(B A C)", toString(set.root));
     }
 
     @Test
@@ -590,7 +590,7 @@ public class AVLSetTests {
         set.remove("D");
 
         // Assert
-        assertEquals("(B A C)", set.toString());
+        assertEquals("(B A C)", toString(set.root));
     }
 
     @Test
@@ -602,7 +602,7 @@ public class AVLSetTests {
         set.remove("A");
 
         // Assert
-        assertEquals("(C B D)", set.toString());
+        assertEquals("(C B D)", toString(set.root));
     }
 
     @Test
@@ -614,7 +614,7 @@ public class AVLSetTests {
         set.remove("B");
 
         // Assert
-        assertEquals("(G (C A (E D F)) (I H J))", set.toString());
+        assertEquals("(G (C A (E D F)) (I H J))", toString(set.root));
     }
 
     @Test
@@ -626,7 +626,7 @@ public class AVLSetTests {
         set.remove("I");
 
         // Assert
-        assertEquals("(D (B A C) (H (F E G) J))", set.toString());
+        assertEquals("(D (B A C) (H (F E G) J))", toString(set.root));
     }
 
     private AVLSet createSetFromSequence(String... args) {
@@ -635,7 +635,7 @@ public class AVLSetTests {
         for(String value : args) {
             set.add(value);
             System.out.print("Added " + value + ": ");
-            System.out.println(set.toString());
+            System.out.println(toString(set.root));
         }
         return set;
     }
@@ -649,7 +649,7 @@ public class AVLSetTests {
         set.add("I");
 
         // Assert
-        assertEquals("(C (B A _) (G (E D F) (H _ I)))", set.toString());
+        assertEquals("(C (B A _) (G (E D F) (H _ I)))", toString(set.root));
     }
 
 
@@ -660,7 +660,7 @@ public class AVLSetTests {
         AVLSet set = createSetFromSequence("M", "T", "O", "Z", "D", "E", "A", "B");
 
         // Act
-        String treeRepresentation = set.toString();
+        String treeRepresentation = toString(set.root);
 
         // Assert
         assertEquals("(O (E (B A D) M) (T _ Z))", treeRepresentation);
@@ -754,5 +754,21 @@ public class AVLSetTests {
             ar[index] = ar[i];
             ar[i] = a;
         }
+    }
+
+    // recursively builds a string that represents the tree's structure
+    private String toString(Node node) {
+        if (node == null)
+            return "_";
+
+        String left = toString(node.left);
+        String right = toString(node.right);
+        String optionalSpace = " ";
+
+        if ((left == "_") && (right == "_")) {
+            return node.value;
+        }
+
+        return "(" + node.value + optionalSpace + left + optionalSpace + right + ")";
     }
 }

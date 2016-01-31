@@ -14,6 +14,9 @@
  * 28 January 2016
  */
 public class BSTSet {
+    // a string that will delineate the items returned by the three toString methods.
+    protected String DELIMINATOR;
+
     // The root node of the binary tree
     Node root;
 
@@ -26,6 +29,7 @@ public class BSTSet {
     public BSTSet() {
         numberOfNodes = 0;
         root = null;
+        DELIMINATOR = " ";
     }
 
     /**
@@ -284,8 +288,8 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalPreSpace = currentNode.left == null ? "" : " ";
-        String optionalPostSpace = currentNode.right == null ? "" : " ";
+        String optionalPreSpace = currentNode.left == null ? "" : DELIMINATOR;
+        String optionalPostSpace = currentNode.right == null ? "" : DELIMINATOR;
 
         return toStringInOrderRecursive(currentNode.left)
                 + optionalPreSpace
@@ -315,7 +319,7 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : " ";
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELIMINATOR;
 
         return optionalSpace
                 + currentNode.value
@@ -350,243 +354,12 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : " ";
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELIMINATOR;
 
         return toStringPostOrderRecursive(currentNode.left)
                 + toStringPostOrderRecursive(currentNode.right)
                 + currentNode.value
                 + optionalSpace;
-    }
-
-    /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using an in-order
-     * traversal of the underlying tree.
-     *
-     * @return an iterator over the elements in this set
-     */
-    public StringIterator iteratorInOrder() {
-        return new InOrderIterator(this);
-    }
-
-    /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using a pre-order
-     * traversal of the underlying tree.
-     *
-     * @return an iterator over the elements in this set
-     */
-    public StringIterator iteratorPreOrder() {
-        return new PreOrderIterator(this);
-    }
-
-    /**
-     * Returns an iterator over the elements in this set.
-     * The elements are returned using a post-order
-     * traversal of the underlying tree.
-     *
-     * @return an iterator over the elements in this set
-     */
-    public StringIterator iteratorPostOrder() {
-        return new PostOrderIterator(this);
-    }
-
-    /**
-     * This iterator will traverse a BSTSet using In-Order sequence.
-     */
-    private class InOrderIterator implements StringIterator {
-        // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack<Node> nodes;
-        // The set that this iterator is traversing
-        private BSTSet bstSet;
-        // Last node that was returned from Next();
-        private Node lastNode;
-
-        /**
-         * Constructor for iterator
-         * @param set The BSTset that this iterator will traverse
-         */
-        public InOrderIterator(BSTSet set) {
-            bstSet = set;
-            nodes = new NodeStack();
-            fillStackUntilNextNode(set.root);
-        }
-
-        // Pushes a path of nodes onto the stack until it finds the next node.
-        private void fillStackUntilNextNode(Node startingNode) {
-            while(startingNode != null) {
-                nodes.push(startingNode);
-                startingNode = startingNode.left;
-            }
-        }
-
-        /**
-         * Returns true if the iteration has more elements.
-         * (In other words, returns true if next() would
-         * return an element rather than throwing an
-         * exception.)
-         *
-         * @return true if the iteration has more elements
-         */
-        @Override
-        public boolean hasNext() {
-            return !nodes.isEmpty();
-        }
-
-        /**
-         * Returns the next element in the iteration.
-         *
-         * @return the next element in the iteration
-         * @throws IllegalStateException if the iteration
-         *                               has no more elements
-         */
-        @Override
-        public String next() {
-            if (!hasNext())
-                throw new IllegalStateException("There are no more items");
-
-            Node nextNode = nodes.pop();
-            fillStackUntilNextNode(nextNode.right);
-
-            lastNode = nextNode;
-            return nextNode.value;
-        }
-    }
-
-    /**
-     * This iterator will traverse a BSTSet in Pre-Order sequence.
-     */
-    private class PreOrderIterator implements StringIterator {
-        // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack<Node> nodes;
-        // The set that this iterator is traversing
-        private BSTSet bstSet;
-        // Last node that was returned from Next();
-        private Node lastNode;
-
-        /**
-         * Constructor for iterator
-         * @param set The BSTset that this iterator will traverse
-         */
-        public PreOrderIterator(BSTSet set) {
-            bstSet = set;
-
-            nodes = new NodeStack();
-            nodes.push(set.root);
-        }
-
-        /**
-         * Returns true if the iteration has more elements.
-         * (In other words, returns true if next() would
-         * return an element rather than throwing an
-         * exception.)
-         *
-         * @return true if the iteration has more elements
-         */
-        @Override
-        public boolean hasNext() {
-            return !nodes.isEmpty();
-        }
-
-        /**
-         * Returns the next element in the iteration.
-         *
-         * @return the next element in the iteration
-         * @throws IllegalStateException if the iteration
-         *                               has no more elements
-         */
-        @Override
-        public String next() {
-            if (!hasNext())
-                throw new IllegalStateException("There are no more items");
-
-            Node nextNode = nodes.pop();
-
-            if (nextNode.right != null)
-                nodes.push(nextNode.right);
-
-            if (nextNode.left != null)
-                nodes.push(nextNode.left);
-
-            lastNode = nextNode;
-            return nextNode.value;
-        }
-    }
-
-    /**
-     * This iterator will traverse a BSTSet in Post-Order sequence.
-     */
-    private class PostOrderIterator implements StringIterator {
-        // Stores the current path of the iterator. Top item is always the next item.
-        private NodeStack<Node> nodes;
-        // The set that this iterator is traversing
-        private BSTSet bstSet;
-        // Last node that was returned from Next();
-        private Node lastNode;
-
-        /**
-         * Constructor for iterator
-         * @param set The BSTset that this iterator will traverse
-         */
-        public PostOrderIterator(BSTSet set) {
-            bstSet = set;
-            nodes = new NodeStack();
-            fillStackUntilNextNode(set.root);
-        }
-
-        // Finds the next node and pushes nodes into stack along the way
-        private void fillStackUntilNextNode(Node startingNode) {
-            while(startingNode != null) {
-                nodes.push(startingNode);
-
-                // First, go left as much as possible
-                if (startingNode.left != null) {
-                    startingNode = startingNode.left;
-                    continue;
-                }
-
-                // If can't go left, then try to go right with secondary preference
-                startingNode = startingNode.right;
-            }
-        }
-
-        /**
-         * Returns true if the iteration has more elements.
-         * (In other words, returns true if next() would
-         * return an element rather than throwing an
-         * exception.)
-         *
-         * @return true if the iteration has more elements
-         */
-        @Override
-        public boolean hasNext() {
-            return !nodes.isEmpty();
-        }
-
-        /**
-         * Returns the next element in the iteration.
-         *
-         * @return the next element in the iteration
-         * @throws IllegalStateException if the iteration
-         *                               has no more elements
-         */
-        @Override
-        public String next() {
-            if (!hasNext())
-                throw new IllegalStateException("There are no more items");
-
-            Node currentNode = nodes.pop();
-
-            if (!nodes.isEmpty()) {
-                Node parentNode = nodes.peek();
-                if (parentNode.left == currentNode) {
-                    fillStackUntilNextNode(parentNode.right);
-                }
-            }
-
-            lastNode = currentNode;
-            return currentNode.value;
-        }
     }
 }
 
