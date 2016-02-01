@@ -1,21 +1,9 @@
 /**
- * Nathan Flint
- * Assignment 2: BSTSet
- * Level: Plus
- * Features:
- *   -toString enhancement
- *   -remove
- *   -simple iterators
- *   -complicated iterator
- *
  * This class implements a Set. A binary search tree is used for the implementation.
- *
- * @author Nathan Flint
- * 28 January 2016
  */
 public class BSTSet {
     // a string that will delineate the items returned by the three toString methods.
-    protected String DELIMINATOR;
+    protected String DELINIATOR;
 
     // The root node of the binary tree
     Node root;
@@ -29,7 +17,7 @@ public class BSTSet {
     public BSTSet() {
         numberOfNodes = 0;
         root = null;
-        DELIMINATOR = " ";
+        DELINIATOR = " ";
     }
 
     /**
@@ -66,22 +54,43 @@ public class BSTSet {
 
     // Recursively traverses the tree looking for the right
     // place to put the given string.
-    protected boolean recursiveAdd(Node parent, Node workingNode, String s) {
-        if (workingNode.value.equals(s))
+    private boolean recursiveAdd(Node parent, Node node, String s) {
+        if (node.value.equals(s))
             return false;
 
-        Node nextNode = getNextNode(workingNode, s);
+        Node nextNode = getNextNode(node, s);
 
         if (nextNode != null)
-            return recursiveAdd(parent, nextNode,s);
+            if (recursiveAdd(node, nextNode,s)) {
+                updateHeight(node);
+                rebalanceIfNeeded(parent, node);
+                return true;
+            } else {
+                return false;
+            }
 
-        addStringToCorrectEdge(workingNode, s);
-
+        addStringToCorrectEdge(node, s);
+        updateHeight(node);
         return true;
     }
 
+    protected void updateHeight(Node node) {
+        if (node == null)
+            return;
+        node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
+    }
+
+    private int getNodeHeight(Node node) {
+        return node == null ? 0 : node.height;
+    }
+
+    protected void rebalanceIfNeeded(Node parent, Node node) {
+        // do nothing for BSTTree
+    }
+
+
     // Used for adding a new leaf. Adds node to correct edge.
-    protected void addStringToCorrectEdge(Node workingNode, String s) {
+    private void addStringToCorrectEdge(Node workingNode, String s) {
         if (stringIsLessThanNode(workingNode, s))
             workingNode.left = new Node(s);
         else
@@ -89,7 +98,7 @@ public class BSTSet {
     }
 
     // returns left or right node base of value of given string
-    protected Node getNextNode(Node workingNode, String s) {
+    private Node getNextNode(Node workingNode, String s) {
         return stringIsLessThanNode(workingNode, s) ? workingNode.left : workingNode.right;
     }
 
@@ -161,32 +170,39 @@ public class BSTSet {
     }
 
     // Recursively finds and then removes the given string from the given root node.
-    private boolean recursiveRemove(Node lastNode, Node workingNode, String stringToRemove) {
+    private boolean recursiveRemove(Node parent, Node workingNode, String stringToRemove) {
         if (workingNode == null)
             return false;
 
-        if (stringIsLessThanNode(workingNode, stringToRemove))
-            return recursiveRemove(workingNode, workingNode.left, stringToRemove);
+        boolean result;
+        if (stringIsLessThanNode(workingNode, stringToRemove))  {
+            result = recursiveRemove(workingNode, workingNode.left, stringToRemove);
+        }
+        else if (stringIsGreaterThanNode(workingNode, stringToRemove)) {
+            result = recursiveRemove(workingNode, workingNode.right, stringToRemove);
+        }
+        else {
+            doRemove(parent, workingNode);
+            result = true;
+        }
 
-        if (stringIsGreaterThanNode(workingNode, stringToRemove))
-            return recursiveRemove(workingNode, workingNode.right, stringToRemove);
-
-        doRemove(lastNode, workingNode);
-        return true;
+        updateHeight(workingNode);
+        rebalanceIfNeeded(parent, workingNode);
+        return result;
     }
 
     // identifies if given string is less than given node
-    protected boolean stringIsLessThanNode(Node workingNode, String stringToRemove) {
+    private boolean stringIsLessThanNode(Node workingNode, String stringToRemove) {
         return workingNode.value.compareTo(stringToRemove) > 0;
     }
 
     // identifies if given string is greater than given node
-    protected boolean stringIsGreaterThanNode(Node workingNode, String stringToRemove) {
+    private boolean stringIsGreaterThanNode(Node workingNode, String stringToRemove) {
         return workingNode.value.compareTo(stringToRemove) < 0;
     }
 
     // Removes the given node from the given parent.
-    private void doRemove(Node parentNode, Node nodeToRemove) {
+    protected void doRemove(Node parentNode, Node nodeToRemove) {
         if (nodeToRemove.left == null) {
             updateParentReference(parentNode, nodeToRemove, nodeToRemove.right);
             return;
@@ -288,8 +304,8 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalPreSpace = currentNode.left == null ? "" : DELIMINATOR;
-        String optionalPostSpace = currentNode.right == null ? "" : DELIMINATOR;
+        String optionalPreSpace = currentNode.left == null ? "" : DELINIATOR;
+        String optionalPostSpace = currentNode.right == null ? "" : DELINIATOR;
 
         return toStringInOrderRecursive(currentNode.left)
                 + optionalPreSpace
@@ -319,7 +335,7 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELIMINATOR;
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELINIATOR;
 
         return optionalSpace
                 + currentNode.value
@@ -328,7 +344,7 @@ public class BSTSet {
     }
 
     // Identifies if the given node is the root node
-    protected boolean nodeIsRoot(Node currentNode) {
+    boolean nodeIsRoot(Node currentNode) {
         return currentNode == root;
     }
 
@@ -354,7 +370,7 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELIMINATOR;
+        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELINIATOR;
 
         return toStringPostOrderRecursive(currentNode.left)
                 + toStringPostOrderRecursive(currentNode.right)

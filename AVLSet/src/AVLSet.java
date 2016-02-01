@@ -11,7 +11,7 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
     public AVLSet() {
         numberOfNodes = 0;
         root = null;
-        DELIMINATOR = ", ";
+        DELINIATOR = ", ";
         rotations = new Rotation[] {
                 new LeftRotation(),
                 new RightRotation(),
@@ -21,33 +21,7 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
     }
 
     @Override
-    protected boolean recursiveAdd(Node parent, Node node, String s) {
-        if (node.value.equals(s))
-            return false;
-
-        Node nextNode = getNextNode(node, s);
-
-        if (nextNode != null)
-            if (recursiveAdd(node, nextNode,s)) {
-                updateHeight(node);
-                rebalanceIfNeeded(parent, node);
-                return true;
-            } else {
-                return false;
-            }
-
-        addStringToCorrectEdge(node, s);
-        updateHeight(node);
-        return true;
-    }
-
-    private void updateHeight(Node node) {
-        if (node == null)
-            return;
-        node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
-    }
-
-    private void rebalanceIfNeeded(Node parent, Node node) {
+    protected void rebalanceIfNeeded(Node parent, Node node) {
         for (Rotation rotation : rotations)
             if (rotation.isNeeded(node)) {
                 rotation.execute(parent, node);
@@ -55,83 +29,7 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
             }
     }
 
-    private int getNodeHeight(Node node) {
-        return node == null ? 0 : node.height;
-    }
-
-    /**
-     * Removes the specified element from this set if
-     * it is present. More formally, this removes an
-     * element e such that s.equals(e), if this set
-     * contains such an element. Returns true if this
-     * set contained the element (or equivalently, if
-     * this set changed as a result of the call).
-     * (This set will not contain the element once the
-     * call returns.)
-     *
-     * @param s the String to be removed from this set,
-     *          if present
-     * @return true if this set contained the specified
-     * element
-     * @throws NullPointerException if the specified
-     *                              element is null
-     */
-    @Override
-    public boolean remove(String s) {
-        if (recursiveRemove(null ,root, s)) {
-            numberOfNodes--;
-            return true;
-        }
-
-        return false;
-    }
-
     // Recursively finds and then removes the given string from the given root node.
-    private boolean recursiveRemove(Node parent, Node workingNode, String stringToRemove) {
-        if (workingNode == null)
-            return false;
-
-        boolean result;
-        if (stringIsLessThanNode(workingNode, stringToRemove))  {
-            result = recursiveRemove(workingNode, workingNode.left, stringToRemove);
-        }
-        else if (stringIsGreaterThanNode(workingNode, stringToRemove)) {
-            result = recursiveRemove(workingNode, workingNode.right, stringToRemove);
-        }
-        else {
-            doRemove(parent, workingNode);
-            result = true;
-        }
-
-        updateHeight(workingNode);
-        rebalanceIfNeeded(parent, workingNode);
-        return result;
-    }
-
-    // Removes the given node from the given parent.
-    private void doRemove(Node parentAVLNode, Node nodeToRemove) {
-        if (nodeToRemove.left == null) {
-            updateParentReference(parentAVLNode, nodeToRemove, nodeToRemove.right);
-            return;
-        }
-
-        if (nodeToRemove.right == null) {
-            updateParentReference(parentAVLNode, nodeToRemove, nodeToRemove.left);
-            return;
-        }
-
-        String maxLeftValue = findMaxValue(nodeToRemove.left);
-        nodeToRemove.value = maxLeftValue;
-        recursiveRemove(nodeToRemove, nodeToRemove.left, maxLeftValue);
-    }
-
-    // recursively searches the given tree looking for the maximum value
-    private String findMaxValue(Node currentAVLNode) {
-        if (currentAVLNode.right == null)
-            return currentAVLNode.value;
-        return findMaxValue(currentAVLNode.right);
-    }
-
     private class LeftRightRotation extends Rotation {
 
         @Override

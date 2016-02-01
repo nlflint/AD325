@@ -44,10 +44,12 @@ public class PolishNotationTests {
         Lukasiewicz converter = new PolishNotation();
 
         // Act & Assert
+        int inputIndex = 0;
+        int expectedOutputIndex = 1;
 
         for (String[] example : examples) {
-            String reverse = converter.pn2rpn(example[0]);
-            assertEquals(example[1], reverse);
+            String actualOutput = converter.pn2rpn(example[inputIndex]);
+            assertEquals(example[expectedOutputIndex], actualOutput);
         }
     }
 
@@ -90,10 +92,12 @@ public class PolishNotationTests {
         Lukasiewicz converter = new PolishNotation();
 
         // Act & Assert
+        int inputIndex = 1;
+        int expectedOutputIndex = 0;
 
         for (String[] example : examples) {
-            String reverse = converter.rpn2pn(example[1]);
-            assertEquals(example[0], reverse);
+            String actualOutput = converter.rpn2pn(example[inputIndex]);
+            assertEquals(example[expectedOutputIndex], actualOutput);
         }
     }
 }

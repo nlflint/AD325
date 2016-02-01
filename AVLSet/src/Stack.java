@@ -36,15 +36,6 @@ class Stack<T> {
     public boolean isEmpty() {
         return head == null;
     }
-
-    /**
-     * Gets the value from the top of the stack without removing it.
-     * @return the value at the top of the stack
-     */
-    public T peek() {
-        VerifyStackIsNotEmpty();
-        return head.value;
-    }
 }
 
 class StackNode<T> {
