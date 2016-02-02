@@ -1,11 +1,12 @@
+package ad325.structures;
 /**
+ * @author Nathan Flint
+ * Assignment 3
+ * Level: Plus
+ *
  * This is an AVL Set. It is a set implemented with a self balancing binary search tree.
- *
- * @Author Nathan Flint
- * 2 February 2016
- *
  */
-public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Check  {
+public class AVLSet extends BSTSet  {
     // collection of rotation types
     private Rotation[] rotations;
 

@@ -1,7 +1,11 @@
+package ad325.structures;
 import java.util.Scanner;
-
 /**
- * Created by nate on 1/30/16.
+ * @author Nathan Flint
+ * Assignment 3
+ *
+ * This class will convert a space delimited polish notion to reverse polish notation and vice versa.
+ *
  */
 public class PolishNotation implements Lukasiewicz {
     String[] operators;
@@ -10,7 +14,6 @@ public class PolishNotation implements Lukasiewicz {
     }
     /**
      * Converts Polish notation to reverse Polish notation.
-     *
      * @param s The Polish notation string to be converted
      * @return The reverse Polish notation representation of the same expression
      */
@@ -65,7 +68,6 @@ public class PolishNotation implements Lukasiewicz {
 
     /**
      * Converts reverse Polish notation to Polish notation.
-     *
      * @param s The reverse Polish notation string to be converted
      * @return The Polish notation representation of the same expression
      */
@@ -120,10 +122,8 @@ public class PolishNotation implements Lukasiewicz {
     class Node {
         // Value of the node
         String value;
-        // The left and right childred of this node
+        // The left and right children of this node
         Node left, right;
-        // height of the node
-        int height;
 
         /**
          * Constructor. Makes a new node with the given value and null child references.
@@ -133,7 +133,6 @@ public class PolishNotation implements Lukasiewicz {
         public Node(String s) {
             value = s;
             left = right = null;
-            height = 1;
         }
     }
 

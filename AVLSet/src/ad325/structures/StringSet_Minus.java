@@ -1,3 +1,5 @@
+package ad325.structures;
+
 /**
  * This is a String version of the java.util.Set
  * interface. It is simplified by removing the generic 

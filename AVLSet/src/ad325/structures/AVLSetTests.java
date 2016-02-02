@@ -1,3 +1,5 @@
+package ad325.structures;
+
 import org.junit.Test;
 import static org.junit.Assert.*;
 

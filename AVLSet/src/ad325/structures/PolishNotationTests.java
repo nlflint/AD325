@@ -1,3 +1,4 @@
+package ad325.structures;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -40,7 +41,8 @@ public class PolishNotationTests {
                 {"* + a b c", "a b + c *"},
                 {"+ * a b * c d","a b * c d * +"},
                 {"- - a b c", "a b - c -"},
-                {"* a - b c", "a b c - *"}};
+                {"* a - b c", "a b c - *"},
+                {"/ 9 * - 12 9 1", "9 12 9 - 1 * /"}};
         Lukasiewicz converter = new PolishNotation();
 
         // Act & Assert
@@ -88,7 +90,8 @@ public class PolishNotationTests {
                 {"* + a b c", "a b + c *"},
                 {"+ * a b * c d","a b * c d * +"},
                 {"- - a b c", "a b - c -"},
-                {"* a - b c", "a b c - *"}};
+                {"* a - b c", "a b c - *"},
+                {"/ 9 * - 12 9 1", "9 12 9 - 1 * /"}};
         Lukasiewicz converter = new PolishNotation();
 
         // Act & Assert

@@ -1,9 +1,14 @@
+package ad325.structures;
+
 /**
+ * @author Nathan Flint
+ * Assignment 3
+ * Level: Plus
+ *
  * This class implements a Set. A binary search tree is used for the implementation.
  *
- * @Author Nathan Flint
  */
-public class BSTSet {
+public class BSTSet implements StringSet_Check {
     // a string that will delineate the items returned by the three toString methods.
     protected String DELIMITER;
 
