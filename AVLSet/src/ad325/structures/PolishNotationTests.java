@@ -16,7 +16,6 @@ public class PolishNotationTests {
 
         // Assert
         assertEquals("5 2 +", reverse);
-
     }
 
     @Test
@@ -30,7 +29,6 @@ public class PolishNotationTests {
 
         // Assert
         assertEquals("5 3 - 2 %", reverse);
-
     }
 
     @Test
@@ -65,7 +63,6 @@ public class PolishNotationTests {
 
         // Assert
         assertEquals("+ 2 5", polish);
-
     }
 
     @Test
@@ -79,7 +76,6 @@ public class PolishNotationTests {
 
         // Assert
         assertEquals("+ % 5 3 2", reverse);
-
     }
 
     @Test
