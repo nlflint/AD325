@@ -1,5 +1,9 @@
 /**
- * Created by nathanf on 1/21/2016.
+ * This is an AVL Set. It is a set implemented with a self balancing binary search tree.
+ *
+ * @Author Nathan Flint
+ * 2 February 2016
+ *
  */
 public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Check  {
     // collection of rotation types
@@ -11,7 +15,7 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
     public AVLSet() {
         numberOfNodes = 0;
         root = null;
-        DELINIATOR = ", ";
+        DELIMITER = ", ";
         rotations = new Rotation[] {
                 new LeftRotation(),
                 new RightRotation(),
@@ -87,31 +91,28 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
         abstract boolean isNeeded(Node node);
         abstract void execute(Node parent, Node rotatingNode);
 
-        protected int getNodeHeight(Node node) {
-            return node == null ? 0 : node.height;
-        }
 
         protected boolean leftChildIsTooLong(Node node) {
-            return (getNodeHeight(node.left) - getNodeHeight(node.right)) > 1;
+            return (Node.getNodeHeight(node.left) - Node.getNodeHeight(node.right)) > 1;
         }
 
         protected boolean rightChildIsTooLong(Node node) {
-            return (getNodeHeight(node.right) - getNodeHeight(node.left)) > 1;
+            return (Node.getNodeHeight(node.right) - Node.getNodeHeight(node.left)) > 1;
         }
 
         protected boolean isRightChildLongest(Node node) {
             if (node == null) return false;
 
-            int rightHeight = node.right == null ? 0 : node.right.height;
-            int leftHeight = node.left == null ? 0 : node.left.height;
+            int rightHeight = Node.getNodeHeight(node.right);
+            int leftHeight = Node.getNodeHeight(node.left);
             return rightHeight >= leftHeight;
         }
 
         protected boolean isLeftChildLongest(Node node) {
             if (node == null) return false;
 
-            int rightHeight = node.right == null ? 0 : node.right.height;
-            int leftHeight = node.left == null ? 0 : node.left.height;
+            int rightHeight = Node.getNodeHeight(node.right);
+            int leftHeight = Node.getNodeHeight(node.left);
             return leftHeight >= rightHeight;
         }
 
@@ -120,10 +121,10 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
             rotatingNode.right = temp.left;
             temp.left = rotatingNode;
 
-            updateParentReference(parent, rotatingNode, temp);
-            updateHeight(rotatingNode);
-            updateHeight(temp);
-            updateHeight(parent);
+            replaceChildOfParent(parent, rotatingNode, temp);
+            Node.updateHeight(rotatingNode);
+            Node.updateHeight(temp);
+            Node.updateHeight(parent);
         }
 
         protected void rotateRight(Node parent, Node rotatingNode) {
@@ -131,10 +132,10 @@ public class AVLSet extends BSTSet implements StringSet_Improved, StringSet_Chec
             rotatingNode.left = temp.right;
             temp.right = rotatingNode;
 
-            updateParentReference(parent, rotatingNode, temp);
-            updateHeight(rotatingNode);
-            updateHeight(temp);
-            updateHeight(parent);
+            replaceChildOfParent(parent, rotatingNode, temp);
+            Node.updateHeight(rotatingNode);
+            Node.updateHeight(temp);
+            Node.updateHeight(parent);
         }
     }
 }

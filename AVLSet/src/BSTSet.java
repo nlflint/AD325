@@ -1,15 +1,17 @@
 /**
  * This class implements a Set. A binary search tree is used for the implementation.
+ *
+ * @Author Nathan Flint
  */
 public class BSTSet {
     // a string that will delineate the items returned by the three toString methods.
-    protected String DELINIATOR;
+    protected String DELIMITER;
 
     // The root node of the binary tree
-    Node root;
+    protected Node root;
 
     // The number of nodes in the tree
-    int numberOfNodes;
+    protected int numberOfNodes;
 
     /**
      * Constructor initializes an empty set
@@ -17,7 +19,7 @@ public class BSTSet {
     public BSTSet() {
         numberOfNodes = 0;
         root = null;
-        DELINIATOR = " ";
+        DELIMITER = " ";
     }
 
     /**
@@ -62,7 +64,7 @@ public class BSTSet {
 
         if (nextNode != null)
             if (recursiveAdd(node, nextNode,s)) {
-                updateHeight(node);
+                Node.updateHeight(node);
                 rebalanceIfNeeded(parent, node);
                 return true;
             } else {
@@ -70,24 +72,18 @@ public class BSTSet {
             }
 
         addStringToCorrectEdge(node, s);
-        updateHeight(node);
+        Node.updateHeight(node);
         return true;
     }
 
-    protected void updateHeight(Node node) {
-        if (node == null)
-            return;
-        node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
-    }
-
-    private int getNodeHeight(Node node) {
-        return node == null ? 0 : node.height;
-    }
-
+    /**
+     * Rebalances the given node if it is unbalanced.
+     * @param parent The parent node of the node to be rebalanced
+     * @param node The node that will be checked for balance and then rebalanced if needed.
+     */
     protected void rebalanceIfNeeded(Node parent, Node node) {
-        // do nothing for BSTTree
+        // Do nothing. BSTTree is not rebalanced.
     }
-
 
     // Used for adding a new leaf. Adds node to correct edge.
     private void addStringToCorrectEdge(Node workingNode, String s) {
@@ -186,7 +182,7 @@ public class BSTSet {
             result = true;
         }
 
-        updateHeight(workingNode);
+        Node.updateHeight(workingNode);
         rebalanceIfNeeded(parent, workingNode);
         return result;
     }
@@ -202,14 +198,14 @@ public class BSTSet {
     }
 
     // Removes the given node from the given parent.
-    protected void doRemove(Node parentNode, Node nodeToRemove) {
+    private void doRemove(Node parentNode, Node nodeToRemove) {
         if (nodeToRemove.left == null) {
-            updateParentReference(parentNode, nodeToRemove, nodeToRemove.right);
+            replaceChildOfParent(parentNode, nodeToRemove, nodeToRemove.right);
             return;
         }
 
         if (nodeToRemove.right == null) {
-            updateParentReference(parentNode, nodeToRemove, nodeToRemove.left);
+            replaceChildOfParent(parentNode, nodeToRemove, nodeToRemove.left);
             return;
         }
 
@@ -225,20 +221,20 @@ public class BSTSet {
         return findMaxValue(currentNode.right);
     }
 
-    // Updates the parent's reference to a new child.
-    protected void updateParentReference(Node parent, Node childToRemove, Node newChild) {
-        // Special case if removing root node
-        if (nodeIsRoot(childToRemove)) {
+    /**
+     * Updates the parent's reference to its right or left child. Uses old child reference to determine
+     * which child to replace (left or right).
+     * @param parent The parent reference that will be updated
+     * @param oldChild The current child reference that will be removed from the parent
+     * @param newChild The new child that will replace the old child
+     */
+    protected void replaceChildOfParent(Node parent, Node oldChild, Node newChild) {
+        if (isRootNode(oldChild))
             root = newChild;
-            return;
-        }
-
-        if(isRightChildOfParent(parent, childToRemove)) {
+        else if(isRightChildOfParent(parent, oldChild))
             parent.right = newChild;
-            return;
-        }
-
-        parent.left = newChild;
+        else
+            parent.left = newChild;
         return;
     }
 
@@ -304,8 +300,8 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalPreSpace = currentNode.left == null ? "" : DELINIATOR;
-        String optionalPostSpace = currentNode.right == null ? "" : DELINIATOR;
+        String optionalPreSpace = currentNode.left == null ? "" : DELIMITER;
+        String optionalPostSpace = currentNode.right == null ? "" : DELIMITER;
 
         return toStringInOrderRecursive(currentNode.left)
                 + optionalPreSpace
@@ -335,7 +331,7 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELINIATOR;
+        String optionalSpace = isRootNode(currentNode) ? "" : DELIMITER;
 
         return optionalSpace
                 + currentNode.value
@@ -344,7 +340,7 @@ public class BSTSet {
     }
 
     // Identifies if the given node is the root node
-    boolean nodeIsRoot(Node currentNode) {
+    boolean isRootNode(Node currentNode) {
         return currentNode == root;
     }
 
@@ -370,7 +366,7 @@ public class BSTSet {
         if (currentNode == null)
             return "";
 
-        String optionalSpace = nodeIsRoot(currentNode) ? "" : DELINIATOR;
+        String optionalSpace = isRootNode(currentNode) ? "" : DELIMITER;
 
         return toStringPostOrderRecursive(currentNode.left)
                 + toStringPostOrderRecursive(currentNode.right)
@@ -385,10 +381,10 @@ public class BSTSet {
 class Node {
     // Value of the node
     String value;
-    // The left and right childred of this node
+    // The left and right children of this node
     Node left, right;
     // height of the node
-    int height;
+    private int height;
 
     /**
      * Constructor. Makes a new node with the given value and null child references.
@@ -398,6 +394,26 @@ class Node {
         value = s;
         left = right = null;
         height = 1;
+    }
+
+    /**
+     * Updates the height of the given node using the pre-calculated height of it's children.
+     // Does not traverse tree to figure out height.
+     * @param node The Node that will have its height updated
+     */
+    public static void updateHeight(Node node) {
+        if (node == null)
+            return;
+        node.height = Math.max(getNodeHeight(node.left), getNodeHeight(node.right)) + 1;
+    }
+
+    /**
+     * Gets height of a node safely. e.g. Returns 0 if node is null.
+     * @param node Node from which to get height
+     * @return height of the given node in the tree
+     */
+    public static int getNodeHeight(Node node) {
+        return node == null ? 0 : node.height;
     }
 }
 

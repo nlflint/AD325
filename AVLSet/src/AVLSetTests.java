@@ -570,7 +570,7 @@ public class AVLSetTests {
     }
 
     @Test
-    public void rebalance_WhenRemovingLeaveLeftLeftOverWeight_ThenOverWeightNodeIsRotatedRight() {
+    public void rebalance_WhenRemoveLeavesLeftLeftOverWeight_ThenOverWeightNodeIsRotatedRight() {
         // Arrange
         AVLSet set = createSetFromSequence("C","B","D","A");
 
@@ -582,7 +582,7 @@ public class AVLSetTests {
     }
 
     @Test
-    public void rebalance_WhenRemovingLeavesLeftRightOverWeight_ThenOverWeightNodeIsRotatedLeftRight() {
+    public void rebalance_WhenRemoveLeavesLeftRightOverWeight_ThenOverWeightNodeIsRotatedLeftRight() {
         // Arrange
         AVLSet set = createSetFromSequence("C","A","D","B");
 
@@ -594,7 +594,7 @@ public class AVLSetTests {
     }
 
     @Test
-    public void rebalance_WhenRemovingLeavesRightLeftOverWeight_ThenOverWeightNodeIsRotatedRightLeft() {
+    public void rebalance_WhenRemoveLeavesRightLeftOverWeight_ThenOverWeightNodeIsRotatedRightLeft() {
         // Arrange
         AVLSet set = createSetFromSequence("B","A","D","C");
 
@@ -606,7 +606,7 @@ public class AVLSetTests {
     }
 
     @Test
-    public void rebalance_WhenRemovingLeavesRightLeftAndRighRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedRight() {
+    public void rebalance_WhenRemoveLeavesRightLeftAndRighRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedRight() {
         // Arrange
         AVLSet set = createSetFromSequence("C","B","G","A","E","I","D","F","H","J");
 
@@ -618,7 +618,7 @@ public class AVLSetTests {
     }
 
     @Test
-    public void rebalance_WhenRemovingLeavesLeftLeftAndLeftRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedLeft() {
+    public void rebalance_WhenRemoveLeavesLeftLeftAndLeftRightChildrenEquallyWeighted_ThenOverWeightNodeIsRotatedLeft() {
         // Arrange
         AVLSet set = createSetFromSequence("H","D","I","B","F","J","A","C","E","G");
 
