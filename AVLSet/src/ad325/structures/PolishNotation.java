@@ -3,6 +3,7 @@ import java.util.Scanner;
 /**
  * @author Nathan Flint
  * Assignment 3
+ * Level: Plus
  *
  * This class will convert a space delimited polish notion to reverse polish notation and vice versa.
  *
@@ -28,6 +29,7 @@ public class PolishNotation implements Lukasiewicz {
         return stringBuilder.toString();
     }
 
+    // writes reverse polish notation to the string builder.
     private void printReversePolish(Node node, StringBuilder stringBuilder, int treeLevel) {
         if (node == null) return;
         printReversePolish(node.left, stringBuilder, treeLevel + 1);
@@ -39,10 +41,12 @@ public class PolishNotation implements Lukasiewicz {
         return;
     }
 
+    // Tests if the given tree level is at the root
     private boolean isRoot(int treeLevel) {
         return treeLevel == 0;
     }
 
+    // Builds an infix representation of the input as a binary tree
     private Node buildTreeFromPolish(Scanner scanner) {
         Node newNode = new Node(scanner.next());
         if (!isOperator(newNode.value))
@@ -53,6 +57,7 @@ public class PolishNotation implements Lukasiewicz {
         return newNode;
     }
 
+    // identifies if the given value is an operator
     private boolean isOperator(String value) {
         for(String operator : operators)
             if (value.equals(operator))
@@ -60,6 +65,7 @@ public class PolishNotation implements Lukasiewicz {
         return false;
     }
 
+    // Builds a scanner with the correct delimiter
     private Scanner buildScanner(String s) {
         Scanner scanner = new Scanner(s);
         scanner.useDelimiter(" ");
@@ -82,6 +88,7 @@ public class PolishNotation implements Lukasiewicz {
         return stringBuilder.toString();
     }
 
+    // writes the given infix tree as polish notation to the string builder
     private void printPolish(Node node, StringBuilder stringBuilder, int treeLevel) {
         if (node == null) return;
 
@@ -89,12 +96,12 @@ public class PolishNotation implements Lukasiewicz {
             stringBuilder.append(" ");
         stringBuilder.append(node.value);
 
-
         printPolish(node.right, stringBuilder, treeLevel + 1);
         printPolish(node.left, stringBuilder, treeLevel + 1);
 
     }
 
+    // Builds a binary tree from the given reverse polish notation represents as a stack.
     private Node buildTreeFromReversePolish(Stack<String> stack) {
         Node newNode = new Node(stack.pop());
 
@@ -106,6 +113,7 @@ public class PolishNotation implements Lukasiewicz {
         return newNode;
     }
 
+    // Constructs a stack from the given reverse polish notation
     private Stack<String> buildStack(String s) {
         Stack<String> stack = new Stack<>();
         Scanner scanner = buildScanner(s);

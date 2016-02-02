@@ -1,5 +1,9 @@
 package ad325.structures;
 /**
+ * @author Nathan Flint
+ * Assignment 3
+ * Level: Plus
+ *
  * This class implements the Stack ADT using a linked list.
  */
 class Stack<T> {
