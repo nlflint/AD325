@@ -43,15 +43,13 @@ public class BSTSet {
 
         if (root == null) {
             root = new Node(s);
-            numberOfNodes++;
-            return true;
+        }
+        else if (!recursiveAdd(null, root, s)) {
+            return false;
         }
 
-        if (recursiveAdd(null, root, s)) {
-            numberOfNodes++;
-            return true;
-        }
-        return false;
+        numberOfNodes++;
+        return true;
     }
 
     // Recursively traverses the tree looking for the right

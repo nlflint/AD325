@@ -126,13 +126,13 @@ public class AVLSetTests {
         // Arrange
         int numberOfItems = 100;
         StringSet_Check set = new AVLSet();
-        String[] addedFredBobs = CreateRandomStringDataSet(numberOfItems);
+        String[] addedFredBobs = CreateRandomlySortedStringDataSet(numberOfItems);
 
         for (String fredBob : addedFredBobs)
             set.add(fredBob);
 
         // Act & Assert
-        String[] verifiedFredBobs = CreateRandomStringDataSet(numberOfItems);
+        String[] verifiedFredBobs = CreateRandomlySortedStringDataSet(numberOfItems);
         for (String fredBob : verifiedFredBobs)
             assertTrue(set.contains(fredBob));
 
@@ -222,7 +222,7 @@ public class AVLSetTests {
     public void size_WhenSetContains100Items_ThenSizeIs100() {
         // Arrange
         StringSet_Check set = new AVLSet();
-        String[] fredBobs = CreateRandomStringDataSet(100);
+        String[] fredBobs = CreateRandomlySortedStringDataSet(100);
         for(String fredBob : fredBobs)
             set.add(fredBob);
 
@@ -397,13 +397,13 @@ public class AVLSetTests {
         // Arrange
         int numberOfItems = 100;
         StringSet_Check set = new AVLSet();
-        String[] addedFredBobs = CreateRandomStringDataSet(numberOfItems);
+        String[] addedFredBobs = CreateRandomlySortedStringDataSet(numberOfItems);
 
         for (String fredBob : addedFredBobs)
             set.add(fredBob);
 
         // Act
-        String[] verifyingFredBobs = CreateRandomStringDataSet(numberOfItems);
+        String[] verifyingFredBobs = CreateRandomlySortedStringDataSet(numberOfItems);
         int itemIndexToRemove = 50;
         set.remove(verifyingFredBobs[itemIndexToRemove]);
 
@@ -673,7 +673,7 @@ public class AVLSetTests {
         AVLSet set = new AVLSet();
 
         // Act
-        String[] values =  CreateRandomStringDataSet(1000);
+        String[] values =  CreateRandomlySortedStringDataSet(10000);
         for(String value : values)
                 set.add(value);
 
@@ -685,16 +685,16 @@ public class AVLSetTests {
     public void hugeTreeIsBalancedAfterRandomlyRemoving() {
         //Arrange
         AVLSet set = new AVLSet();
-        String[] values =  CreateRandomStringDataSet(1000);
+        String[] values =  CreateRandomlySortedStringDataSet(10000);
         for(String value : values)
             set.add(value);
 
-        String[] valuesRemoving =  CreateRandomStringDataSet(1000);
-        for(int i = 0; i < 500; i++)
+        String[] valuesRemoving =  CreateRandomlySortedStringDataSet(10000);
+        for(int i = 0; i < 5000; i++)
             set.remove(valuesRemoving[i]);
 
         // Act
-        for(int i = 500; i < 1000; i++)
+        for(int i = 5000; i < 10000; i++)
             set.contains(valuesRemoving[i]);
 
         // Assert
@@ -731,7 +731,7 @@ public class AVLSetTests {
 
     }
 
-    private String[] CreateRandomStringDataSet(int numberOfElements) {
+    private String[] CreateRandomlySortedStringDataSet(int numberOfElements) {
         String[] testData = new String[numberOfElements];
         for (int i = 1; i <= testData.length; i++) {
             testData[i - 1] = String.format("%02d", i);
