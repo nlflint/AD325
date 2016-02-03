@@ -78,7 +78,6 @@ The hardest problem was figuring out how the rotations actually worked, and then
 What did you learn from this work? How will you approach the next programming assignment differently?
 I learned that when I haven't wrapped my head around a concept, like double rotations, that I really need to put in the time to understand it on pen and paper first, before digging into it. If this happens again, I will make sure I fully understand the concept before I start trying to write unit tests.
 
-
-
 What are some ways to test the well-formedness of the input string for the Lukasiewicz methods?
+The only idea I can come up with is to do the verification as the tree is being constructed. For example, if the recursion returns to the root node, and there are items left in the scanner, then there was a problem. Or, if the scanner runs out of items before returning to the root node, then there was a problem.
 

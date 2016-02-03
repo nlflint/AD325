@@ -24,26 +24,9 @@ public class PolishNotation implements Lukasiewicz {
         Node root = buildTreeFromPolish(scanner);
 
         StringBuilder stringBuilder = new StringBuilder();
-        printReversePolish(root, stringBuilder, 0);
+        buildReversePolishString(root, stringBuilder, true);
 
         return stringBuilder.toString();
-    }
-
-    // writes reverse polish notation to the string builder.
-    private void printReversePolish(Node node, StringBuilder stringBuilder, int treeLevel) {
-        if (node == null) return;
-        printReversePolish(node.left, stringBuilder, treeLevel + 1);
-        printReversePolish(node.right, stringBuilder, treeLevel + 1);
-        stringBuilder.append(node.value);
-
-        if (!isRoot(treeLevel))
-            stringBuilder.append(" ");
-        return;
-    }
-
-    // Tests if the given tree level is at the root
-    private boolean isRoot(int treeLevel) {
-        return treeLevel == 0;
     }
 
     // Builds an infix representation of the input as a binary tree
@@ -65,6 +48,20 @@ public class PolishNotation implements Lukasiewicz {
         return false;
     }
 
+    // writes reverse polish notation to the string builder.
+    private void buildReversePolishString(Node node, StringBuilder stringBuilder, boolean isRoot) {
+        if (node == null) return;
+
+        buildReversePolishString(node.left, stringBuilder, false);
+        buildReversePolishString(node.right, stringBuilder, false);
+        stringBuilder.append(node.value);
+
+        if (!isRoot)
+            stringBuilder.append(" ");
+
+        return;
+    }
+
     // Builds a scanner with the correct delimiter
     private Scanner buildScanner(String s) {
         Scanner scanner = new Scanner(s);
@@ -79,49 +76,43 @@ public class PolishNotation implements Lukasiewicz {
      */
     @Override
     public String rpn2pn(String s) {
-        Stack<String> stack = buildStack(s);
-        Node root = buildTreeFromReversePolish(stack);
+        Scanner scanner = buildScanner(s);
+        Node root = buildTreeFromReversePolish(scanner);
 
         StringBuilder stringBuilder = new StringBuilder();
-        printPolish(root, stringBuilder, 0);
+        buildPolishString(root, stringBuilder, true);
 
         return stringBuilder.toString();
     }
 
+    // Builds an infix tree from the given reverse polish string. Does it in a single pass.
+    private Node buildTreeFromReversePolish(Scanner scanner) {
+        Stack<Node> stack = new Stack<>();
+
+        while (scanner.hasNext()) {
+            String value = scanner.next();
+            Node newNode = new Node(value);
+            if (isOperator(value)) {
+                newNode.right = stack.pop();
+                newNode.left = stack.pop();
+            }
+            stack.push(newNode);
+        }
+        return stack.pop();
+    }
+
     // writes the given infix tree as polish notation to the string builder
-    private void printPolish(Node node, StringBuilder stringBuilder, int treeLevel) {
+    private void buildPolishString(Node node, StringBuilder stringBuilder, boolean isRoot) {
         if (node == null) return;
 
-        if (!isRoot(treeLevel))
+        if (!isRoot)
             stringBuilder.append(" ");
+
         stringBuilder.append(node.value);
+        buildPolishString(node.left, stringBuilder, false);
+        buildPolishString(node.right, stringBuilder, false);
 
-        printPolish(node.right, stringBuilder, treeLevel + 1);
-        printPolish(node.left, stringBuilder, treeLevel + 1);
-
-    }
-
-    // Builds a binary tree from the given reverse polish notation represents as a stack.
-    private Node buildTreeFromReversePolish(Stack<String> stack) {
-        Node newNode = new Node(stack.pop());
-
-        if (!isOperator(newNode.value))
-            return newNode;
-
-        newNode.left = buildTreeFromReversePolish(stack);
-        newNode.right = buildTreeFromReversePolish(stack);
-        return newNode;
-    }
-
-    // Constructs a stack from the given reverse polish notation
-    private Stack<String> buildStack(String s) {
-        Stack<String> stack = new Stack<>();
-        Scanner scanner = buildScanner(s);
-
-        while(scanner.hasNext())
-            stack.push(scanner.next());
-
-        return stack;
+        return;
     }
 
     /**
@@ -143,5 +134,4 @@ public class PolishNotation implements Lukasiewicz {
             left = right = null;
         }
     }
-
 }
