@@ -8,10 +8,14 @@ import java.util.Arrays;
 public class PrioritizedWords implements PriorityStringQueueInterface {
     private StringPriority[] values;
     private int nextEmptyIndex;
+    private int nAry;
+    private int nAryMinusOne;
 
     public PrioritizedWords() {
         values = new StringPriority[10];
         nextEmptyIndex = 0;
+        nAry = 4;
+        nAryMinusOne = nAry - 1;
     }
     /**
      * Inserts the given string into the queue with the given priority
@@ -54,7 +58,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
     }
 
     private int getParentIndex(int childIndex) {
-        int parentIndex = (childIndex + 1) / 2 - 1;
+        int parentIndex = (childIndex + nAryMinusOne) / nAry - 1;
         return parentIndex;
     }
 
@@ -91,7 +95,6 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public void clear() {
-
     }
 
     /**
@@ -122,18 +125,24 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
         int greatestPriority = values[children[0]].priority;
 
         for (int child : children) {
+            if (!indexExists(child))
+                return greatestChild;
+
             int childPriority = values[child].priority;
-            if (childPriority < greatestPriority)
+            if (childPriority < greatestPriority) {
                 greatestChild = child;
+                greatestPriority = childPriority;
+            }
+
         }
         return greatestChild;
     }
 
     private int[] getChildIndexes(int index) {
-        int[] children = new int[2];
+        int[] children = new int[nAry];
 
-        for (int i = 0; i < 2; i++)
-            children[i] = (index + 1) * 2 - 1 + i;
+        for (int i = 0; i < nAry; i++)
+            children[i] = (index + 1) * nAry - nAryMinusOne + i;
 
         return children;
     }
@@ -150,6 +159,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
         for (int child : children) {
             if (!indexExists(child))
                 return false;
+
             int childPriority = values[child].priority;
             if (childPriority < parentPriority)
                 return true;

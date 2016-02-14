@@ -100,12 +100,12 @@ public class PrioritizedWordsTests {
     }
 
     @Test
-    public void add_WhenAddingHundredItemsWithUniquePriority_ThenItemsAreRemovedInPriorityOrder() {
+    public void add_WhenAddingTenThousandItemsWithUniquePriority_ThenItemsAreRemovedInPriorityOrder() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
 
         // act
-        Map<String, Integer> values = createNItemsWithRandomPriority(100);
+        Map<String, Integer> values = createNItemsWithRandomUniquePriority(10000);
 
         for(Map.Entry<String, Integer> pair : values.entrySet())
                 queue.add(pair.getKey(), pair.getValue());
@@ -155,7 +155,63 @@ public class PrioritizedWordsTests {
 
     }
 
-    private Map<String, Integer> createNItemsWithRandomPriority(int numberOfItmes) {
+    @Test
+    public void nAry_Full4AryTest() {
+        // arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        for (int i = 20; i >= 0; i--) {
+            String word = Integer.toString(i);
+            queue.add(word, i);
+        }
+
+        // Act & Assert
+        int lastPriority = Integer.MIN_VALUE;
+        while(queue.size() > 0) {
+            String value = queue.remove();
+            int priority = Integer.parseInt(value);
+            assertTrue(priority > lastPriority);
+            lastPriority = priority;
+        }
+    }
+
+    @Test
+    public void duplicate_priorities() {
+        // arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // act
+        queue.add("1", 1);
+        queue.add("1", 1);
+        queue.add("1", 1);
+        queue.add("1", 1);
+        queue.add("20", 20);
+        queue.add("20", 20);
+        queue.add("20", 20);
+        queue.add("20", 20);
+        queue.add("8", 8);
+        queue.add("8", 8);
+        queue.add("9", 9);
+        queue.add("9", 9);
+        queue.add("20", 20);
+        queue.add("4", 4);
+        queue.add("4", 4);
+        queue.add("4", 4);
+        queue.add("40", 40);
+        queue.add("40", 40);
+        queue.add("100", 100);
+        queue.add("65", 65);
+        queue.add("65", 65);
+
+        int lastPriority = Integer.MIN_VALUE;
+        while(queue.size() > 0) {
+            String value = queue.remove();
+            int priority = Integer.parseInt(value);
+            assertTrue(priority >= lastPriority);
+            lastPriority = priority;
+        }
+    }
+
+    private Map<String, Integer> createNItemsWithRandomUniquePriority(int numberOfItmes) {
         HashMap<String, Integer> map = new HashMap<String, Integer>();
 
         int[] priorities = CreateRandomlySortedStringDataSet(numberOfItmes);
