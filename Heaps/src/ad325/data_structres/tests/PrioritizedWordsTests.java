@@ -115,7 +115,7 @@ public class PrioritizedWordsTests {
         while(queue.size() > 0) {
             String value = queue.remove();
             int priority = values.get(value);
-            assertTrue(priority >= lastPriority);
+            assertTrue(priority > lastPriority);
             lastPriority = priority;
         }
     }

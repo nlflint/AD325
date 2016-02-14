@@ -8,14 +8,10 @@ import java.util.Arrays;
 public class PrioritizedWords implements PriorityStringQueueInterface {
     private StringPriority[] values;
     private int nextEmptyIndex;
-    private int nextIndexToRemove;
-    private int size;
 
     public PrioritizedWords() {
         values = new StringPriority[10];
         nextEmptyIndex = 0;
-        nextIndexToRemove = -1;
-        size = 0;
     }
     /**
      * Inserts the given string into the queue with the given priority
@@ -30,19 +26,36 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
         if (arrayIsFull())
             doubleArraySpace();
 
-        values[nextEmptyIndex] = new StringPriority(s, p);
+        int newIndex = nextEmptyIndex++;
 
-        int currentIndex = nextEmptyIndex;
-        int nextIndex = nextEmptyIndex - 1;
+        values[newIndex] = new StringPriority(s, p);
 
-        while(nextIndex > -1 && values[currentIndex].priority < values[nextIndex].priority) {
-            swapValues(currentIndex, nextIndex);
-            nextIndex--;
-            currentIndex--;
+        while (hasGreaterPriorityThanParent(newIndex)) {
+            int parentIndex = getParentIndex(newIndex);
+            swapValues(newIndex, parentIndex);
+            newIndex = parentIndex;
         }
-        nextEmptyIndex++;
-        size++;
+
         return false;
+    }
+
+    private boolean hasGreaterPriorityThanParent(int newIndex) {
+        return hasGreaterPriority(newIndex, getParentIndex(newIndex));
+    }
+
+    private boolean hasGreaterPriority(int first, int second) {
+        if (second < 0)
+            return false;
+
+        int firstPriority = values[first].priority;
+        int secondPriority = values[second].priority;
+
+        return firstPriority < secondPriority;
+    }
+
+    private int getParentIndex(int childIndex) {
+        int parentIndex = (childIndex + 1) / 2 - 1;
+        return parentIndex;
     }
 
     private void doubleArraySpace() {
@@ -54,10 +67,12 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
 
     }
 
-    private void swapValues(int firstIndex, int secondIndex) {
+    private int swapValues(int firstIndex, int secondIndex) {
         StringPriority temp = values[firstIndex];
         values[firstIndex] = values[secondIndex];
         values[secondIndex] = temp;
+
+        return secondIndex;
     }
 
     /**
@@ -87,9 +102,63 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public String remove() {
-        nextIndexToRemove++;
-        size--;
-        return values[nextIndexToRemove].value;
+        int workingIndex = 0;
+        String removedValue = values[workingIndex].value;
+        moveLastValueToRoot();
+
+        while (hasAChildWithGreaterPriority(workingIndex)) {
+            int childIndex = getIndexOfChildWithHighestPriority(workingIndex);
+            swapValues(workingIndex, childIndex);
+            workingIndex = childIndex;
+        }
+
+        return removedValue;
+    }
+
+    private int getIndexOfChildWithHighestPriority(int index) {
+        int[] children = getChildIndexes(index);
+
+        int greatestChild = children[0];
+        int greatestPriority = values[children[0]].priority;
+
+        for (int child : children) {
+            int childPriority = values[child].priority;
+            if (childPriority < greatestPriority)
+                greatestChild = child;
+        }
+        return greatestChild;
+    }
+
+    private int[] getChildIndexes(int index) {
+        int[] children = new int[2];
+
+        for (int i = 0; i < 2; i++)
+            children[i] = (index + 1) * 2 - 1 + i;
+
+        return children;
+    }
+
+    private void moveLastValueToRoot() {
+        nextEmptyIndex--;
+        values[0] = values[nextEmptyIndex];
+    }
+
+    private boolean hasAChildWithGreaterPriority(int parent) {
+        int parentPriority = values[parent].priority;
+        int[] children = getChildIndexes(parent);
+
+        for (int child : children) {
+            if (!indexExists(child))
+                return false;
+            int childPriority = values[child].priority;
+            if (childPriority < parentPriority)
+                return true;
+        }
+        return false;
+    }
+
+    private boolean indexExists(int index) {
+        return index < nextEmptyIndex;
     }
 
     /**
@@ -99,7 +168,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public int size() {
-        return size;
+        return nextEmptyIndex;
     }
 
     /**
