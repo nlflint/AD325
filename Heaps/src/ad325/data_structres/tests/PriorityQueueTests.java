@@ -172,6 +172,75 @@ public class PriorityQueueTests {
     }
 
     @Test
+    public void SixteenAry_largeScaleTest() {
+        // arrange
+        PriorityQueue<PriorityString> queue = new PriorityQueue<PriorityString>(new MaxHeapComparator(), 16);
+
+        // act
+        List<PriorityString> values = createNItemsWithRandomUniquePriority(10000);
+
+        for(PriorityString value : values)
+            queue.add(value);
+
+        // assert
+        int lastPriority = Integer.MAX_VALUE;
+        while(queue.size() > 0) {
+            PriorityString value = queue.remove();
+            int priority = value.Priority;
+            assertTrue(priority < lastPriority);
+            lastPriority = priority;
+        }
+    }
+
+    @Test
+    public void TwoAry_largeScaleTest() {
+        // arrange
+        PriorityQueue<PriorityString> queue = new PriorityQueue<PriorityString>(new MaxHeapComparator(), 2);
+
+        // act
+        List<PriorityString> values = createNItemsWithRandomUniquePriority(10000);
+
+        for(PriorityString value : values)
+            queue.add(value);
+
+        // assert
+        int lastPriority = Integer.MAX_VALUE;
+        while(queue.size() > 0) {
+            PriorityString value = queue.remove();
+            int priority = value.Priority;
+            assertTrue(priority < lastPriority);
+            lastPriority = priority;
+        }
+    }
+
+    @Test
+    public void nAry_WhenConstructingQueueWithNaryLessThan2_ThenExceptionIsThrown() {
+        try {
+            PriorityQueue<PriorityString> queue = new PriorityQueue<PriorityString>(new MaxHeapComparator(), 1);
+            fail();
+        } catch (IllegalArgumentException ex) {
+
+        }
+    }
+
+    @Test
+    public void nAry_WhenConstructingQueueWithNaryGreaterThan16_ThenExceptionIsThrown() {
+        try {
+            PriorityQueue<PriorityString> queue = new PriorityQueue<PriorityString>(new MaxHeapComparator(), 17);
+            fail();
+        } catch (IllegalArgumentException ex) {
+
+        }
+    }
+
+    @Test
+    public void nAry_WhenConstructingQueueBetween2And16_ThenNoExceptionThrown() {
+        PriorityQueue<PriorityString> queue;
+        for (int i = 2; i < 17; i++)
+             queue = new PriorityQueue<PriorityString>(new MinHeapComparator());
+    }
+
+    @Test
     public void remove_WhenRemovingSomethingFromEmptyQueue_ThenExceptionIsThrown() {
         // Arrange
         PriorityQueue<PriorityString> queue = buildMinHeapPriorityQueue();

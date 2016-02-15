@@ -1,6 +1,7 @@
 package ad325.data_structres.tests;
 
 import ad325.data_structures.PrioritizedWords;
+import ad325.data_structures.PriorityQueue;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -138,7 +139,7 @@ public class PrioritizedWordsTests {
     }
 
     @Test
-    public void add_WhenAddingTenThousandItemsWithUniquePriority_ThenItemsAreRemovedInPriorityOrder() {
+    public void addRemove_LargeScaleStringPriorityIntegrityTest() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
 
@@ -152,9 +153,9 @@ public class PrioritizedWordsTests {
         int lastPriority = Integer.MIN_VALUE;
         while(queue.size() > 0) {
             String value = queue.remove();
-            int priority = values.get(value);
-            assertTrue(priority > lastPriority);
-            lastPriority = priority;
+            int expectedPriority = values.get(value);
+            assertTrue(expectedPriority > lastPriority);
+            lastPriority = expectedPriority;
         }
     }
 
@@ -202,7 +203,7 @@ public class PrioritizedWordsTests {
     }
 
     @Test
-    public void nAry_Full4AryTest() {
+    public void nAry_Sample4AryTest() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
         for (int i = 20; i >= 0; i--) {

@@ -6,18 +6,37 @@ import java.util.Comparator;
 /**
  * Created by nate on 2/14/16.
  */
-public class PriorityQueue<E> implements PriorityQueueInterface<E> {
+public class PriorityQueue<E>
+        implements PriorityQueueInterface<E>, ComparatorConstructorImplemented, NaryTreeConstructorImplemented {
     private int nextEmptyIndex;
     private final Comparator<E> comparator;
     private E[] values;
     private final int nAry;
     private final int nAryMinusOne;
 
+    /**
+     * Constructor. Defaults to 4-ary heap.
+     * @param comparator the comparator that will be used to implement min or max heap.
+     * @throws IllegalArgumentException if nAry is NOT between 2 and 16 inclusive
+     */
     public PriorityQueue(Comparator<E> comparator) {
+        this(comparator, 4);
+    }
+
+    /**
+     * Constructor.
+     * @param comparator the comparator that will be used to implement min or max heap.
+     * @param nAry the nary of the underlying heap
+     * @throws IllegalArgumentException if nAry is NOT between 2 and 16 inclusive
+     */
+    public PriorityQueue(Comparator<E> comparator, int nAry) {
+        if (nAry <  2 || nAry > 16)
+            throw new IllegalArgumentException("nAry must be between 2 and 16, inclusive.");
+
         this.comparator = comparator;
         nextEmptyIndex = 0;
         values = (E[]) new Object[10];
-        nAry = 4;
+        this.nAry = nAry;
         nAryMinusOne = nAry - 1;
     }
 
@@ -100,7 +119,7 @@ public class PriorityQueue<E> implements PriorityQueueInterface<E> {
     @Override
     public E peek() {
         if (size() < 1)
-            throw new IllegalStateException("Queue is empty. Cannot peek and empty queue.");
+            throw new IllegalStateException("Queue is empty. Cannot peek an empty queue.");
         return values[0];
     }
 
