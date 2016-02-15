@@ -131,6 +131,26 @@ public class PriorityQueueTests {
     }
 
     @Test
+    public void add_WhenQueueContainsItemsWithNegativePriority_ThenMostNegativeHasHighestPriorityInMinHeap() {
+        // arrange
+        PriorityQueue<PriorityString> queue = buildMinHeapPriorityQueue();
+
+        // Act
+        add(queue, "a", 10);
+        add(queue, "b", -56);
+        add(queue, "c", -10);
+        add(queue, "d", 100);
+        add(queue, "e", -1000);
+
+        // Assert
+        assertEquals("e", queue.remove().Value);
+        assertEquals("b", queue.remove().Value);
+        assertEquals("c", queue.remove().Value);
+        assertEquals("a", queue.remove().Value);
+        assertEquals("d", queue.remove().Value);
+    }
+
+    @Test
     public void minHeap_largeScaleTest() {
         // arrange
         PriorityQueue<PriorityString> queue = buildMinHeapPriorityQueue();
@@ -149,6 +169,26 @@ public class PriorityQueueTests {
             assertTrue(priority > lastPriority);
             lastPriority = priority;
         }
+    }
+
+    @Test
+    public void add_WhenQueueContainsItemsWithNegativePriority_ThenMostNegativeHasLowestPriorityInMaxHeap() {
+        // arrange
+        PriorityQueue<PriorityString> queue = new PriorityQueue<PriorityString>(new MaxHeapComparator());
+
+        // Act
+        add(queue, "a", 10);
+        add(queue, "b", -56);
+        add(queue, "c", -10);
+        add(queue, "d", 100);
+        add(queue, "e", -1000);
+
+        // Assert
+        assertEquals("d", queue.remove().Value);
+        assertEquals("a", queue.remove().Value);
+        assertEquals("c", queue.remove().Value);
+        assertEquals("b", queue.remove().Value);
+        assertEquals("e", queue.remove().Value);
     }
 
     @Test
