@@ -288,7 +288,7 @@ public class PrioritizedWordsTests {
         // Act & Assert
         try
         {
-            assertEquals("asdf", queue.peek());
+            queue.peek();
             fail();
         } catch (IllegalStateException ex) {}
     }

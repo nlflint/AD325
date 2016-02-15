@@ -1,52 +1,61 @@
 package ad325.data_structures;
 
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
- * This is a priority queue, implemented using a heap.
- *
- * @Author Nathan Flint
- * Assignment: 4
+ * Created by nate on 2/14/16.
  */
-public class PrioritizedWords implements PriorityStringQueueInterface {
-    private PriorityString[] values;
+public class PriorityQueue<E> implements PriorityQueueInterface<E> {
     private int nextEmptyIndex;
-    private int nAry;
-    private int nAryMinusOne;
+    private final Comparator<E> comparator;
+    private E[] values;
+    private final int nAry;
+    private final int nAryMinusOne;
 
-    public PrioritizedWords() {
-        values = new PriorityString[10];
+    public PriorityQueue(Comparator<E> comparator) {
+        this.comparator = comparator;
         nextEmptyIndex = 0;
+        values = (E[]) new Object[10];
         nAry = 4;
         nAryMinusOne = nAry - 1;
     }
+
     /**
-     * Inserts the given string into the queue with the given priority
+     * Inserts the given element into the priority queue.
      *
-     * @param s The string to be added
-     * @param p The priority for this string
+     * @param e The element to be added
      * @return true (queue has been updated)
-     * @throws IllegalArgumentException if the string is null or empty
+     * @throws IllegalArgumentException if the element is null
+     *                                  or cannot be cast to a type usable by this queue
      */
     @Override
-    public boolean add(String s, int p) {
-        if (s == null || s.equals(""))
-            throw new IllegalArgumentException("s argument is null or empty. Cannot add a null or empty string.");
+    public boolean add(E e) {
+        if (e == null)
+            throw new IllegalArgumentException("e argument is null. Cannot add null thing to queue.");
 
         if (arrayIsFull())
             doubleArraySpace();
 
         int newIndex = nextEmptyIndex++;
 
-        values[newIndex] = new PriorityString(s, p);
+        values[newIndex] = e;
 
-        while (hasGreaterPriorityThanParent(newIndex)) {
+        while (hasHigherPriorityThanParent(newIndex)) {
             int parentIndex = getParentIndex(newIndex);
             swapValues(newIndex, parentIndex);
             newIndex = parentIndex;
         }
 
         return true;
+    }
+    // swaps two elements at the given indexes, and returns the second index.
+    private int swapValues(int firstIndex, int secondIndex) {
+        E temp = values[firstIndex];
+        values[firstIndex] = values[secondIndex];
+        values[secondIndex] = temp;
+
+        return secondIndex;
     }
 
     // Test if the heap has reach capacity
@@ -61,34 +70,25 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
     }
 
     // Checks if priority of given index is higher than it's parent index.
-    private boolean hasGreaterPriorityThanParent(int newIndex) {
-        return hasGreaterPriority(newIndex, getParentIndex(newIndex));
+    private boolean hasHigherPriorityThanParent(int newIndex) {
+        return hasHigherPriority(newIndex, getParentIndex(newIndex));
     }
 
     // Tests if the priority at the first index is greater than the second
-    private boolean hasGreaterPriority(int first, int second) {
+    private boolean hasHigherPriority(int first, int second) {
         if (second < 0)
             return false;
 
-        int firstPriority = values[first].priority;
-        int secondPriority = values[second].priority;
+        E leftElement = values[first];
+        E rightElement = values[second];
 
-        return firstPriority < secondPriority;
+        return comparator.compare(leftElement,rightElement) < 0;
     }
 
     // Gets parent index given the child index
     private int getParentIndex(int childIndex) {
         int parentIndex = (childIndex + nAryMinusOne) / nAry - 1;
         return parentIndex;
-    }
-
-    // swaps two elements at the given indexes, and returns the second index.
-    private int swapValues(int firstIndex, int secondIndex) {
-        PriorityString temp = values[firstIndex];
-        values[firstIndex] = values[secondIndex];
-        values[secondIndex] = temp;
-
-        return secondIndex;
     }
 
     /**
@@ -98,10 +98,10 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      * @throws IllegalStateException if the queue is empty
      */
     @Override
-    public String peek() {
+    public E peek() {
         if (size() < 1)
             throw new IllegalStateException("Queue is empty. Cannot peek and empty queue.");
-        return values[0].value;
+        return values[0];
     }
 
     /**
@@ -119,21 +119,21 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      * @throws IllegalStateException if the queue is empty
      */
     @Override
-    public String remove() {
+    public E remove() {
         if (size() < 1)
             throw new IllegalStateException("Queue is empty. Cannot remove something from an empty queue.");
 
         int workingIndex = 0;
-        String removedValue = values[workingIndex].value;
+        E removedElement = values[workingIndex];
         moveLastValueToRoot();
 
-        while (hasAChildWithGreaterPriority(workingIndex)) {
+        while (hasAChildWithHigherPriority(workingIndex)) {
             int childIndex = getIndexOfChildWithHighestPriority(workingIndex);
             swapValues(workingIndex, childIndex);
             workingIndex = childIndex;
         }
 
-        return removedValue;
+        return removedElement;
     }
 
     // Moves last item on the heap, to the root element.
@@ -144,16 +144,16 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
 
 
     // Tests if the given parent has a child of priority greater than itself.
-    private boolean hasAChildWithGreaterPriority(int parent) {
-        int parentPriority = values[parent].priority;
+    private boolean hasAChildWithHigherPriority(int parent) {
+        E parentElement = values[parent];
         int[] children = getChildIndexes(parent);
 
         for (int child : children) {
             if (!indexExists(child))
                 return false;
 
-            int childPriority = values[child].priority;
-            if (childPriority < parentPriority)
+            E childElement = values[child];
+            if (comparator.compare(childElement, parentElement) < 0)
                 return true;
         }
         return false;
@@ -178,21 +178,21 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
     private int getIndexOfChildWithHighestPriority(int index) {
         int[] children = getChildIndexes(index);
 
-        int greatestChild = children[0];
-        int greatestPriority = values[children[0]].priority;
+        int greatestChildIndex = children[0];
+        E highestPriorityChild = values[children[0]];
 
-        for (int child : children) {
-            if (!indexExists(child))
-                return greatestChild;
+        for (int childIndex : children) {
+            if (!indexExists(childIndex))
+                return greatestChildIndex;
 
-            int childPriority = values[child].priority;
-            if (childPriority < greatestPriority) {
-                greatestChild = child;
-                greatestPriority = childPriority;
+            E child = values[childIndex];
+            if (comparator.compare(child, highestPriorityChild) < 0) {
+                greatestChildIndex = childIndex;
+                highestPriorityChild = child;
             }
 
         }
-        return greatestChild;
+        return greatestChildIndex;
     }
 
     /**
@@ -209,8 +209,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      * Returns an array containing the elements in this queue.
      * The order of the elements is not specified. However, if the
      * array is a copy of the underlying storage for the priority
-     * queue, this method could be very helpful in testing and
-     * debugging the queue.
+     * queue, this method could be very helpful in testing the queue.
      * <p/>
      * The array object returned by this method is independent of the
      * queue. That is, the caller may reorder or replace values within
@@ -220,20 +219,10 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public Object[] toArray() {
-        String[] strings = new String[nextEmptyIndex];
+        Object[] elements = new Object[nextEmptyIndex];
         for (int i = 0; i < nextEmptyIndex; i++) {
-            strings[i] = values[i].value;
+            elements[i] = values[i];
         }
-        return strings;
-    }
-}
-
-class PriorityString {
-    final int priority;
-    final String value;
-
-    public PriorityString(String value, int priority) {
-        this.value = value;
-        this.priority = priority;
+        return elements;
     }
 }
