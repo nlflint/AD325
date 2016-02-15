@@ -38,15 +38,22 @@ public class PriorityQueue<E>
      * @param nAry the nary of the underlying heap
      * @throws IllegalArgumentException if nAry is NOT between 2 and 16 inclusive
      */
+
     public PriorityQueue(Comparator<E> comparator, int nAry) {
         if (nAry <  2 || nAry > 16)
             throw new IllegalArgumentException("nAry must be between 2 and 16, inclusive.");
 
         this.comparator = comparator;
         nextEmptyIndex = 0;
-        values = (E[]) new Object[10];
+        values = buildInitialArray();
         this.nAry = nAry;
         nAryMinusOne = nAry - 1;
+    }
+
+    // Builds the initial array. Isolated to it's own function because of suppression.
+    @SuppressWarnings("unchecked")
+    private E[] buildInitialArray() {
+        return (E[]) new Object[10];
     }
 
     /**
