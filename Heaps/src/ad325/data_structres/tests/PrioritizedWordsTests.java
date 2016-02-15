@@ -3,12 +3,12 @@ package ad325.data_structres.tests;
 import ad325.data_structures.PrioritizedWords;
 import org.junit.Test;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
@@ -100,6 +100,44 @@ public class PrioritizedWordsTests {
     }
 
     @Test
+    public void add_WhenAddingNullString_ThenExceptionIsThrown() {
+        // arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // act
+        try {
+            queue.add(null, 100);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+
+    }
+
+    @Test
+    public void add_WhenAddingEmptyString_ThenExceptionIsThrown() {
+        // arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // act
+        try {
+            queue.add("", 100);
+            fail();
+        } catch (IllegalArgumentException ex) {}
+
+    }
+
+    @Test
+    public void add_WhenAddingSomething_ThenTrueIsReturned() {
+        // arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // Act
+        boolean result = queue.add("asdf", 10);
+
+        // Assert
+        assertTrue(result);
+    }
+
+    @Test
     public void add_WhenAddingTenThousandItemsWithUniquePriority_ThenItemsAreRemovedInPriorityOrder() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
@@ -121,6 +159,18 @@ public class PrioritizedWordsTests {
     }
 
     @Test
+    public void remove_WhenRemovingSomethingFromEmptyQueue_ThenExceptionIsThrown() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // Act & Assert
+        try {
+            queue.remove();
+            fail();
+        } catch (IllegalStateException ex) {}
+    }
+
+    @Test
     public void size_WhenAddingItem_ThenSizeIsIncreasedByOne() {
         // Arrange
         PrioritizedWords queue = new PrioritizedWords();
@@ -133,8 +183,6 @@ public class PrioritizedWordsTests {
         // Assert
         assertEquals(0, sizeBefore);
         assertEquals(1, sizeAfter);
-
-
     }
 
     @Test
@@ -151,8 +199,6 @@ public class PrioritizedWordsTests {
         // Assert
         assertEquals(1, sizeBefore);
         assertEquals(0, sizeAfter);
-
-
     }
 
     @Test
@@ -209,6 +255,94 @@ public class PrioritizedWordsTests {
             assertTrue(priority >= lastPriority);
             lastPriority = priority;
         }
+    }
+
+    @Test
+    public void peek_WhenThereIsSeomthingOnTheQueue_ThenPeekReturnsTheThing() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        queue.add("asdf", 1);
+
+        // Act & Assert
+        assertEquals("asdf", queue.peek());
+    }
+
+    @Test
+    public void peek_WhenThereIsSomethingOnTheQueue_ThenPeekDoesNotRemoveTheThing() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        queue.add("asdf", 1);
+
+        // Act & Assert
+        assertEquals("asdf", queue.peek());
+        assertEquals(1, queue.size());
+        assertEquals("asdf", queue.remove());
+        assertEquals(0, queue.size());
+    }
+
+    @Test
+    public void peek_WhenThereNothingOnTheQueue_ThenPeekThrowsAnException() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+
+        // Act & Assert
+        try
+        {
+            assertEquals("asdf", queue.peek());
+            fail();
+        } catch (IllegalStateException ex) {}
+    }
+
+    @Test
+    public void clear_WhenThereIsSomethingOnTheQueue_ThenClearDeletesEverythingFromTheQueue() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        queue.add("asdf", 1);
+        queue.add("qwer", 2);
+
+        // Act & Assert
+        queue.clear();
+        assertEquals(0, queue.size());
+    }
+
+    @Test
+    public void clear_AfterClearingQueue_ThenAddAndRemoveStillBehaveProperly() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        queue.add("asdf", 1);
+        queue.add("qwer", 2);
+        queue.clear();
+
+        // Act
+        queue.add("a", 10);
+        queue.add("b", 1);
+        queue.add("c", 2);
+        queue.add("d", 7);
+        queue.add("e", 5);
+        queue.add("f", 9);
+
+        // Assert
+        assertEquals("b", queue.remove());
+        assertEquals("c", queue.remove());
+        assertEquals("e", queue.remove());
+        assertEquals("d", queue.remove());
+        assertEquals("f", queue.remove());
+        assertEquals("a", queue.remove());
+    }
+
+    @Test
+    public void toArray_WhenQueueContainsStuff_ThenToArrayReturnsInternalHeap() {
+        // Arrange
+        PrioritizedWords queue = new PrioritizedWords();
+        queue.add("asdf", 1);
+        queue.add("qwer", 2);
+
+        // Act
+        String[] values = (String[]) queue.toArray();
+
+        // Assert
+        assertThat(values, is( new String[] {"asdf", "qwer"}));
+
     }
 
     private Map<String, Integer> createNItemsWithRandomUniquePriority(int numberOfItmes) {
