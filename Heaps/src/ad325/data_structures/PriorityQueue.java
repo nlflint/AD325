@@ -4,14 +4,23 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Created by nate on 2/14/16.
+ * This is a generic priority queue, implemented using a heap.
+ *
+ * @Author Nathan Flint
+ * Assignment: 4
+ * Level: Extra Plus
  */
 public class PriorityQueue<E>
         implements PriorityQueueInterface<E>, ComparatorConstructorImplemented, NaryTreeConstructorImplemented {
+    // number of elements in the queue and also the next empty index of the heap
     private int nextEmptyIndex;
+    // Comparator used for determining priority of the elements
     private final Comparator<E> comparator;
+    // a Heap containing the elements of the queue.
     private E[] values;
+    // the nAry of the heap
     private final int nAry;
+    // utility value used for parent/child index conversion
     private final int nAryMinusOne;
 
     /**

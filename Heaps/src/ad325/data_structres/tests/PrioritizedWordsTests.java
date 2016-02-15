@@ -1,7 +1,6 @@
 package ad325.data_structres.tests;
 
 import ad325.data_structures.PrioritizedWords;
-import ad325.data_structures.PriorityQueue;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -9,7 +8,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
@@ -339,10 +337,11 @@ public class PrioritizedWordsTests {
         queue.add("qwer", 2);
 
         // Act
-        String[] values = (String[]) queue.toArray();
+        Object[] values = queue.toArray();
 
         // Assert
-        assertThat(values, is( new String[] {"asdf", "qwer"}));
+        assertEquals("asdf", values[0]);
+        assertEquals("qwer", values[1]);
 
     }
 

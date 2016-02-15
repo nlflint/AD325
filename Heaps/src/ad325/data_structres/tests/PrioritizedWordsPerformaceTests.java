@@ -3,13 +3,8 @@ package ad325.data_structres.tests;
 import ad325.data_structures.PrioritizedWords;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Created by nate on 2/14/16.
@@ -17,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 @Ignore("Performance tests: should only be run manually. Takes awhile to finish.")
 public class PrioritizedWordsPerformaceTests {
     @Test
-    public void performance_addAndRemove() {
+    public void addAndRemove() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
         int testScale = 30000000;
@@ -39,7 +34,7 @@ public class PrioritizedWordsPerformaceTests {
     }
 
     @Test
-    public void performance_addOnly() {
+    public void addOnly() {
         // arrange
         PrioritizedWords queue = new PrioritizedWords();
         int testScale = 30000000;

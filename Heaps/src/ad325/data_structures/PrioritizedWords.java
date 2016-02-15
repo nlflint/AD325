@@ -1,25 +1,24 @@
 package ad325.data_structures;
 
-import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  * This is a priority queue, implemented using a heap.
  *
  * @Author Nathan Flint
  * Assignment: 4
+ * Level: Extra Plus
  */
 public class PrioritizedWords implements PriorityStringQueueInterface {
-    private PriorityString[] values;
-    private int nextEmptyIndex;
-    private int nAry;
-    private int nAryMinusOne;
+    private PriorityQueue<PriorityString> queue;
 
+    /**
+     * Constructor. Builds a new String priority queue.
+     */
     public PrioritizedWords() {
-        values = new PriorityString[10];
-        nextEmptyIndex = 0;
-        nAry = 4;
-        nAryMinusOne = nAry - 1;
+        queue = new PriorityQueue<PriorityString>(new MinHeapComparator());
     }
+
     /**
      * Inserts the given string into the queue with the given priority
      *
@@ -31,64 +30,9 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
     @Override
     public boolean add(String s, int p) {
         if (s == null || s.equals(""))
-            throw new IllegalArgumentException("s argument is null or empty. Cannot add a null or empty string.");
+            throw new IllegalArgumentException("s string is null or empty. Null or empty strings not allowed");
 
-        if (arrayIsFull())
-            doubleArraySpace();
-
-        int newIndex = nextEmptyIndex++;
-
-        values[newIndex] = new PriorityString(s, p);
-
-        while (hasGreaterPriorityThanParent(newIndex)) {
-            int parentIndex = getParentIndex(newIndex);
-            swapValues(newIndex, parentIndex);
-            newIndex = parentIndex;
-        }
-
-        return true;
-    }
-
-    // Test if the heap has reach capacity
-    private boolean arrayIsFull() {
-        return nextEmptyIndex == values.length;
-
-    }
-
-    // Doubles available space in the heap
-    private void doubleArraySpace() {
-        values = Arrays.copyOf(values, values.length * 2);
-    }
-
-    // Checks if priority of given index is higher than it's parent index.
-    private boolean hasGreaterPriorityThanParent(int newIndex) {
-        return hasGreaterPriority(newIndex, getParentIndex(newIndex));
-    }
-
-    // Tests if the priority at the first index is greater than the second
-    private boolean hasGreaterPriority(int first, int second) {
-        if (second < 0)
-            return false;
-
-        int firstPriority = values[first].priority;
-        int secondPriority = values[second].priority;
-
-        return firstPriority < secondPriority;
-    }
-
-    // Gets parent index given the child index
-    private int getParentIndex(int childIndex) {
-        int parentIndex = (childIndex + nAryMinusOne) / nAry - 1;
-        return parentIndex;
-    }
-
-    // swaps two elements at the given indexes, and returns the second index.
-    private int swapValues(int firstIndex, int secondIndex) {
-        PriorityString temp = values[firstIndex];
-        values[firstIndex] = values[secondIndex];
-        values[secondIndex] = temp;
-
-        return secondIndex;
+        return queue.add(new PriorityString(s, p));
     }
 
     /**
@@ -99,9 +43,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public String peek() {
-        if (size() < 1)
-            throw new IllegalStateException("Queue is empty. Cannot peek and empty queue.");
-        return values[0].value;
+        return queue.peek().value;
     }
 
     /**
@@ -109,7 +51,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public void clear() {
-        nextEmptyIndex = 0;
+        queue.clear();
     }
 
     /**
@@ -120,79 +62,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public String remove() {
-        if (size() < 1)
-            throw new IllegalStateException("Queue is empty. Cannot remove something from an empty queue.");
-
-        int workingIndex = 0;
-        String removedValue = values[workingIndex].value;
-        moveLastValueToRoot();
-
-        while (hasAChildWithGreaterPriority(workingIndex)) {
-            int childIndex = getIndexOfChildWithHighestPriority(workingIndex);
-            swapValues(workingIndex, childIndex);
-            workingIndex = childIndex;
-        }
-
-        return removedValue;
-    }
-
-    // Moves last item on the heap, to the root element.
-    private void moveLastValueToRoot() {
-        nextEmptyIndex--;
-        values[0] = values[nextEmptyIndex];
-    }
-
-
-    // Tests if the given parent has a child of priority greater than itself.
-    private boolean hasAChildWithGreaterPriority(int parent) {
-        int parentPriority = values[parent].priority;
-        int[] children = getChildIndexes(parent);
-
-        for (int child : children) {
-            if (!indexExists(child))
-                return false;
-
-            int childPriority = values[child].priority;
-            if (childPriority < parentPriority)
-                return true;
-        }
-        return false;
-    }
-
-    // Tests if the given index exists in the heap
-    private boolean indexExists(int index) {
-        return index < nextEmptyIndex;
-    }
-
-    // builds an array of children indexes, given the parent index.
-    private int[] getChildIndexes(int parent) {
-        int[] children = new int[nAry];
-
-        for (int i = 0; i < nAry; i++)
-            children[i] = (parent + 1) * nAry - nAryMinusOne + i;
-
-        return children;
-    }
-
-    // Searches children of the given index and returns the child's index with the greatest priority
-    private int getIndexOfChildWithHighestPriority(int index) {
-        int[] children = getChildIndexes(index);
-
-        int greatestChild = children[0];
-        int greatestPriority = values[children[0]].priority;
-
-        for (int child : children) {
-            if (!indexExists(child))
-                return greatestChild;
-
-            int childPriority = values[child].priority;
-            if (childPriority < greatestPriority) {
-                greatestChild = child;
-                greatestPriority = childPriority;
-            }
-
-        }
-        return greatestChild;
+        return queue.remove().value;
     }
 
     /**
@@ -202,7 +72,7 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public int size() {
-        return nextEmptyIndex;
+        return queue.size();
     }
 
     /**
@@ -220,20 +90,80 @@ public class PrioritizedWords implements PriorityStringQueueInterface {
      */
     @Override
     public Object[] toArray() {
-        String[] strings = new String[nextEmptyIndex];
-        for (int i = 0; i < nextEmptyIndex; i++) {
-            strings[i] = values[i].value;
+        Object[] values = queue.toArray();
+        for (int i = 0; i < queue.size(); i++) {
+            values[i] = ((PriorityString)values[i]).value;
         }
-        return strings;
+        return values;
     }
 }
 
+/**
+ * Composite class that holds a value and a priority.
+ */
 class PriorityString {
+    // the heap priority of this element
     final int priority;
+    // the string being stored in the queue.
     final String value;
 
-    public PriorityString(String value, int priority) {
+    /**
+     * Constructor.
+     * @param value string value that will be stored
+     * @param priority heap priority of the string
+     */
+    PriorityString(String value, int priority) {
         this.value = value;
         this.priority = priority;
+    }
+}
+
+/**
+ * This comparator makes a Min Heap.
+ */
+class MinHeapComparator implements Comparator<PriorityString> {
+    /**
+     * Compares its two arguments for order.  Returns a negative integer,
+     * zero, or a positive integer as the first argument is less than, equal
+     * to, or greater than the second.<p>
+     * <p/>
+     * In the foregoing description, the notation
+     * <tt>sgn(</tt><i>expression</i><tt>)</tt> designates the mathematical
+     * <i>signum</i> function, which is defined to return one of <tt>-1</tt>,
+     * <tt>0</tt>, or <tt>1</tt> according to whether the value of
+     * <i>expression</i> is negative, zero or positive.<p>
+     * <p/>
+     * The implementor must ensure that <tt>sgn(compare(x, y)) ==
+     * -sgn(compare(y, x))</tt> for all <tt>x</tt> and <tt>y</tt>.  (This
+     * implies that <tt>compare(x, y)</tt> must throw an exception if and only
+     * if <tt>compare(y, x)</tt> throws an exception.)<p>
+     * <p/>
+     * The implementor must also ensure that the relation is transitive:
+     * <tt>((compare(x, y)&gt;0) &amp;&amp; (compare(y, z)&gt;0))</tt> implies
+     * <tt>compare(x, z)&gt;0</tt>.<p>
+     * <p/>
+     * Finally, the implementor must ensure that <tt>compare(x, y)==0</tt>
+     * implies that <tt>sgn(compare(x, z))==sgn(compare(y, z))</tt> for all
+     * <tt>z</tt>.<p>
+     * <p/>
+     * It is generally the case, but <i>not</i> strictly required that
+     * <tt>(compare(x, y)==0) == (x.equals(y))</tt>.  Generally speaking,
+     * any comparator that violates this condition should clearly indicate
+     * this fact.  The recommended language is "Note: this comparator
+     * imposes orderings that are inconsistent with equals."
+     *
+     * @param o1 the first object to be compared.
+     * @param o2 the second object to be compared.
+     * @return a negative integer, zero, or a positive integer as the
+     * first argument is less than, equal to, or greater than the
+     * second.
+     * @throws NullPointerException if an argument is null and this
+     *                              comparator does not permit null arguments
+     * @throws ClassCastException   if the arguments' types prevent them from
+     *                              being compared by this comparator.
+     */
+    @Override
+    public int compare(PriorityString o1, PriorityString o2) {
+        return o1.priority - o2.priority;
     }
 }
