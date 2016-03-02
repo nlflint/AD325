@@ -46,11 +46,10 @@ public class MyServiceDesk extends ServiceDeskBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!peek1().equals("")) {
-                    process1(peek1());
-                }
+                process1(peek1());
+                process1(peek1());
+                process1(peek1());
                 desk1Running = false;
-
             }
         }).start();
 
@@ -67,11 +66,10 @@ public class MyServiceDesk extends ServiceDeskBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!peek2().equals("")) {
-                    process2(peek2());
-                }
+                process2(peek2());
+                process2(peek2());
+                process2(peek2());
                 desk2Running = false;
-
             }
         }).start();
     }
@@ -87,11 +85,10 @@ public class MyServiceDesk extends ServiceDeskBase {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(!peek3().equals("")) {
-                    process3(peek3());
-                }
+                process3(peek3());
+                process3(peek3());
+                process3(peek3());
                 desk3Running = false;
-
             }
         }).start();
     }
