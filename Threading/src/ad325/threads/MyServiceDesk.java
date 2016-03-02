@@ -9,7 +9,7 @@ import java.util.function.Supplier;
  * Created by nate on 3/1/16.
  */
 public class MyServiceDesk extends ServiceDeskBase {
-    private HashMap<Character, Queue<DeskController>> deskOrderPerCustomer;
+    private Map<Character, Queue<DeskController>> deskVisitOrderPerCustomer;
     final DeskController desk1;
     final DeskController desk2;
     final DeskController desk3;
@@ -19,9 +19,9 @@ public class MyServiceDesk extends ServiceDeskBase {
         final MyServiceDesk help = new MyServiceDesk();
 
         // Kick start the process for each customer
-        help.queueNextDeskFor(new Customer('*'));
-        help.queueNextDeskFor(new Customer('&'));
-        help.queueNextDeskFor(new Customer('@'));
+        help.queueNextVisitFor(new Customer('*'));
+        help.queueNextVisitFor(new Customer('&'));
+        help.queueNextVisitFor(new Customer('@'));
     }
 
     public MyServiceDesk() {
@@ -41,54 +41,51 @@ public class MyServiceDesk extends ServiceDeskBase {
                 , () -> isEmpty(queue3)
                 , this::process3);
 
-        deskOrderPerCustomer = createDeskOrderPerCustomer();
+        deskVisitOrderPerCustomer = createDeskVisitOrderPerCustomer();
     }
 
     private boolean isEmpty(String queue) {
         return queue.length() < 1;
     }
 
-    private HashMap<Character, Queue<DeskController>> createDeskOrderPerCustomer() {
-        HashMap<Character, Queue<DeskController>> deskOrderPerCustomer = new HashMap<>();
-        deskOrderPerCustomer.put('*', createQueueFrom(desk1, desk3, desk2));
-        deskOrderPerCustomer.put('&', createQueueFrom(desk2, desk1, desk3));
-        deskOrderPerCustomer.put('@', createQueueFrom(desk3, desk2, desk1));
+    private Map<Character, Queue<DeskController>> createDeskVisitOrderPerCustomer() {
+        Map<Character, Queue<DeskController>> deskVisitOrderPerCustomer = new HashMap<>();
+        deskVisitOrderPerCustomer.put('*', createVisitOrderFrom(desk1, desk3, desk2));
+        deskVisitOrderPerCustomer.put('&', createVisitOrderFrom(desk2, desk1, desk3));
+        deskVisitOrderPerCustomer.put('@', createVisitOrderFrom(desk3, desk2, desk1));
 
-        return deskOrderPerCustomer;
+        return deskVisitOrderPerCustomer;
     }
 
-    private Queue<DeskController> createQueueFrom(DeskController... deskControllers) {
-        Queue<DeskController> deskOrderQueue = new ArrayDeque<>();
-
-        for (DeskController deskController : deskControllers)
-            deskOrderQueue.add(deskController);
-
-        return deskOrderQueue;
+    private Queue<DeskController> createVisitOrderFrom(DeskController... deskControllers) {
+        return new ArrayDeque<>(Arrays.asList(deskControllers));
     }
 
-    public void queueNextDeskFor(Customer c) {
-        Queue<DeskController> deskControllerQueue = deskOrderPerCustomer.get(c.id);
+    public void queueNextVisitFor(Customer c) {
+        Queue<DeskController> deskControllerQueue = deskVisitOrderPerCustomer.get(c.id);
 
         if (deskControllerQueue.peek() == null)
             return;
 
         DeskController desk = deskControllerQueue.remove();
-        processCustomer(desk, c);
+        queueCustomerOnDesk(c, desk);
     }
 
-    private void processCustomer(DeskController controller, Customer c) {
-        controller.enqueue(c);
+    private void queueCustomerOnDesk(Customer c, DeskController deskController) {
+        deskController.enqueue(c);
 
-        if (controller.isRunning())
-            return;
+        if (!deskController.isRunning())
+            runServiceDesk(deskController);
+    }
 
+    private void runServiceDesk(DeskController controller) {
         controller.setRunning(true);
 
         new Thread(() -> {
             while(!controller.isEmpty()) {
                 Customer customer = controller.peek();
                 controller.process(customer);
-                queueNextDeskFor(customer);
+                queueNextVisitFor(customer);
             }
             controller.setRunning(false);
         }).start();
