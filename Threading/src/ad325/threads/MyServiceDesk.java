@@ -49,29 +49,25 @@ public class MyServiceDesk extends ServiceDeskBase {
     }
 
     private Map<Character, Queue<DeskController>> createDeskVisitOrderPerCustomer() {
-        Map<Character, Queue<DeskController>> deskVisitOrderPerCustomer = new HashMap<>();
-        deskVisitOrderPerCustomer.put('*', createVisitOrderFrom(desk1, desk3, desk2));
-        deskVisitOrderPerCustomer.put('&', createVisitOrderFrom(desk2, desk1, desk3));
-        deskVisitOrderPerCustomer.put('@', createVisitOrderFrom(desk3, desk2, desk1));
+        Map<Character, Queue<DeskController>> deskVisitOrders = new HashMap<>();
+        deskVisitOrders.put('*', createVisitOrderOf(desk1, desk3, desk2));
+        deskVisitOrders.put('&', createVisitOrderOf(desk2, desk1, desk3));
+        deskVisitOrders.put('@', createVisitOrderOf(desk3, desk2, desk1));
 
-        return deskVisitOrderPerCustomer;
+        return deskVisitOrders;
     }
 
-    private Queue<DeskController> createVisitOrderFrom(DeskController... deskControllers) {
+    private Queue<DeskController> createVisitOrderOf(DeskController... deskControllers) {
         return new ArrayDeque<>(Arrays.asList(deskControllers));
     }
 
     public void queueNextVisitFor(Customer c) {
-        Queue<DeskController> deskControllerQueue = deskVisitOrderPerCustomer.get(c.id);
+        Queue<DeskController> deskVisitOrderQueue = deskVisitOrderPerCustomer.get(c.id);
 
-        if (deskControllerQueue.peek() == null)
+        if (deskVisitOrderQueue.peek() == null)
             return;
 
-        DeskController desk = deskControllerQueue.remove();
-        queueCustomerOnDesk(c, desk);
-    }
-
-    private void queueCustomerOnDesk(Customer c, DeskController deskController) {
+        DeskController deskController = deskVisitOrderQueue.remove();
         deskController.enqueue(c);
 
         if (!deskController.isRunning())
@@ -121,9 +117,7 @@ class DeskController {
         return peekFunc.get();
     }
 
-    public void enqueue(Customer c) {
-        enqueueFunc.accept(c);
-    }
+    public void enqueue(Customer c) { enqueueFunc.accept(c); }
 
     public boolean isEmpty() {
         return isEmptyFunc.getAsBoolean();
