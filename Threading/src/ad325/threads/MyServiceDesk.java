@@ -50,7 +50,7 @@ public class MyServiceDesk extends ServiceDeskBase {
 
     private Map<Character, Queue<DeskController>> createDeskVisitOrderPerCustomer() {
         Map<Character, Queue<DeskController>> deskVisitOrders = new HashMap<>();
-        deskVisitOrders.put('*', createVisitOrderOf(desk1, desk3, desk2));
+        deskVisitOrders.put('*', createVisitOrderOf(desk1, desk2, desk3));
         deskVisitOrders.put('&', createVisitOrderOf(desk2, desk1, desk3));
         deskVisitOrders.put('@', createVisitOrderOf(desk3, desk2, desk1));
 
