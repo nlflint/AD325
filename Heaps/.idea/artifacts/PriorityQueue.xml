@@ -1,0 +1,17 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="PriorityQueue">
+    <output-path>$PROJECT_DIR$/out/artifacts/PriorityQueue</output-path>
+    <root id="archive" name="PriorityQueue.jar">
+      <element id="directory" name="ad325">
+        <element id="directory" name="data_structures">
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/PrioritizedWords.java" />
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/ComparatorConstructorImplemented.java" />
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/PriorityQueueInterface.java" />
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/NaryTreeConstructorImplemented.java" />
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/PriorityQueue.java" />
+          <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structures/PriorityStringQueueInterface.java" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>

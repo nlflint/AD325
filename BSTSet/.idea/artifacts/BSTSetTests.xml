@@ -1,0 +1,12 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="BSTSetTests">
+    <output-path>$PROJECT_DIR$/out/artifacts/BSTSetTests</output-path>
+    <root id="archive" name="BSTSetTests.jar">
+      <element id="file-copy" path="$PROJECT_DIR$/src/BSTSetTests.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/InOrderIteratorTests.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/PostOrderIteratorTests.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/PreOrderIteratorTests.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/StringIteratorTests.java" />
+    </root>
+  </artifact>
+</component>

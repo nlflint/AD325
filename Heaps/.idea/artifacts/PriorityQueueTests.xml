@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="PriorityQueueTests">
+    <output-path>$PROJECT_DIR$/out/artifacts/PriorityQueueTests</output-path>
+    <root id="archive" name="PriorityQueueTests.jar">
+      <element id="directory" name="ad325">
+        <element id="directory" name="data_structures">
+          <element id="directory" name="tests">
+            <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structres/tests/PrioritizedWordsPerformaceTests.java" />
+            <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structres/tests/PrioritizedWordsTests.java" />
+            <element id="file-copy" path="$PROJECT_DIR$/src/ad325/data_structres/tests/PriorityQueueTests.java" />
+          </element>
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
