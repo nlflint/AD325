@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -85,11 +88,100 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        WordCount wordCount = new WordCount();
-        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+        Map<String,Counter> countsByType = new WordCount().getCountByTokenType(inputStream);
 
         // Assert
         assertEquals(1, countsByType.size());
         assertEquals(2, countsByType.get("house").GetCount());
+    }
+
+    @Test
+    public void tokenTypeCount_GivenWhiteSpaceCharacters_ThenWhiteSpaceCharactersAreNotCounted() {
+        // Arrange
+        String twoSametoken = "\n house\t  house cat\t cat\n \nmouse ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        Map<String,Counter> countsByType = new WordCount().getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(3, countsByType.size());
+        assertEquals(2, countsByType.get("house").GetCount());
+        assertEquals(2, countsByType.get("cat").GetCount());
+        assertEquals(1, countsByType.get("mouse").GetCount());
+    }
+
+    @Test
+    public void buildReport_GivenFilenameAndOneTokenWith20Occurances_ThenReportShowsFilenameAndTokenCount() {
+        // Arrange
+        String filename = "myfile.txt";
+        HashMap<String, Counter> countsByToken = new HashMap<String, Counter>();
+        countsByToken.put("first", new FakeCounter(20));
+
+        // Act
+        List<String> report = new WordCount().buildReport(filename, countsByToken);
+
+        // Assert
+        assertEquals(Arrays.asList(
+                "myfile.txt: 1 tokens",
+                "   20 : first",
+                ""), report);
+    }
+
+    @Test
+    public void buildReport_GivenMultipleTokenTypes_ThenTokensSortAlphabetically() {
+        // Arrange
+        String filename = "myfile.txt";
+        HashMap<String, Counter> countsByToken = new HashMap<String, Counter>();
+        countsByToken.put("aaa", new FakeCounter(20));
+        countsByToken.put("ccc", new FakeCounter(3));
+        countsByToken.put("bbb", new FakeCounter(200));
+
+        // Act
+        List<String> report = new WordCount().buildReport(filename, countsByToken);
+
+        // Assert
+        assertEquals(Arrays.asList(
+                "myfile.txt: 3 tokens",
+                "   20 : aaa",
+                "  200 : bbb",
+                "    3 : ccc",
+                ""), report);
+    }
+
+    @Test
+    public void buildReport_GivenCountsLessThanThree_ThenTokensLessThanThreeAreNotReported() {
+        // Arrange
+        String filename = "myfile.txt";
+        HashMap<String, Counter> countsByToken = new HashMap<String, Counter>();
+        countsByToken.put("aaa", new FakeCounter(1));
+        countsByToken.put("ccc", new FakeCounter(2));
+        countsByToken.put("zzz", new FakeCounter(3));
+        countsByToken.put("bbb", new FakeCounter(500));
+        countsByToken.put("fff", new FakeCounter(10));
+
+
+        // Act
+        List<String> report = new WordCount().buildReport(filename, countsByToken);
+
+        // Assert
+        assertEquals(Arrays.asList(
+                "myfile.txt: 3 tokens",
+                "  500 : bbb",
+                "   10 : fff",
+                "    3 : zzz",
+                ""), report);
+    }
+
+    private class FakeCounter extends Counter {
+        private final int _count;
+        public FakeCounter(int count) {
+            _count = count;
+        }
+
+        @Override
+        public int GetCount() {
+            return _count;
+        }
     }
 }

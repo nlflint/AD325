@@ -1,23 +1,34 @@
 package ad325.token;
 
-import com.sun.tools.doclets.internal.toolkit.util.DocFinder;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WordCount {
- 
+    public static void main(String[] args) {
+        tokenCount(args[0]);
+    }
+
 	public static void tokenCount(String filename) {
         WordCount wordCount = new WordCount();
 
         InputStream fileStream = getFileInputStream(filename);
 
-        wordCount.getCountByTokenType(fileStream);
-
+        Map<String, Counter> countsByTokenType = wordCount.getCountByTokenType(fileStream);
+        List<String> report = wordCount.buildReport(filename, countsByTokenType);
+        printReport(report);
 	}
+
+    private static void printReport(List<String> report) {
+        for(String row : report)
+            System.out.println(row);
+    }
 
     private static InputStream getFileInputStream(String filename) {
         try {
@@ -38,7 +49,7 @@ public class WordCount {
 
 		// process the file, token by token
 		while(scan.hasNext()) {
-            String token = scan.next().toLowerCase();
+            String token = scan.next().toLowerCase().trim();
             if (token.length() > 0)
                 addToken(countsByType, token);
 		}
@@ -56,10 +67,49 @@ public class WordCount {
             countsByType.put(token, new Counter());
     }
 
+    List<String> buildReport(String filename, Map<String,Counter> countByTokenType) {
+        List<Map.Entry<String, Counter>> keyValuesSorted = sortAndFilterKeyValues(countByTokenType);
+
+        int numberOfTokens = keyValuesSorted.size();
+        String header = CreateHeader(filename, numberOfTokens);
+
+        ArrayList<String> report = new ArrayList<>();
+        report.add(header);
+
+        for (Map.Entry<String, Counter> keyValue : keyValuesSorted) {
+            String tokenType = keyValue.getKey();
+            int count = keyValue.getValue().GetCount();
+
+            String row = FormatTokenCountRow(count, tokenType);
+            report.add(row);
+        }
+
+        report.add("");
+
+        return report;
+    }
+
+    private List<Map.Entry<String, Counter>> sortAndFilterKeyValues(Map<String, Counter> countByTokenType) {
+        return countByTokenType.entrySet()
+                .stream()
+                .filter(x -> x.getValue().GetCount() > 2)
+                .sorted((x,y) -> x.getKey().compareTo(y.getKey()))
+                .collect(Collectors.toList());
+    }
+
+    private String FormatTokenCountRow(int count, String tokenType) {
+        return String.format("%5d : %s", count, tokenType);
+    }
+
+    private String CreateHeader(String filename, int count) {
+        return String.format("%s: %d tokens", filename, count);
+    }
+
 }
 
 class Counter {
     private int _count;
+
     public Counter() {
         _count = 1;
     }
