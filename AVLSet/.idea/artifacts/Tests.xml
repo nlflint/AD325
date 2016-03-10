@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Tests">
+    <output-path>$PROJECT_DIR$/out/artifacts/Tests</output-path>
+    <root id="archive" name="Tests.jar">
+      <element id="file-copy" path="$PROJECT_DIR$/src/ad325/structures/AVLSetTests.java" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/ad325/structures/PolishNotationTests.java" />
+    </root>
+  </artifact>
+</component>
