@@ -1,0 +1,95 @@
+package ad325.token;
+
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Map;
+
+/**
+ * Created by nate on 3/8/16.
+ */
+public class WordCountTests {
+    @Test
+    public void tokenTypeCount_WhenTwoOfTheSameTokens_ThenMapHasOneEntryWithCountOfTwo() {
+        // Arrange
+        String twoSametoken = " Two Two ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        WordCount wordCount = new WordCount();
+        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(1, countsByType.size());
+        assertEquals(2, countsByType.get("two").GetCount());
+
+    }
+
+    @Test
+    public void tokenTypeCount_WhenCasingIsDifferent_ThenCountIsNotCaseSensitive() {
+        // Arrange
+        String twoSametoken = " TWO two TwO ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        WordCount wordCount = new WordCount();
+        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(1, countsByType.size());
+        assertEquals(3, countsByType.get("two").GetCount());
+
+    }
+
+    @Test
+    public void tokenTypeCount_GivenMultipleTypes_ThenCountExistsForEachType() {
+        // Arrange
+        String twoSametoken = " TWO lmnop asd ASD two TwO Asd LMNoP ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        WordCount wordCount = new WordCount();
+        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(3, countsByType.size());
+        assertEquals(3, countsByType.get("two").GetCount());
+        assertEquals(3, countsByType.get("asd").GetCount());
+        assertEquals(2, countsByType.get("lmnop").GetCount());
+
+    }
+
+    @Test
+    public void tokenTypeCount_GivenPunctuation_ThenPunctuationHasCount() {
+        // Arrange
+        String twoSametoken = " ! . ? ? ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        WordCount wordCount = new WordCount();
+        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(3, countsByType.size());
+        assertEquals(1, countsByType.get("!").GetCount());
+        assertEquals(1, countsByType.get(".").GetCount());
+        assertEquals(2, countsByType.get("?").GetCount());
+    }
+
+    @Test
+    public void tokenTypeCount_GivenDoubleSpace_ThenDoubleSpaceDoesNotHaveCount() {
+        // Arrange
+        String twoSametoken = " house  house ";
+        InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
+
+        // Act
+        WordCount wordCount = new WordCount();
+        Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
+
+        // Assert
+        assertEquals(1, countsByType.size());
+        assertEquals(2, countsByType.get("house").GetCount());
+    }
+}
