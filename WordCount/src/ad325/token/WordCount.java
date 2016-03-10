@@ -8,9 +8,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class WordCount {
+
+    private static final int MINIMUM_COUNT = 3;
+
     public static void main(String[] args) {
         tokenCount(args[0]);
     }
@@ -92,11 +94,17 @@ public class WordCount {
     private List<Map.Entry<String, Counter>> sortAndFilterKeyValues(Map<String, Counter> countByTokenType) {
         return countByTokenType.entrySet()
                 .stream()
-                .filter(x -> x.getValue().GetCount() > 2)
-                .sorted((x,y) -> x.getKey().compareTo(y.getKey()))
+                .filter(this::hasMinimumCount)
+                .sorted(this::alphabetically)
                 .collect(Collectors.toList());
     }
 
+    private boolean hasMinimumCount(Map.Entry<String, Counter> token) {
+        return token.getValue().GetCount() >= MINIMUM_COUNT;
+    }
+    private int alphabetically(Map.Entry<String, Counter> left, Map.Entry<String, Counter> right) {
+        return left.getKey().compareTo(right.getKey());
+    }
     private String FormatTokenCountRow(int count, String tokenType) {
         return String.format("%5d : %s", count, tokenType);
     }
