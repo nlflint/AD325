@@ -14,6 +14,8 @@ import java.util.Map;
  * Created by nate on 3/8/16.
  */
 public class WordCountTests {
+    private static final boolean sortByCount = true;
+    private static final boolean sortAlphabetically = false;
     @Test
     public void tokenTypeCount_WhenTwoOfTheSameTokens_ThenMapHasOneEntryWithCountOfTwo() {
         // Arrange
@@ -21,13 +23,17 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        WordCount wordCount = new WordCount();
+        WordCount wordCount = getWordCountAlphabeticallySorted();
         Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
 
         // Assert
         assertEquals(1, countsByType.size());
         assertEquals(2, countsByType.get("two").GetCount());
 
+    }
+
+    private WordCount getWordCountAlphabeticallySorted() {
+        return new WordCount(sortAlphabetically);
     }
 
     @Test
@@ -37,7 +43,7 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        WordCount wordCount = new WordCount();
+        WordCount wordCount = getWordCountAlphabeticallySorted();
         Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
 
         // Assert
@@ -53,7 +59,7 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        WordCount wordCount = new WordCount();
+        WordCount wordCount = getWordCountAlphabeticallySorted();
         Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
 
         // Assert
@@ -71,7 +77,7 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        WordCount wordCount = new WordCount();
+        WordCount wordCount = getWordCountAlphabeticallySorted();
         Map<String,Counter> countsByType = wordCount.getCountByTokenType(inputStream);
 
         // Assert
@@ -88,7 +94,7 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        Map<String,Counter> countsByType = new WordCount().getCountByTokenType(inputStream);
+        Map<String,Counter> countsByType = getWordCountAlphabeticallySorted().getCountByTokenType(inputStream);
 
         // Assert
         assertEquals(1, countsByType.size());
@@ -102,7 +108,7 @@ public class WordCountTests {
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act
-        Map<String,Counter> countsByType = new WordCount().getCountByTokenType(inputStream);
+        Map<String,Counter> countsByType = getWordCountAlphabeticallySorted().getCountByTokenType(inputStream);
 
         // Assert
         assertEquals(3, countsByType.size());
@@ -119,7 +125,7 @@ public class WordCountTests {
         countsByToken.put("first", new FakeCounter(20));
 
         // Act
-        List<String> report = new WordCount().buildReport(filename, countsByToken);
+        List<String> report = getWordCountAlphabeticallySorted().buildReport(filename, countsByToken);
 
         // Assert
         assertEquals(Arrays.asList(
@@ -138,7 +144,7 @@ public class WordCountTests {
         countsByToken.put("bbb", new FakeCounter(200));
 
         // Act
-        List<String> report = new WordCount().buildReport(filename, countsByToken);
+        List<String> report = getWordCountAlphabeticallySorted().buildReport(filename, countsByToken);
 
         // Assert
         assertEquals(Arrays.asList(
@@ -162,12 +168,34 @@ public class WordCountTests {
 
 
         // Act
-        List<String> report = new WordCount().buildReport(filename, countsByToken);
+        List<String> report = getWordCountAlphabeticallySorted().buildReport(filename, countsByToken);
 
         // Assert
         assertEquals(Arrays.asList(
                 "myfile.txt: 3 tokens",
                 "  500 : bbb",
+                "   10 : fff",
+                "    3 : zzz",
+                ""), report);
+    }
+
+    @Test
+    public void buildReport_GivenContructorSortsByCount_ThenTokensAreSortByCountDescending() {
+        // Arrange
+        String filename = "myfile.txt";
+        HashMap<String, Counter> countsByToken = new HashMap<String, Counter>();
+        countsByToken.put("zzz", new FakeCounter(3));
+        countsByToken.put("bbb", new FakeCounter(45));
+        countsByToken.put("fff", new FakeCounter(10));
+
+
+        // Act
+        List<String> report = getWordCountAlphabeticallySorted().buildReport(filename, countsByToken);
+
+        // Assert
+        assertEquals(Arrays.asList(
+                "myfile.txt: 3 tokens",
+                "   45 : bbb",
                 "   10 : fff",
                 "    3 : zzz",
                 ""), report);
