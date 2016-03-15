@@ -104,7 +104,7 @@ public class WordCountTests {
     @Test
     public void tokenTypeCount_GivenWhiteSpaceCharacters_ThenWhiteSpaceCharactersAreNotCounted() {
         // Arrange
-        String twoSametoken = "\n house\t  house cat\t cat\n \nmouse ";
+        String twoSametoken = "\n house\t\t    \thouse   cat\t cat\n \nmouse ";
         InputStream inputStream = new ByteArrayInputStream(twoSametoken.getBytes());
 
         // Act

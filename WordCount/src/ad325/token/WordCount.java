@@ -138,12 +138,10 @@ public class WordCount {
     Map<String,Counter> getCountByTokenType(InputStream inputStream) {
 		// open the file for reading using Scanner
         java.util.Scanner scan = new java.util.Scanner(inputStream);
-        scan.useDelimiter(" ");
-
         Map<String,Counter> countsByType = new HashMap<String, Counter>();
 
 		while(scan.hasNext()) {
-            String token = scan.next().toLowerCase().trim();
+            String token = scan.next().toLowerCase();
             if (token.length() > 0)
                 incrementCount(countsByType, token);
 		}
